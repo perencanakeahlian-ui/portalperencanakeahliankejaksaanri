@@ -27,6 +27,7 @@ jobs:
       - name: Install, build, and upload your site
         uses: withastro/action@v3
         with:
+          node-version: 22
           # Pastikan dependencies berhasil terinstall
           # Jika Anda menggunakan npm/pnpm/yarn, action ini otomatis akan mencari lock file-nya.
           package-manager: npm
