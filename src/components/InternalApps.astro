@@ -1,0 +1,42 @@
+---
+import AppCard from './AppCard.astro';
+
+const apps = [
+    {
+        href: 'https://silabin.kejaksaan.go.id/',
+        icon: 'description',
+        title: 'SILABIN',
+        description: 'Sistem Informasi Laporan Pembinaan',
+    },
+    {
+        href: 'https://sicana.kejaksaan.go.id/',
+        icon: 'troubleshoot',
+        title: 'SICANA & RB',
+        description: 'Sistem Perencanaan & Reformasi Birokrasi',
+    },
+    {
+        href: 'https://simanris.kejaksaan.go.id/login',
+        icon: 'security',
+        title: 'SIMANRIS',
+        description: 'Sinergi Informasi Manajemen Risiko',
+    },
+    {
+        href: 'https://birocana.kejaksaan.go.id/suncana/login.php',
+        icon: 'edit_calendar',
+        title: 'SUNCANA',
+        description: 'Sistem Penyusunan Rencana Anggaran dan Program Kerja',
+    },
+];
+---
+
+<div class="col-span-12 lg:col-span-7 animate-reveal stagger-2">
+    <div class="mb-8">
+        <h3 class="text-2xl font-bold font-headline mb-3">Aplikasi internal kita-kita aja nih!</h3>
+        <p class="text-on-surface-variant text-base font-light">Ini deretan aplikasi punya Kejaksaan RI, jangan sampai lupa buat laporan ya!</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        {apps.map((app) => (
+            <AppCard {...app} />
+        ))}
+    </div>
+</div>

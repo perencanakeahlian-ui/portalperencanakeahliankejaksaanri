@@ -1,0 +1,36 @@
+---
+---
+
+<section id="kalender" class="grid grid-cols-12 gap-8 lg:gap-16 scroll-mt-24">
+    <div class="col-span-12 lg:col-span-4 flex flex-col justify-center animate-reveal">
+        <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6">
+            <span class="material-symbols-outlined text-3xl">event_upcoming</span>
+        </div>
+        <h3 class="text-3xl font-extrabold font-headline mb-6 leading-tight text-white">Lihat jadwal yuk, biar nggak kaget pas deadline!</h3>
+        <p class="text-on-surface-variant mb-8 text-base font-light leading-relaxed">Simpan ke Google Calendar aja, biar HP-mu yang ingetin pas mau deadline!</p>
+        <div class="flex flex-col gap-4">
+            <a href="https://bit.ly/SimpankeKalendermu" target="_blank" class="btn-primary group gap-3 shadow-xl shadow-primary/10 h-14">
+                <span class="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">calendar_add_on</span>
+                Simpan ke Google Kalender!
+            </a>
+            <a class="text-white/60 text-center text-xs font-bold uppercase tracking-widest hover:text-primary transition-all flex items-center justify-center gap-3 py-3 rounded-xl hover:bg-white/5" href="https://bit.ly/WebKalenderPerencana" target="_blank">
+                Cek tampilan penuh kalendar
+                <span class="material-symbols-outlined text-base">open_in_new</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-span-12 lg:col-span-8 animate-reveal">
+        <div class="glass-panel rounded-[2rem] p-4 shadow-2xl relative overflow-hidden group">
+            <div class="calendar-frame-container">
+                <iframe src="https://embed.styledcalendar.com/#OlkGF8UsvN8yj5imHuDL" title="Styled Calendar" class="styled-calendar-container" style="width: 100%; height: 100%; border: none;" data-cy="calendar-embed-iframe"></iframe>
+            </div>
+
+            <div class="flex items-center gap-4 text-on-surface-variant/80 italic text-[11px] mt-6 bg-black/40 p-4 rounded-xl border border-white/5">
+                <span class="material-symbols-outlined text-primary text-lg">info</span>
+                <p>Kalender lebih asik dibuka di laptop. Kalau di HP, klik tombol di atas untuk tampilan penuh ya!</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script async type="module" src="https://embed.styledcalendar.com/assets/parent-window.js"></script>

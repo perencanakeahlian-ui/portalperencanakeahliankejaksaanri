@@ -1,0 +1,21 @@
+---
+interface Props {
+  href: string;
+  icon: string;
+  title: string;
+  description: string;
+}
+
+const { href, icon, title, description } = Astro.props;
+---
+
+<a href={href} target="_blank" class="group p-6 rounded-[1.8rem] bg-surface-container/20 card-hover">
+    <div class="flex items-start justify-between mb-8">
+        <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-500">
+            <span class="material-symbols-outlined text-3xl">{icon}</span>
+        </div>
+        <span class="material-symbols-outlined text-white/20 group-hover:text-primary transition-colors">arrow_outward</span>
+    </div>
+    <h4 class="text-lg font-bold font-headline mb-1 text-white/90">{title}</h4>
+    <p class="text-xs text-on-surface-variant/80 font-medium">{description}</p>
+</a>

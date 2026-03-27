@@ -1,0 +1,43 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Akan tertrigger jika push ke branch utama
+  push:
+    branches: [ main, master ]
+  # Memungkinkan untuk menekan tombol deploy manual dari GitHub Actions tab
+  workflow_dispatch:
+
+# Konfigurasi akses GitHub token
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository using git
+        uses: actions/checkout@v4
+
+      - name: Install, build, and upload your site
+        uses: withastro/action@v3
+        with:
+          # Pastikan dependencies berhasil terinstall
+          # Jika Anda menggunakan npm/pnpm/yarn, action ini otomatis akan mencari lock file-nya.
+          package-manager: npm
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

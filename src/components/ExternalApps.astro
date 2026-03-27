@@ -1,0 +1,34 @@
+---
+const externalLinks = [
+    { href: 'https://esr.menpan.go.id/', label: 'e-SAKIP' },
+    { href: 'https://e-monev.bappenas.go.id/portal/masuk', label: 'e-Monev BAPPENAS' },
+    { href: 'https://sakti.kemenkeu.go.id/', label: 'SAKTI' },
+    { href: 'https://monev.kemenkeu.go.id/', label: 'SMART Monev Kemenkeu' },
+    { href: 'https://indonesia2045.go.id/', label: 'RPJN 2025-2045' },
+];
+---
+
+<div class="col-span-12 lg:col-span-5 animate-reveal stagger-3">
+    <div class="glass-panel rounded-[2rem] p-8 h-full flex flex-col shadow-2xl shadow-black/40">
+        <div class="mb-8">
+            <div class="w-10 h-10 rounded-lg bg-neon-accent/10 flex items-center justify-center text-neon-accent mb-4">
+                <span class="material-symbols-outlined text-2xl">captive_portal</span>
+            </div>
+            <h3 class="text-xl font-bold font-headline mb-3 text-neon-accent">Aplikasi eksternal disini, ya!</h3>
+            <p class="text-on-surface-variant text-sm font-light">Butuh akses ke kementerian lain? Klik aja di bawah ini.</p>
+        </div>
+        <div class="flex flex-wrap gap-3 flex-1 content-start mb-8">
+            {externalLinks.map(({ href, label }) => (
+                <a href={href} target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105 text-center">
+                    {label}
+                </a>
+            ))}
+        </div>
+        <div class="pt-6 border-t border-white/5">
+            <div class="flex items-center gap-4 p-5 rounded-xl bg-white/5 border border-white/5">
+                <span class="material-symbols-outlined text-primary text-xl animate-pulse">info</span>
+                <p class="text-[11px] text-on-surface-variant/80 leading-relaxed">Akses portal ini disinkronisasi melalui SSO Pemerintah jika tersedia.</p>
+            </div>
+        </div>
+    </div>
+</div>
