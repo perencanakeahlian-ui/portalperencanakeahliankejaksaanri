@@ -1,15 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#021C00"/>
-      <stop offset="100%" stop-color="#0F5104"/>
-    </linearGradient>
-    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFD100"/>
-      <stop offset="100%" stop-color="#D19200"/>
+      <stop offset="0%" stop-color="#FFD900"/>
+      <stop offset="100%" stop-color="#ca8a04"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <path d="M256 80 L256 420 M120 180 Q256 120 392 180 M120 180 L120 280 Q160 340 200 280 L200 180 M312 180 L312 280 Q352 340 392 280 L392 180 M200 420 L312 420" stroke="url(#gold)" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <circle cx="256" cy="130" r="32" fill="url(#gold)"/>
+  
+  <rect width="48" height="48" rx="12" fill="url(#bg)"/>
+  
+  <g fill="#073902">
+    <!-- Base -->
+    <path d="M10 36v-4h28v4H10z"/>
+    <!-- Left Pillar -->
+    <path d="M13 30V18h4v12h-4z"/>
+    <!-- Center Pillar -->
+    <path d="M22 30V18h4v12h-4z"/>
+    <!-- Right Pillar -->
+    <path d="M31 30V18h4v12h-4z"/>
+    <!-- Roof -->
+    <path d="M10 18v-3l14-7 14 7v3H10z"/>
+  </g>
 </svg>

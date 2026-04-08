@@ -7,20 +7,20 @@ import InternalApps from '../components/InternalApps.astro';
 import ExternalApps from '../components/ExternalApps.astro';
 import ResourcesCTA from '../components/ResourcesCTA.astro';
 import Calendar from '../components/Calendar.astro';
-import ComingSoon from '../components/ComingSoon.astro';
+import KamusPerencana from '../components/KamusPerencana.astro';
 import Footer from '../components/Footer.astro';
 ---
 
 <Layout>
     <Header />
 
-    <main class="pt-24 pb-20 px-6 md:px-12 max-w-7xl mx-auto space-y-16 md:space-y-20">
+    <main class="pt-32 md:pt-36 pb-20 px-6 md:px-12 max-w-7xl mx-auto space-y-16 md:space-y-20">
         <Hero />
 
         <div class="section-divider opacity-10"></div>
 
         <!-- Applications Grid -->
-        <section id="aplikasi" class="grid grid-cols-12 gap-8 lg:gap-12 scroll-mt-24">
+        <section id="aplikasi" class="grid grid-cols-12 gap-8 lg:gap-12 scroll-mt-36">
             <InternalApps />
             <ExternalApps />
         </section>
@@ -29,7 +29,7 @@ import Footer from '../components/Footer.astro';
 
         <Calendar />
 
-        <ComingSoon />
+        <KamusPerencana />
     </main>
 
     <Footer />
@@ -45,7 +45,7 @@ import Footer from '../components/Footer.astro';
             e.preventDefault();
             const targetElement = document.querySelector(targetId!);
             if (targetElement) {
-                const offset = 80;
+                const offset = 120; // Adjusted offset for the new taller header
                 const elementPosition = targetElement.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - offset;
 
