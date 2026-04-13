@@ -264,7 +264,7 @@
                     </div>
                     <div class="flex flex-wrap gap-3 flex-1 content-start mb-8">
                         <a href="https://esr.menpan.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">e-SAKIP</a>
-                        <a href="https://e-monev.bappenas.go.id/portal/masuk" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">e-Monev BAPPENAS</a>
+                        <a href="https://e-monev.bappenas.go.id/emonev/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">e-Monev BAPPENAS</a>
                         <a href="https://sakti.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">SAKTI</a>
                         <a href="https://monev.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105 text-center">SMART Monev Kemenkeu</a>
                         <a href="https://indonesia2045.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">RPJN 2025-2045</a>
