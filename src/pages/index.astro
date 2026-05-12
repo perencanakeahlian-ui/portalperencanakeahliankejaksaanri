@@ -54,29 +54,31 @@ import Analytics from '@vercel/analytics/astro'
         }
         /* FAQ Styles */
         .faq-pill {
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: 0.05em;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
             cursor: pointer;
-            transition: all 0.25s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .faq-pill:hover {
             background: rgba(255, 255, 255, 0.08);
             color: #fff;
-            border-color: rgba(255, 217, 0, 0.3);
+            border-color: rgba(255, 217, 0, 0.4);
+            transform: translateY(-2px);
         }
         .faq-pill.active {
             background: #FFD900;
             color: #073902;
             border-color: #FFD900;
-            box-shadow: 0 8px 20px -8px rgba(255, 217, 0, 0.5);
+            box-shadow: 0 10px 25px -5px rgba(255, 217, 0, 0.4);
+            transform: translateY(-2px);
         }
         .faq-item {
             background: rgba(8, 42, 7, 0.3);
@@ -138,11 +140,11 @@ import Analytics from '@vercel/analytics/astro'
             font-family: 'Space Grotesk', sans-serif;
         }
         .faq-q-text {
-            font-size: 15px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.92);
-            line-height: 1.4;
-            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.5;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
         }
         .faq-chevron {
             color: rgba(255, 255, 255, 0.4);
@@ -162,13 +164,13 @@ import Analytics from '@vercel/analytics/astro'
             max-height: 3000px;
         }
         .faq-a-inner {
-            padding: 0 24px 24px 72px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            line-height: 1.7;
+            padding: 0 24px 28px 72px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+            line-height: 1.8;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 18px;
-            margin-top: 4px;
+            padding-top: 20px;
+            margin-top: 8px;
         }
         .faq-a-inner p { margin-bottom: 10px; }
         .faq-a-inner ul, .faq-a-inner ol {
@@ -494,11 +496,13 @@ import Analytics from '@vercel/analytics/astro'
                             <h5 class="text-base font-bold font-headline leading-tight">Tugas &amp; Fungsi Perencana</h5>
                         </a>
                     </div>
-                    <a href="https://docs.google.com/spreadsheets/d/1UtTdYHejXk78tHQxK5-Goh0x8crWR26q6p5asmTHfbw/edit?usp=sharing" target="_blank" class="btn-primary group gap-3 shadow-xl shadow-primary/10 h-14 w-full md:w-auto md:inline-flex">
-                        <span class="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">groups</span>
-                        Daftar Perencana Se Indonesia
-                        <span class="material-symbols-outlined text-base ml-1 group-hover:translate-x-1 transition-transform">arrow_outward</span>
-                    </a>
+                    <div class="mt-10 flex justify-center w-full">
+                        <a href="https://docs.google.com/spreadsheets/d/1UtTdYHejXk78tHQxK5-Goh0x8crWR26q6p5asmTHfbw/edit?usp=sharing" target="_blank" class="btn-primary group gap-3 shadow-2xl shadow-primary/20 h-14 px-8 w-full md:w-auto inline-flex">
+                            <span class="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform">groups</span>
+                            <span class="text-[15px]">Daftar Perencana Se Indonesia</span>
+                            <span class="material-symbols-outlined text-lg ml-1 group-hover:translate-x-1 transition-transform">arrow_outward</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -657,7 +661,8 @@ import Analytics from '@vercel/analytics/astro'
             </div>
 
             <!-- Category Filter Pills -->
-            <div id="faq-categories" class="flex flex-wrap gap-2 mb-8 justify-center"></div>
+            <div class="text-center mb-6 text-sm text-on-surface-variant/60 font-medium tracking-wide">Pilih Kategori Pertanyaan:</div>
+            <div id="faq-categories" class="flex flex-wrap gap-3 mb-10 justify-center max-w-5xl mx-auto"></div>
 
             <!-- FAQ List -->
             <div id="faq-list" class="space-y-3 max-w-4xl mx-auto"></div>
@@ -693,8 +698,8 @@ import Analytics from '@vercel/analytics/astro'
         // FAQ Renderer
         (function() {
             const data = window.FAQ_DATA || [];
-            const cats = Array.from(new Set(data.map(f => f.cat)));
-            let activeCat = 'TUGAS & FUNGSI PERENCANA';
+            const cats = ['Semua', ...Array.from(new Set(data.map(f => f.cat)))];
+            let activeCat = 'Semua';
             let openId = null;
 
             const catEl = document.getElementById('faq-categories');
