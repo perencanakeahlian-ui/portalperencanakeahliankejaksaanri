@@ -8,16 +8,7 @@
   
   <rect width="48" height="48" rx="12" fill="url(#bg)"/>
   
-  <g fill="#073902">
-    <!-- Base -->
-    <path d="M10 36v-4h28v4H10z"/>
-    <!-- Left Pillar -->
-    <path d="M13 30V18h4v12h-4z"/>
-    <!-- Center Pillar -->
-    <path d="M22 30V18h4v12h-4z"/>
-    <!-- Right Pillar -->
-    <path d="M31 30V18h4v12h-4z"/>
-    <!-- Roof -->
-    <path d="M10 18v-3l14-7 14 7v3H10z"/>
+  <g fill="#073902" transform="translate(8, 8) scale(0.033333) translate(0, 960)">
+    <path d="M160-120v-80h640v80H160Zm160-200v-320h80v320h-80Zm160 0v-320h80v320h-80Zm160 0v-320h80v320h-80ZM160-720v-80l320-160 320 160v80H160Zm320-111 204-102-204-102-204 102 204 102Z"/>
   </g>
 </svg>
