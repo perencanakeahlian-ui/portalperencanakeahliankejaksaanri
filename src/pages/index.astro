@@ -58,44 +58,81 @@ import Analytics from '@vercel/analytics/astro'
             border-radius: 999px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.6);
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-family: 'Inter', sans-serif;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
+        .faq-pill::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,217,0,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .faq-pill:hover::before { opacity: 1; }
         .faq-pill:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.06);
             color: #fff;
-            border-color: rgba(255, 217, 0, 0.4);
+            border-color: rgba(255, 217, 0, 0.35);
             transform: translateY(-2px);
+            box-shadow: 0 4px 15px -3px rgba(0,0,0,0.3);
         }
         .faq-pill.active {
-            background: #FFD900;
+            background: linear-gradient(135deg, #FFD900, #f5c800);
             color: #073902;
             border-color: #FFD900;
-            box-shadow: 0 10px 25px -5px rgba(255, 217, 0, 0.4);
+            box-shadow: 0 8px 25px -5px rgba(255, 217, 0, 0.45);
             transform: translateY(-2px);
         }
+        .faq-pill.active::before { opacity: 0; }
+        .faq-pill:active { transform: scale(0.97); }
+        .faq-counter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 800;
+            margin-left: 6px;
+        }
+        .faq-pill .faq-counter { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); }
+        .faq-pill.active .faq-counter { background: rgba(7,57,2,0.2); color: #073902; }
+
         .faq-item {
-            background: rgba(8, 42, 7, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(8, 42, 7, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 20px;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             backdrop-filter: blur(12px);
+            opacity: 0;
+            transform: translateY(12px);
+            animation: faqSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        @keyframes faqSlideIn {
+            to { opacity: 1; transform: translateY(0); }
         }
         .faq-item:hover {
             border-color: rgba(255, 255, 255, 0.12);
-            background: rgba(8, 42, 7, 0.5);
+            background: rgba(8, 42, 7, 0.45);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px -10px rgba(0,0,0,0.4);
         }
         .faq-item.open {
-            border-color: rgba(255, 217, 0, 0.25);
-            background: rgba(8, 42, 7, 0.6);
-            box-shadow: 0 0 40px -10px rgba(255, 217, 0, 0.15);
+            border-color: rgba(255, 217, 0, 0.3);
+            background: rgba(8, 42, 7, 0.55);
+            box-shadow: 0 0 50px -10px rgba(255, 217, 0, 0.12), 0 10px 30px -10px rgba(0,0,0,0.3);
+            transform: translateY(0);
         }
         .faq-q {
             width: 100%;
@@ -104,73 +141,82 @@ import Analytics from '@vercel/analytics/astro'
             border: 0;
             color: #fff;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
             gap: 16px;
             cursor: pointer;
             text-align: left;
+            transition: padding 0.3s;
         }
-        .faq-q-inner { display: flex; gap: 16px; align-items: flex-start; flex: 1; }
+        .faq-item.open .faq-q { padding-bottom: 12px; }
+        .faq-q-inner { display: flex; gap: 16px; align-items: center; flex: 1; }
         .faq-q-badge {
             flex-shrink: 0;
-            width: 32px; height: 32px;
-            border-radius: 10px;
-            background: rgba(255, 217, 0, 0.1);
+            width: 36px; height: 36px;
+            border-radius: 12px;
+            background: rgba(255, 217, 0, 0.08);
             color: #FFD900;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 12px;
-            font-family: 'Space Grotesk', sans-serif;
-            transition: all 0.3s;
+            font-size: 13px;
+            font-family: 'Manrope', sans-serif;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .faq-item:hover .faq-q-badge {
+            background: rgba(255, 217, 0, 0.15);
+            transform: scale(1.05);
         }
         .faq-item.open .faq-q-badge {
-            background: #FFD900;
+            background: linear-gradient(135deg, #FFD900, #f5c800);
             color: #073902;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px -2px rgba(255,217,0,0.3);
         }
         .faq-q-cat {
-            display: block;
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: rgba(255, 217, 0, 0.7);
-            margin-bottom: 4px;
-            font-family: 'Space Grotesk', sans-serif;
+            display: none;
         }
         .faq-q-text {
-            font-size: 16px;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.95);
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.88);
             line-height: 1.5;
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-family: 'Inter', sans-serif;
+            transition: color 0.3s;
         }
+        .faq-item:hover .faq-q-text { color: rgba(255,255,255,1); }
+        .faq-item.open .faq-q-text { color: #FFD900; }
         .faq-chevron {
-            color: rgba(255, 255, 255, 0.4);
-            transition: transform 0.35s ease, color 0.3s;
+            color: rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             flex-shrink: 0;
+            font-size: 28px;
         }
+        .faq-item:hover .faq-chevron { color: rgba(255,255,255,0.6); }
         .faq-item.open .faq-chevron {
             transform: rotate(180deg);
             color: #FFD900;
         }
         .faq-a {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.45s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .faq-item.open .faq-a {
-            max-height: 3000px;
+            grid-template-rows: 1fr;
+        }
+        .faq-a-wrap {
+            overflow: hidden;
         }
         .faq-a-inner {
-            padding: 0 24px 28px 72px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 15px;
+            padding: 0 24px 28px 68px;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 14px;
             line-height: 1.8;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
             padding-top: 20px;
-            margin-top: 8px;
+            margin-top: 0;
         }
         .faq-a-inner p { margin-bottom: 10px; }
         .faq-a-inner ul, .faq-a-inner ol {
@@ -180,20 +226,23 @@ import Analytics from '@vercel/analytics/astro'
         .faq-a-inner ol { list-style: decimal; }
         .faq-a-inner li { margin-bottom: 6px; }
         .faq-a-inner b { color: #fff; font-weight: 600; }
-        .faq-a-inner a { color: #FFD900; text-decoration: underline; }
+        .faq-a-inner a { color: #FFD900; text-decoration: underline; text-underline-offset: 3px; }
+        .faq-a-inner a:hover { color: #fff; }
         .faq-a-inner table {
             width: 100%;
             border-collapse: collapse;
             margin: 10px 0;
             font-size: 13px;
+            border-radius: 12px;
+            overflow: hidden;
         }
         .faq-a-inner th, .faq-a-inner td {
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 8px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 12px;
             text-align: left;
         }
         .faq-a-inner th {
-            background: rgba(255, 217, 0, 0.06);
+            background: rgba(255, 217, 0, 0.08);
             color: #FFD900;
             font-weight: 700;
             font-size: 11px;
@@ -202,32 +251,33 @@ import Analytics from '@vercel/analytics/astro'
         }
         .faq-a-inner td:first-child { font-weight: 600; color: rgba(255,255,255,0.9); }
         .faq-a-inner .note {
-            margin-top: 12px;
-            padding: 10px 14px;
-            background: rgba(255, 217, 0, 0.06);
+            margin-top: 14px;
+            padding: 12px 16px;
+            background: rgba(255, 217, 0, 0.05);
             border-left: 3px solid #FFD900;
-            border-radius: 8px;
+            border-radius: 10px;
             color: rgba(255, 217, 0, 0.85);
             font-size: 13px;
         }
         .faq-a-inner .note.danger {
-            background: rgba(239, 68, 68, 0.08);
+            background: rgba(239, 68, 68, 0.06);
             border-left-color: #ef4444;
             color: rgba(248, 113, 113, 0.95);
         }
         .faq-a-inner .code {
             margin-top: 10px;
-            padding: 10px 14px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            font-family: 'Space Grotesk', monospace;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
             color: rgba(255, 255, 255, 0.7);
         }
         @media (max-width: 640px) {
             .faq-a-inner { padding-left: 24px; }
             .faq-a-inner table { font-size: 11px; }
+            .faq-q-inner { gap: 12px; }
             .faq-a-inner th, .faq-a-inner td { padding: 6px; }
         }
         .nav-link {
@@ -651,21 +701,35 @@ import Analytics from '@vercel/analytics/astro'
 
         <!-- FAQ Section -->
         <section id="faq" class="animate-reveal scroll-mt-24">
-            <div class="text-center mb-12">
+            <div class="text-center mb-14">
                 <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md">
                     <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                     <span class="text-[9px] font-bold uppercase tracking-widest text-primary font-headline">05 Masih penasaran?</span>
                 </div>
                 <h3 class="text-3xl md:text-4xl font-extrabold font-headline mb-4 text-white">Tanya-jawab sebelum nanya ke grup</h3>
-                <p class="text-on-surface-variant text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto">Pertanyaan-pertanyaan paling sering muncul soal formasi, tugas, dan teknis kerjaan udah kami rangkum di sini. Cek dulu, siapa tau jawabannya udah ada.</p>
+                <p class="text-on-surface-variant text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto mb-8">Pertanyaan-pertanyaan paling sering muncul soal formasi, tugas, dan teknis kerjaan udah kami rangkum di sini. Cek dulu, siapa tau jawabannya udah ada.</p>
+                
+                <!-- Search Bar -->
+                <div class="max-w-lg mx-auto relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-xl">search</span>
+                    <input id="faq-search" type="text" placeholder="Cari pertanyaan..." class="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-primary/50 focus:bg-white/[0.07] transition-all" />
+                    <button id="faq-search-clear" class="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white transition-colors hidden">
+                        <span class="material-symbols-outlined text-lg">close</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Category Filter Pills -->
-            <div class="text-center mb-6 text-sm text-on-surface-variant/60 font-medium tracking-wide">Pilih Kategori Pertanyaan:</div>
-            <div id="faq-categories" class="flex flex-wrap gap-3 mb-10 justify-center max-w-5xl mx-auto"></div>
+            <div id="faq-categories" class="flex flex-wrap gap-2.5 mb-10 justify-center max-w-5xl mx-auto"></div>
 
             <!-- FAQ List -->
             <div id="faq-list" class="space-y-3 max-w-4xl mx-auto"></div>
+            
+            <!-- Empty State -->
+            <div id="faq-empty" class="hidden text-center py-16 max-w-md mx-auto">
+                <span class="material-symbols-outlined text-5xl text-white/15 mb-4 block">search_off</span>
+                <p class="text-white/40 text-sm">Tidak ada pertanyaan yang cocok dengan pencarianmu.</p>
+            </div>
         </section>
     </main>
 
@@ -698,47 +762,110 @@ import Analytics from '@vercel/analytics/astro'
         // FAQ Renderer
         (function() {
             const data = window.FAQ_DATA || [];
-            const cats = ['Semua', ...Array.from(new Set(data.map(f => f.cat)))];
-            let activeCat = 'Semua';
+            const cats = Array.from(new Set(data.map(f => f.cat)));
+            let activeCat = 'TUGAS & FUNGSI PERENCANA';
             let openId = null;
+            let searchQuery = '';
 
             const catEl = document.getElementById('faq-categories');
             const listEl = document.getElementById('faq-list');
+            const emptyEl = document.getElementById('faq-empty');
+            const searchInput = document.getElementById('faq-search');
+            const searchClear = document.getElementById('faq-search-clear');
             if (!catEl || !listEl) return;
 
+            // Search
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    searchQuery = this.value.trim().toLowerCase();
+                    searchClear.classList.toggle('hidden', !searchQuery);
+                    openId = null;
+                    renderList();
+                });
+            }
+            if (searchClear) {
+                searchClear.addEventListener('click', function() {
+                    searchInput.value = '';
+                    searchQuery = '';
+                    this.classList.add('hidden');
+                    openId = null;
+                    renderList();
+                });
+            }
+
+            function getCatCount(cat) {
+                if (searchQuery) {
+                    return data.filter(f => f.cat === cat && (f.q.toLowerCase().includes(searchQuery) || f.a.toLowerCase().includes(searchQuery))).length;
+                }
+                return data.filter(f => f.cat === cat).length;
+            }
+
             function renderCats() {
-                catEl.innerHTML = cats.map(c => `
-                    <button data-cat="${c}" class="faq-pill ${c === activeCat ? 'active' : ''}">${c}</button>
-                `).join('');
+                catEl.innerHTML = cats.map(c => {
+                    const count = getCatCount(c);
+                    return `<button data-cat="${c}" class="faq-pill ${c === activeCat ? 'active' : ''}">${c}<span class="faq-counter">${count}</span></button>`;
+                }).join('');
                 catEl.querySelectorAll('button').forEach(b => {
-                    b.onclick = () => { activeCat = b.dataset.cat; openId = null; renderCats(); renderList(); };
+                    b.onclick = () => {
+                        activeCat = b.dataset.cat;
+                        openId = null;
+                        renderCats();
+                        renderList();
+                        catEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    };
+                });
+            }
+
+            function updatePillCounts() {
+                catEl.querySelectorAll('.faq-pill').forEach(btn => {
+                    const cat = btn.dataset.cat;
+                    const counter = btn.querySelector('.faq-counter');
+                    if (counter) counter.textContent = getCatCount(cat);
                 });
             }
 
             function renderList() {
-                const filtered = activeCat === 'Semua' ? data : data.filter(f => f.cat === activeCat);
-                listEl.innerHTML = filtered.map(f => `
-                    <div class="faq-item ${openId === f.id ? 'open' : ''}" data-id="${f.id}">
-                        <button class="faq-q">
+                let filtered = data.filter(f => f.cat === activeCat);
+                if (searchQuery) {
+                    filtered = filtered.filter(f => f.q.toLowerCase().includes(searchQuery) || f.a.toLowerCase().includes(searchQuery));
+                }
+
+                if (emptyEl) {
+                    emptyEl.classList.toggle('hidden', filtered.length > 0);
+                }
+                listEl.classList.toggle('hidden', filtered.length === 0);
+
+                listEl.innerHTML = filtered.map((f, i) => `
+                    <div class="faq-item ${openId === f.id ? 'open' : ''}" data-id="${f.id}" style="animation-delay: ${i * 60}ms">
+                        <button class="faq-q" aria-expanded="${openId === f.id}">
                             <div class="faq-q-inner">
-                                <span class="faq-q-badge">Q</span>
-                                <div>
-                                    <span class="faq-q-cat">${f.cat}</span>
-                                    <h4 class="faq-q-text">${f.q}</h4>
-                                </div>
+                                <span class="faq-q-badge">${i + 1}</span>
+                                <h4 class="faq-q-text">${f.q}</h4>
                             </div>
                             <span class="material-symbols-outlined faq-chevron">expand_more</span>
                         </button>
-                        <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
+                        <div class="faq-a"><div class="faq-a-wrap"><div class="faq-a-inner">${f.a}</div></div></div>
                     </div>
                 `).join('');
+
                 listEl.querySelectorAll('.faq-item').forEach(it => {
                     it.querySelector('.faq-q').onclick = () => {
                         const id = it.dataset.id;
-                        openId = (openId === id) ? null : id;
+                        const wasOpen = openId === id;
+                        openId = wasOpen ? null : id;
                         renderList();
+                        if (!wasOpen) {
+                            setTimeout(() => {
+                                const openItem = listEl.querySelector('.faq-item.open');
+                                if (openItem) {
+                                    openItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                }
+                            }, 100);
+                        }
                     };
                 });
+
+                updatePillCounts();
             }
 
             renderCats();
