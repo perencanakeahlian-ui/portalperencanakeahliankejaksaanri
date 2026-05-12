@@ -800,45 +800,20 @@ import Analytics from '@vercel/analytics/astro'
 
         <!-- FAQ Section -->
         <section id="faq" class="animate-reveal scroll-mt-24">
-            <div class="text-center mb-14">
+            <div class="text-center mb-12">
                 <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md">
                     <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                     <span class="text-[9px] font-bold uppercase tracking-widest text-primary font-headline">05 Masih penasaran?</span>
                 </div>
                 <h3 class="text-3xl md:text-4xl font-extrabold font-headline mb-4 text-white">Tanya-jawab sebelum nanya ke grup</h3>
-                <p class="text-on-surface-variant text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto mb-8">Pertanyaan-pertanyaan paling sering muncul soal formasi, tugas, dan teknis kerjaan udah kami rangkum di sini. Cek dulu, siapa tau jawabannya udah ada.</p>
-                
-                <!-- Search Bar -->
-                <div class="max-w-lg mx-auto relative">
-                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-xl">search</span>
-                    <input id="faq-search" type="text" placeholder="Cari pertanyaan..." class="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-primary/50 focus:bg-white/[0.07] transition-all" />
-                    <button id="faq-search-clear" class="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white transition-colors hidden">
-                        <span class="material-symbols-outlined text-lg">close</span>
-                    </button>
-                </div>
+                <p class="text-on-surface-variant text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto">Pertanyaan-pertanyaan paling sering muncul soal formasi, tugas, dan teknis kerjaan udah kami rangkum di sini. Cek dulu, siapa tau jawabannya udah ada.</p>
             </div>
 
-            <!-- Category Dropdown -->
-            <div class="faq-select-wrap mb-10">
-                <button id="faq-select-btn" class="faq-select-btn">
-                    <div class="faq-select-label">
-                        <span class="material-symbols-outlined sel-badge">category</span>
-                        <span class="sel-text" id="faq-sel-text">TUGAS & FUNGSI PERENCANA</span>
-                        <span class="sel-count" id="faq-sel-count"></span>
-                    </div>
-                    <span class="material-symbols-outlined sel-icon">expand_more</span>
-                </button>
-                <div id="faq-dropdown" class="faq-dropdown"></div>
-            </div>
+            <!-- Category Filter Pills -->
+            <div id="faq-categories" class="flex flex-wrap gap-2 mb-8 justify-center"></div>
 
             <!-- FAQ List -->
             <div id="faq-list" class="space-y-3 max-w-4xl mx-auto"></div>
-            
-            <!-- Empty State -->
-            <div id="faq-empty" class="hidden text-center py-16 max-w-md mx-auto">
-                <span class="material-symbols-outlined text-5xl text-white/15 mb-4 block">search_off</span>
-                <p class="text-white/40 text-sm">Tidak ada pertanyaan yang cocok dengan pencarianmu.</p>
-            </div>
         </section>
     </main>
 
@@ -868,161 +843,53 @@ import Analytics from '@vercel/analytics/astro'
     <script is:inline async type="module" src="https://embed.styledcalendar.com/assets/parent-window.js"></script>
     <script is:inline src="faq-data.js"></script>
     <script is:inline>
-        // FAQ Renderer with Dropdown
+        // FAQ Renderer
         (function() {
             const data = window.FAQ_DATA || [];
             const cats = Array.from(new Set(data.map(f => f.cat)));
             let activeCat = 'TUGAS & FUNGSI PERENCANA';
             let openId = null;
-            let searchQuery = '';
-            let dropdownOpen = false;
 
+            const catEl = document.getElementById('faq-categories');
             const listEl = document.getElementById('faq-list');
-            const emptyEl = document.getElementById('faq-empty');
-            const searchInput = document.getElementById('faq-search');
-            const searchClear = document.getElementById('faq-search-clear');
-            const selectBtn = document.getElementById('faq-select-btn');
-            const selText = document.getElementById('faq-sel-text');
-            const selCount = document.getElementById('faq-sel-count');
-            const dropdown = document.getElementById('faq-dropdown');
-            if (!listEl || !selectBtn) return;
+            if (!catEl || !listEl) return;
 
-            // Category icon map
-            const catIcons = {
-                'TUGAS & FUNGSI PERENCANA': 'work',
-                'PERJA & RENCANA KINERJA': 'handshake',
-                'SOP KEJAKSAAN': 'rule',
-                'SILABIN': 'description',
-                'SIMANRIS': 'security',
-                'SICANA': 'troubleshoot',
-                'SUNCANA': 'edit_calendar',
-                'REFORMASI BIROKRASI': 'autorenew',
-                'E-SAKIP': 'assessment',
-                'E-MONEV BAPPENAS': 'monitoring',
-                'SAKTI': 'account_balance',
-                'NKA & IKPA': 'trending_up',
-                'RPJPN & RPJMN': 'flag',
-                'RENJA': 'event_note',
-                'IKU': 'speed',
-            };
-
-            function getCatIcon(cat) { return catIcons[cat] || 'category'; }
-            function getCatCount(cat) {
-                if (searchQuery) {
-                    return data.filter(f => f.cat === cat && (f.q.toLowerCase().includes(searchQuery) || f.a.toLowerCase().includes(searchQuery))).length;
-                }
-                return data.filter(f => f.cat === cat).length;
-            }
-
-            // Dropdown toggle
-            selectBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                dropdownOpen = !dropdownOpen;
-                selectBtn.classList.toggle('open', dropdownOpen);
-                dropdown.classList.toggle('show', dropdownOpen);
-                if (dropdownOpen) renderDropdown();
-            });
-
-            // Close on outside click
-            document.addEventListener('click', function() {
-                if (dropdownOpen) {
-                    dropdownOpen = false;
-                    selectBtn.classList.remove('open');
-                    dropdown.classList.remove('show');
-                }
-            });
-
-            function renderDropdown() {
-                dropdown.innerHTML = cats.map(c => {
-                    const count = getCatCount(c);
-                    const icon = getCatIcon(c);
-                    return `<div class="faq-dropdown-item ${c === activeCat ? 'active' : ''}" data-cat="${c}">
-                        <span class="material-symbols-outlined dd-badge">${icon}</span>
-                        <span class="dd-text">${c}</span>
-                        <span class="dd-count">${count}</span>
-                    </div>`;
-                }).join('');
-                dropdown.querySelectorAll('.faq-dropdown-item').forEach(item => {
-                    item.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        activeCat = this.dataset.cat;
-                        openId = null;
-                        dropdownOpen = false;
-                        selectBtn.classList.remove('open');
-                        dropdown.classList.remove('show');
-                        updateSelectBtn();
-                        renderList();
-                    });
-                });
-            }
-
-            function updateSelectBtn() {
-                if (selText) selText.textContent = activeCat;
-                if (selCount) selCount.textContent = getCatCount(activeCat) + ' pertanyaan';
-                const badge = selectBtn.querySelector('.sel-badge');
-                if (badge) badge.textContent = getCatIcon(activeCat);
-            }
-
-            // Search
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    searchQuery = this.value.trim().toLowerCase();
-                    if (searchClear) searchClear.classList.toggle('hidden', !searchQuery);
-                    openId = null;
-                    updateSelectBtn();
-                    renderList();
-                });
-            }
-            if (searchClear) {
-                searchClear.addEventListener('click', function() {
-                    searchInput.value = '';
-                    searchQuery = '';
-                    this.classList.add('hidden');
-                    openId = null;
-                    updateSelectBtn();
-                    renderList();
+            function renderCats() {
+                catEl.innerHTML = cats.map(c => `
+                    <button data-cat="${c}" class="faq-pill ${c === activeCat ? 'active' : ''}">${c}</button>
+                `).join('');
+                catEl.querySelectorAll('button').forEach(b => {
+                    b.onclick = () => { activeCat = b.dataset.cat; openId = null; renderCats(); renderList(); };
                 });
             }
 
             function renderList() {
-                let filtered = data.filter(f => f.cat === activeCat);
-                if (searchQuery) {
-                    filtered = filtered.filter(f => f.q.toLowerCase().includes(searchQuery) || f.a.toLowerCase().includes(searchQuery));
-                }
-
-                if (emptyEl) emptyEl.classList.toggle('hidden', filtered.length > 0);
-                listEl.classList.toggle('hidden', filtered.length === 0);
-
-                listEl.innerHTML = filtered.map((f, i) => `
-                    <div class="faq-item ${openId === f.id ? 'open' : ''}" data-id="${f.id}" style="animation-delay: ${i * 50}ms">
-                        <button class="faq-q" aria-expanded="${openId === f.id}">
+                const filtered = data.filter(f => f.cat === activeCat);
+                listEl.innerHTML = filtered.map(f => `
+                    <div class="faq-item ${openId === f.id ? 'open' : ''}" data-id="${f.id}">
+                        <button class="faq-q">
                             <div class="faq-q-inner">
-                                <span class="faq-q-badge">${i + 1}</span>
-                                <h4 class="faq-q-text">${f.q}</h4>
+                                <span class="faq-q-badge">Q</span>
+                                <div>
+                                    <span class="faq-q-cat">${f.cat}</span>
+                                    <h4 class="faq-q-text">${f.q}</h4>
+                                </div>
                             </div>
                             <span class="material-symbols-outlined faq-chevron">expand_more</span>
                         </button>
-                        <div class="faq-a"><div class="faq-a-wrap"><div class="faq-a-inner">${f.a}</div></div></div>
+                        <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
                     </div>
                 `).join('');
-
                 listEl.querySelectorAll('.faq-item').forEach(it => {
                     it.querySelector('.faq-q').onclick = () => {
                         const id = it.dataset.id;
-                        const wasOpen = openId === id;
-                        openId = wasOpen ? null : id;
+                        openId = (openId === id) ? null : id;
                         renderList();
-                        if (!wasOpen) {
-                            setTimeout(() => {
-                                const openItem = listEl.querySelector('.faq-item.open');
-                                if (openItem) openItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                            }, 100);
-                        }
                     };
                 });
             }
 
-            updateSelectBtn();
+            renderCats();
             renderList();
         })();
     </script>
