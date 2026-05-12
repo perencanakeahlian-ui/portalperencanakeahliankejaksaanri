@@ -1,72 +1,823 @@
 ---
-import '../styles/global.css';
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Hero from '../components/Hero.astro';
-import InternalApps from '../components/InternalApps.astro';
-import ExternalApps from '../components/ExternalApps.astro';
-import ResourcesCTA from '../components/ResourcesCTA.astro';
-import Calendar from '../components/Calendar.astro';
-import KamusPerencana from '../components/KamusPerencana.astro';
-import Footer from '../components/Footer.astro';
+import Analytics from '@vercel/analytics/astro'
 ---
+<!DOCTYPE html>
+<html class="dark" lang="id">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    
+    <!-- SEO & Basic Meta from old layout -->
+    <title>GanaSatya Dhiracana DCXXV - Portal Perencana</title>
+    <meta name="description" content="Portal Perencana Keahlian Kejaksaan RI. Kumpulan link aplikasi internal dan eksternal untuk 500+ perencana keahlian." />
+    <meta name="keywords" content="portal perencana, perencana keahlian, kejaksaan ri, aplikasi internal kejaksaan, sipena, ganasatya dhiracana" />
+    <meta name="author" content="GanaSatya Dhiracana DCXXV" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#021C00" />
 
-<Layout>
-    <Header />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="GanaSatya Dhiracana DCXXV - Portal Perencana" />
+    <meta property="og:description" content="Portal Perencana Keahlian Kejaksaan RI. Kumpulan link aplikasi internal dan eksternal untuk 500+ perencana keahlian." />
+    <meta property="og:site_name" content="Portal Perencana Kejaksaan RI" />
+    <meta property="og:image" content="/favicon.svg" />
 
-    <main class="pt-32 md:pt-36 pb-20 px-6 md:px-12 max-w-7xl mx-auto space-y-16 md:space-y-20">
-        <Hero />
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="mask-icon" href="/favicon.svg" color="#D19200" />
+    <meta name="msapplication-TileColor" content="#021C00" />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #010800;
+        }
+        .font-headline {
+            font-family: 'Manrope', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(8, 42, 7, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hero-glow {
+            box-shadow: 0 0 100px -20px rgba(255, 217, 0, 0.12);
+        }
+        /* FAQ Styles */
+        .faq-pill {
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-family: 'Space Grotesk', sans-serif;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .faq-pill:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border-color: rgba(255, 217, 0, 0.3);
+        }
+        .faq-pill.active {
+            background: #FFD900;
+            color: #073902;
+            border-color: #FFD900;
+            box-shadow: 0 8px 20px -8px rgba(255, 217, 0, 0.5);
+        }
+        .faq-item {
+            background: rgba(8, 42, 7, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(12px);
+        }
+        .faq-item:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            background: rgba(8, 42, 7, 0.5);
+        }
+        .faq-item.open {
+            border-color: rgba(255, 217, 0, 0.25);
+            background: rgba(8, 42, 7, 0.6);
+            box-shadow: 0 0 40px -10px rgba(255, 217, 0, 0.15);
+        }
+        .faq-q {
+            width: 100%;
+            padding: 22px 24px;
+            background: transparent;
+            border: 0;
+            color: #fff;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            cursor: pointer;
+            text-align: left;
+        }
+        .faq-q-inner { display: flex; gap: 16px; align-items: flex-start; flex: 1; }
+        .faq-q-badge {
+            flex-shrink: 0;
+            width: 32px; height: 32px;
+            border-radius: 10px;
+            background: rgba(255, 217, 0, 0.1);
+            color: #FFD900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.3s;
+        }
+        .faq-item.open .faq-q-badge {
+            background: #FFD900;
+            color: #073902;
+        }
+        .faq-q-cat {
+            display: block;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: rgba(255, 217, 0, 0.7);
+            margin-bottom: 4px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .faq-q-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.92);
+            line-height: 1.4;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .faq-chevron {
+            color: rgba(255, 255, 255, 0.4);
+            transition: transform 0.35s ease, color 0.3s;
+            flex-shrink: 0;
+        }
+        .faq-item.open .faq-chevron {
+            transform: rotate(180deg);
+            color: #FFD900;
+        }
+        .faq-a {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        .faq-item.open .faq-a {
+            max-height: 3000px;
+        }
+        .faq-a-inner {
+            padding: 0 24px 24px 72px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            line-height: 1.7;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 18px;
+            margin-top: 4px;
+        }
+        .faq-a-inner p { margin-bottom: 10px; }
+        .faq-a-inner ul, .faq-a-inner ol {
+            margin: 8px 0 12px 18px;
+            list-style: disc;
+        }
+        .faq-a-inner ol { list-style: decimal; }
+        .faq-a-inner li { margin-bottom: 6px; }
+        .faq-a-inner b { color: #fff; font-weight: 600; }
+        .faq-a-inner a { color: #FFD900; text-decoration: underline; }
+        .faq-a-inner table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+        .faq-a-inner th, .faq-a-inner td {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 10px;
+            text-align: left;
+        }
+        .faq-a-inner th {
+            background: rgba(255, 217, 0, 0.06);
+            color: #FFD900;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .faq-a-inner td:first-child { font-weight: 600; color: rgba(255,255,255,0.9); }
+        .faq-a-inner .note {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: rgba(255, 217, 0, 0.06);
+            border-left: 3px solid #FFD900;
+            border-radius: 8px;
+            color: rgba(255, 217, 0, 0.85);
+            font-size: 13px;
+        }
+        .faq-a-inner .note.danger {
+            background: rgba(239, 68, 68, 0.08);
+            border-left-color: #ef4444;
+            color: rgba(248, 113, 113, 0.95);
+        }
+        .faq-a-inner .code {
+            margin-top: 10px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        @media (max-width: 640px) {
+            .faq-a-inner { padding-left: 24px; }
+            .faq-a-inner table { font-size: 11px; }
+            .faq-a-inner th, .faq-a-inner td { padding: 6px; }
+        }
+        .nav-link {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.55);
+            transition: color 0.25s ease;
+            text-decoration: none;
+            position: relative;
+        }
+        .nav-link:hover { color: #FFD900; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -6px;
+            width: 0;
+            height: 2px;
+            background: #FFD900;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-link:hover::after { width: 100%; }
+        .section-divider {
+            background: linear-gradient(90deg, transparent, rgba(255, 217, 0, 0.15), transparent);
+            height: 1px;
+            width: 100%;
+        }
+        .btn-primary {
+            background-color: #FFD900;
+            color: #073902;
+            height: 56px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 32px;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 30px -5px rgba(255, 217, 0, 0.3);
+        }
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            height: 56px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 32px;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+        }
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: #9fd58c;
+            color: #9fd58c;
+            transform: translateY(-3px);
+        }
+        
+        /* Animations */
+        @keyframes fadeInBlur {
+            from { opacity: 0; filter: blur(10px); transform: translateY(20px); }
+            to { opacity: 1; filter: blur(0); transform: translateY(0); }
+        }
+        .animate-reveal {
+            animation: fadeInBlur 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .card-hover:hover {
+            background: rgba(13, 53, 12, 0.6);
+            border-color: rgba(255, 217, 0, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+        }
+
+        .glass-hero-pattern {
+            background: radial-gradient(circle at 50% 50%, rgba(255, 217, 0, 0.08) 0%, transparent 50%),
+                        linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+        }
+
+        /* Typing Effect Cursor */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s infinite;
+            margin-left: 4px;
+            color: #FFD900;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .calendar-frame-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 1.5rem;
+            overflow: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #010800; }
+        ::-webkit-scrollbar-thumb { background: #1a4a18; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FFD900; }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#FFD900",
+                        "on-primary": "#073902",
+                        "surface": "#010800",
+                        "surface-container": "#082a07",
+                        "surface-container-high": "#0d350c",
+                        "neon-accent": "#9fd58c",
+                        "on-surface": "#f8faf5",
+                        "on-surface-variant": "#c2c9ba",
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="text-on-surface antialiased overflow-x-hidden selection:bg-primary/30 selection:text-primary">
+
+    <!-- Top Alert Banner -->
+    <div class="fixed top-0 left-0 right-0 z-[60] bg-gradient-to-r from-primary via-yellow-300 to-primary text-on-primary">
+        <div class="max-w-7xl mx-auto px-4 md:px-12 py-2 flex items-center justify-center gap-3 text-center">
+            <span class="material-symbols-outlined text-base animate-pulse">alarm_on</span>
+            <p class="text-[11px] md:text-xs font-bold tracking-wide">Reminder akhir bulan: SILABIN &amp; E-MONEV Bappenas nungguin laporanmu, ya!</p>
+            <a href="#kalender" class="hidden sm:inline-flex items-center gap-1 ml-2 px-3 py-1 rounded-full bg-on-primary/15 hover:bg-on-primary/25 text-[10px] font-bold uppercase tracking-widest transition-all">
+                <span class="material-symbols-outlined text-sm">calendar_month</span>
+                Cek Kalender
+            </a>
+        </div>
+    </div>
+    
+    <!-- Navigation Header -->
+    <header class="fixed top-9 right-0 h-16 bg-[#010800]/90 backdrop-blur-xl flex justify-between items-center px-6 md:px-12 z-50 border-b border-white/5 left-0 transition-all duration-300">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-yellow-600 flex items-center justify-center shadow-lg shadow-primary/20">
+                <span class="material-symbols-outlined text-on-primary font-bold">account_balance</span>
+            </div>
+            <span class="text-[10px] font-headline font-bold tracking-[0.2em] text-white opacity-90 uppercase">GanaSatya Dhiracana DCXXV</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+            <nav class="hidden md:flex gap-7">
+                <a href="#" class="nav-link">Beranda</a>
+                <a href="#kamus-perencana" class="nav-link">Kamus</a>
+                <a href="#aplikasi" class="nav-link">Aplikasi</a>
+                <a href="#panduan" class="nav-link">Panduan</a>
+                <a href="#kalender" class="nav-link">Kalender</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="pt-32 pb-20 px-6 md:px-12 max-w-7xl mx-auto space-y-16 md:space-y-20">
+        
+        <!-- Hero Section -->
+        <section class="animate-reveal stagger-1 relative">
+            <div class="relative w-full mb-8 rounded-[2.5rem] overflow-hidden hero-glow h-[320px] lg:h-[400px] glass-hero-pattern border border-white/10">
+                <div class="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-primary/20 rounded-full blur-[100px] animate-pulse"></div>
+                <div class="absolute bottom-[-10%] left-[-5%] w-[300px] h-[300px] bg-green-500/10 rounded-full blur-[80px]"></div>
+                
+                <div class="absolute inset-0 flex items-center justify-center overflow-hidden">
+                    <div class="w-full h-full opacity-20 mix-blend-overlay" style="background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');"></div>
+                    <div class="absolute top-1/4 left-1/4 w-32 h-32 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 rotate-12 animate-bounce transition-all duration-[5s]"></div>
+                    <div class="absolute bottom-1/4 right-1/3 w-48 h-48 bg-primary/5 backdrop-blur-lg rounded-[3rem] border border-primary/20 -rotate-12"></div>
+                </div>
+                
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#010800]/10 to-[#010800]"></div>
+                
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+                    <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-xl">
+                        <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+                        <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-primary font-headline">Portal Perencana Keahlian</span>
+                    </div>
+                    <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold font-headline tracking-tight leading-[1.1]">
+                        <span class="text-[#FFD900]">Halo, teman perencana!</span> <br/>
+                        <span class="text-white typing-cursor" id="typing-text">Selamat datang di rumah kita</span>
+                    </h1>
+                </div>
+            </div>
+            
+            <div class="max-w-3xl mx-auto text-center">
+                <p class="text-base md:text-lg text-on-surface-variant font-light leading-relaxed">
+                    Capek lompat-lompat tab buat cari aplikasi, panduan, sampai kalender deadline? Di sini semua udah dirapihin jadi satu pintu, biar kerjamu makin sat-set, gak pakai ribet.
+                </p>
+                <p class="text-sm md:text-base text-white/50 font-light leading-relaxed mt-4">
+                    Yuk, kita mulai dari kenalan dulu sama dunia perencana di bawah ini 👇
+                </p>
+            </div>
+        </section>
+
+        <div class="section-divider opacity-10"></div>
+
+        <!-- Kamus Perencana Section (LIVE) -->
+        <section id="kamus-perencana" class="animate-reveal scroll-mt-24">
+            <div class="glass-panel rounded-[2rem] p-8 md:p-12 border border-white/5 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                <div class="relative z-10">
+                    <div class="flex flex-col md:flex-row md:items-start justify-between mb-12 gap-8">
+                        <div class="max-w-3xl">
+                            <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md">
+                                <span class="w-1.5 h-1.5 rounded-full bg-neon-accent animate-pulse"></span>
+                                <span class="text-[9px] font-bold uppercase tracking-widest text-neon-accent font-headline">01 Kenalan dulu</span>
+                            </div>
+                            <h3 class="text-3xl md:text-4xl font-extrabold font-headline mb-6 text-white">Kenalan dulu yuk, sama formasi perencana!</h3>
+                            <p class="text-on-surface-variant text-lg font-light leading-relaxed">
+                                Sebelum nyemplung ke aplikasi, mampir dulu ke kamus ini. Mulai dari tugas fungsi, PERJA, SOP, sampai contoh PK &amp; RK. Semuanya kami kupas tuntas biar kamu makin pede sama formasi sendiri. Punya referensi keren? Bagi-bagi juga ya!
+                            </p>
+                        </div>
+                        <div class="shrink-0 hidden lg:block">
+                            <div class="w-24 h-24 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center rotate-6 group-hover:rotate-0 transition-transform duration-700">
+                                <span class="material-symbols-outlined text-5xl text-primary/40 group-hover:text-primary transition-colors">auto_stories</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                        <a href="https://drive.google.com/drive/folders/1N2auyLcogovM31OzDa-18lT3BjgCvCU5?usp=sharing" target="_blank" class="p-6 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-4 group/item hover:bg-white/10 hover:border-primary/30 transition-all">
+                            <div class="flex items-start justify-between">
+                                <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                    <span class="material-symbols-outlined text-2xl">collections_bookmark</span>
+                                </div>
+                                <span class="material-symbols-outlined text-white/20 group-hover/item:text-primary transition-colors">arrow_outward</span>
+                            </div>
+                            <h5 class="text-base font-bold font-headline leading-tight">Referensi PK &amp; RK Perencana</h5>
+                        </a>
+                        <a href="https://drive.google.com/drive/folders/1lplZaVqXsA0Vrk6HxcWHUtxNFmR81uul?usp=sharing" target="_blank" class="p-6 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-4 group/item hover:bg-white/10 hover:border-primary/30 transition-all">
+                            <div class="flex items-start justify-between">
+                                <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                    <span class="material-symbols-outlined text-2xl">gavel</span>
+                                </div>
+                                <span class="material-symbols-outlined text-white/20 group-hover/item:text-primary transition-colors">arrow_outward</span>
+                            </div>
+                            <h5 class="text-base font-bold font-headline leading-tight">PERJA &amp; SOP Kejaksaan</h5>
+                        </a>
+                        <a href="https://drive.google.com/drive/folders/1zheJgbij-asMSZSOjxx3kCtQIW3r9iHd?usp=sharing" target="_blank" class="p-6 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-4 group/item hover:bg-white/10 hover:border-primary/30 transition-all">
+                            <div class="flex items-start justify-between">
+                                <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                    <span class="material-symbols-outlined text-2xl">library_books</span>
+                                </div>
+                                <span class="material-symbols-outlined text-white/20 group-hover/item:text-primary transition-colors">arrow_outward</span>
+                            </div>
+                            <h5 class="text-base font-bold font-headline leading-tight">Tugas &amp; Fungsi Perencana</h5>
+                        </a>
+                    </div>
+                    <a href="https://docs.google.com/spreadsheets/d/1UtTdYHejXk78tHQxK5-Goh0x8crWR26q6p5asmTHfbw/edit?usp=sharing" target="_blank" class="btn-primary group gap-3 shadow-xl shadow-primary/10 h-14 w-full md:w-auto md:inline-flex">
+                        <span class="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">groups</span>
+                        Daftar Perencana Se Indonesia
+                        <span class="material-symbols-outlined text-base ml-1 group-hover:translate-x-1 transition-transform">arrow_outward</span>
+                    </a>
+                </div>
+            </div>
+        </section>
 
         <div class="section-divider opacity-10"></div>
 
         <!-- Applications Grid -->
-        <section id="aplikasi" class="grid grid-cols-12 gap-8 lg:gap-12 scroll-mt-36">
-            <InternalApps />
-            <ExternalApps />
+        <section id="aplikasi" class="grid grid-cols-12 gap-8 lg:gap-12 scroll-mt-24">
+            <!-- Internal Apps -->
+            <div class="col-span-12 lg:col-span-7 animate-reveal stagger-2">
+                <div class="mb-8">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-primary/70 font-headline">02 Ruang kerja</span>
+                    <h3 class="text-2xl font-bold font-headline mb-3 mt-3">Nah, udah kenal? Mari kita masuk ke ruang kerjanya.</h3>
+                    <p class="text-on-surface-variant text-base font-light">Empat aplikasi internal Kejaksaan RI ini bakal jadi teman setiamu. Tinggal pilih mana yang lagi kamu butuhin, klik, login, beres. Gak perlu mikir dua kali.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <a href="https://silabin.kejaksaan.go.id/" target="_blank" class="group p-6 rounded-[1.8rem] bg-surface-container/20 card-hover">
+                        <div class="flex items-start justify-between mb-8">
+                            <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-500">
+                                <span class="material-symbols-outlined text-3xl">description</span>
+                            </div>
+                            <span class="material-symbols-outlined text-white/20 group-hover:text-primary transition-colors">arrow_outward</span>
+                        </div>
+                        <h4 class="text-lg font-bold font-headline mb-1 text-white/90">SILABIN</h4>
+                        <p class="text-xs text-on-surface-variant/80 font-medium">Sistem Informasi Laporan Pembinaan</p>
+                    </a>
+                    <a href="https://sicana.kejaksaan.go.id/" target="_blank" class="group p-6 rounded-[1.8rem] bg-surface-container/20 card-hover">
+                        <div class="flex items-start justify-between mb-8">
+                            <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-500">
+                                <span class="material-symbols-outlined text-3xl">troubleshoot</span>
+                            </div>
+                            <span class="material-symbols-outlined text-white/20 group-hover:text-primary transition-colors">arrow_outward</span>
+                        </div>
+                        <h4 class="text-lg font-bold font-headline mb-1 text-white/90">SICANA & RB</h4>
+                        <p class="text-xs text-on-surface-variant/80 font-medium">Sistem Perencanaan & Reformasi Birokrasi</p>
+                    </a>
+                    <a href="https://simanris.kejaksaan.go.id/login" target="_blank" class="group p-6 rounded-[1.8rem] bg-surface-container/20 card-hover">
+                        <div class="flex items-start justify-between mb-8">
+                            <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-500">
+                                <span class="material-symbols-outlined text-3xl">security</span>
+                            </div>
+                            <span class="material-symbols-outlined text-white/20 group-hover:text-primary transition-colors">arrow_outward</span>
+                        </div>
+                        <h4 class="text-lg font-bold font-headline mb-1 text-white/90">SIMANRIS</h4>
+                        <p class="text-xs text-on-surface-variant/80 font-medium">Sinergi Informasi Manajemen Risiko</p>
+                    </a>
+                    <a href="https://birocana.kejaksaan.go.id/suncana/login" target="_blank" class="group p-6 rounded-[1.8rem] bg-surface-container/20 card-hover">
+                        <div class="flex items-start justify-between mb-8">
+                            <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-500">
+                                <span class="material-symbols-outlined text-3xl">edit_calendar</span>
+                            </div>
+                            <span class="material-symbols-outlined text-white/20 group-hover:text-primary transition-colors">arrow_outward</span>
+                        </div>
+                        <h4 class="text-lg font-bold font-headline mb-1 text-white/90">SUNCANA</h4>
+                        <p class="text-xs text-on-surface-variant/80 font-medium">Sistem Penyusunan Rencana Anggaran dan Program Kerja</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- External Apps Sidebar -->
+            <div class="col-span-12 lg:col-span-5 animate-reveal stagger-3">
+                <div class="glass-panel rounded-[2rem] p-8 h-full flex flex-col shadow-2xl shadow-black/40">
+                    <div class="mb-8">
+                        <div class="w-10 h-10 rounded-lg bg-neon-accent/10 flex items-center justify-center text-neon-accent mb-4">
+                            <span class="material-symbols-outlined text-2xl">captive_portal</span>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-neon-accent/70 font-headline">Lintas K/L</span>
+                        <h3 class="text-xl font-bold font-headline mb-3 mt-3 text-neon-accent">Perlu mampir ke kementerian lain?</h3>
+                        <p class="text-on-surface-variant text-sm font-light">Pintu cepatnya kami siapin di sini. Tinggal pilih tujuannya, klik, langsung cus.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-3 flex-1 content-start mb-8">
+                        <a href="https://esr.menpan.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">e-SAKIP</a>
+                        <a href="https://e-monev.bappenas.go.id/portal/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">e-Monev BAPPENAS</a>
+                        <a href="https://sakti.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">SAKTI</a>
+                        <a href="https://monev.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105 text-center">NKA Monev Kemenkeu</a>
+                        <a href="https://indonesia2045.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">RPJN 2025-2045</a>
+                        <a href="https://myintress.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">IKPA MyIntress</a>
+                        <a href="http://spanint.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">IKPA OM-SPAN</a>
+                    </div>
+                    <div class="pt-6 border-t border-white/5">
+                        <div class="flex items-center gap-4 p-5 rounded-xl bg-white/5 border border-white/5">
+                            <span class="material-symbols-outlined text-primary text-xl animate-pulse">info</span>
+                            <p class="text-[11px] text-on-surface-variant/80 leading-relaxed">Akses portal ini disinkronisasi melalui SSO Pemerintah jika tersedia.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <ResourcesCTA />
+        <!-- Drive/Resources Section -->
+        <section id="panduan" class="animate-reveal scroll-mt-24">
+            <div class="relative p-[1px] rounded-[2rem] bg-gradient-to-br from-primary/20 via-transparent to-green-500/10">
+                <div class="bg-surface-container/40 rounded-[1.95rem] p-8 md:p-12 flex flex-col items-center justify-center gap-10 backdrop-blur-2xl text-center">
+                    <div class="relative z-10 max-w-2xl">
+                        <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-primary/70 font-headline">03 Bekal kerja</span>
+                        <h3 class="text-2xl md:text-4xl font-extrabold font-headline mb-4 mt-3">Aplikasinya udah kenal, sekarang format laporannya!</h3>
+                        <p class="text-on-surface-variant text-base md:text-lg font-light leading-relaxed">Template, panduan, sampai cover &amp; format SAKIP. Semuanya kami kumpulin biar kamu tinggal pakai. Gak perlu lagi nyari sana-sini.</p>
+                    </div>
+                    <div class="relative z-10 flex flex-col sm:flex-row gap-5 w-full justify-center max-w-xl">
+                        <a class="btn-primary group gap-4 px-10 h-14 w-full sm:w-auto" href="https://drive.google.com/drive/folders/1pVzQUj2RJ7Zxi28NK616EFvXSOPR29ES?usp=sharing" target="_blank">
+                            <span class="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform">cloud_download</span>
+                            <span class="text-base">Cek panduannya</span>
+                        </a>
+                        <a class="btn-secondary group gap-4 px-10 h-14 w-full sm:w-auto" href="https://linktr.ee/perencanakeahlian" target="_blank">
+                            <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">folder_shared</span>
+                            <span class="text-base">Cek cover & format SAKIP</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <Calendar />
+        <!-- Calendar Section -->
+        <section id="kalender" class="grid grid-cols-12 gap-8 lg:gap-16 scroll-mt-24">
+            <div class="col-span-12 lg:col-span-4 flex flex-col justify-center animate-reveal">
+                <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6">
+                    <span class="material-symbols-outlined text-3xl">event_upcoming</span>
+                </div>
+                <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-primary/70 font-headline mb-3 inline-block">04 Jaga ritme</span>
+                <h3 class="text-3xl font-extrabold font-headline mb-6 leading-tight text-white">Biar nggak kaget pas deadline mepet</h3>
+                <p class="text-on-surface-variant mb-8 text-base font-light leading-relaxed">Semua tenggat penting udah kami susun rapi di kalender ini. Simpan ke Google Calendar-mu, biar HP yang ingetin. Kamu tinggal fokus kerja.</p>
+                <div class="flex flex-col gap-4">
+                    <a href="https://bit.ly/SimpankeKalendermu" target="_blank" class="btn-primary group gap-3 shadow-xl shadow-primary/10 h-14">
+                        <span class="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">calendar_add_on</span>
+                        Simpan ke Google Kalender!
+                    </a>
+                    <a class="text-white/60 text-center text-xs font-bold uppercase tracking-widest hover:text-primary transition-all flex items-center justify-center gap-3 py-3 rounded-xl hover:bg-white/5" href="https://bit.ly/WebKalenderPerencana" target="_blank">
+                        Cek tampilan penuh kalendar
+                        <span class="material-symbols-outlined text-base">open_in_new</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-span-12 lg:col-span-8 animate-reveal">
+                <div class="glass-panel rounded-[2rem] p-4 shadow-2xl relative overflow-hidden group">
+                    <div class="calendar-frame-container">
+                        <iframe src="https://embed.styledcalendar.com/#OlkGF8UsvN8yj5imHuDL" title="Styled Calendar" class="styled-calendar-container" style="width: 100%; height: 100%; border: none;" data-cy="calendar-embed-iframe"></iframe>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 text-on-surface-variant/80 italic text-[11px] mt-6 bg-black/40 p-4 rounded-xl border border-white/5">
+                        <span class="material-symbols-outlined text-primary text-lg">info</span>
+                        <p>Kalender lebih asik dibuka di laptop. Kalau di HP, klik tombol di atas untuk tampilan penuh ya!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <KamusPerencana />
+        <!-- FAQ Section -->
+        <section id="faq" class="animate-reveal scroll-mt-24">
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md">
+                    <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                    <span class="text-[9px] font-bold uppercase tracking-widest text-primary font-headline">05 Masih penasaran?</span>
+                </div>
+                <h3 class="text-3xl md:text-4xl font-extrabold font-headline mb-4 text-white">Tanya-jawab sebelum nanya ke grup</h3>
+                <p class="text-on-surface-variant text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto">Pertanyaan-pertanyaan paling sering muncul soal formasi, tugas, dan teknis kerjaan udah kami rangkum di sini. Cek dulu, siapa tau jawabannya udah ada.</p>
+            </div>
+
+            <!-- Category Filter Pills -->
+            <div id="faq-categories" class="flex flex-wrap gap-2 mb-8 justify-center"></div>
+
+            <!-- FAQ List -->
+            <div id="faq-list" class="space-y-3 max-w-4xl mx-auto"></div>
+        </section>
     </main>
 
-    <Footer />
-</Layout>
+    <!-- Footer -->
+    <footer class="py-16 px-6 md:px-12 w-full bg-[#010800] border-t border-white/5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
+            <div class="flex flex-col gap-4 max-w-lg text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-on-primary text-xl font-bold">account_balance</span>
+                    </div>
+                    <span class="text-[10px] font-headline font-black tracking-widest text-white uppercase">GanaSatya Dhiracana</span>
+                </div>
+                <p class="text-[10px] font-medium text-neon-accent/60 leading-relaxed uppercase tracking-wider">
+                    Dibuat khusus untuk 500+ perencana keahlian kejaksaan RI. Selamat mengabdi, Teman!
+                </p>
+                <p class="text-[9px] text-white/20 uppercase tracking-[0.4em]">© 2026 ORI RINALDI • VERSI 2.0</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-8 md:gap-12">
+                <a class="text-[9px] text-white/40 hover:text-primary transition-all font-bold uppercase tracking-[0.2em]" href="#">Kebijakan</a>
+                <a class="text-[9px] text-white/40 hover:text-primary transition-all font-bold uppercase tracking-[0.2em]" href="#">Ketentuan</a>
+                <a class="text-[9px] text-white/40 hover:text-primary transition-all font-bold uppercase tracking-[0.2em]" href="#">Bantuan</a>
+            </div>
+        </div>
+    </footer>
 
-<script>
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const targetId = (this as HTMLAnchorElement).getAttribute('href');
-            if (targetId === '#') return;
+    <script async type="module" src="https://embed.styledcalendar.com/assets/parent-window.js"></script>
+    <script src="faq-data.js"></script>
+    <script>
+        // FAQ Renderer
+        (function() {
+            const data = window.FAQ_DATA || [];
+            const cats = Array.from(new Set(data.map(f => f.cat)));
+            let activeCat = 'TUGAS & FUNGSI PERENCANA';
+            let openId = null;
 
-            e.preventDefault();
-            const targetElement = document.querySelector(targetId!);
-            if (targetElement) {
-                const offset = 120; // Adjusted offset for the new taller header
-                const elementPosition = targetElement.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - offset;
+            const catEl = document.getElementById('faq-categories');
+            const listEl = document.getElementById('faq-list');
+            if (!catEl || !listEl) return;
 
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
+            function renderCats() {
+                catEl.innerHTML = cats.map(c => `
+                    <button data-cat="${c}" class="faq-pill ${c === activeCat ? 'active' : ''}">${c}</button>
+                `).join('');
+                catEl.querySelectorAll('button').forEach(b => {
+                    b.onclick = () => { activeCat = b.dataset.cat; openId = null; renderCats(); renderList(); };
                 });
             }
-        });
-    });
 
-    // Intersection Observer for reveal animations
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate-reveal');
+            function renderList() {
+                const filtered = activeCat === 'Semua' ? data : data.filter(f => f.cat === activeCat);
+                listEl.innerHTML = filtered.map(f => `
+                    <div class="faq-item ${openId === f.id ? 'open' : ''}" data-id="${f.id}">
+                        <button class="faq-q">
+                            <div class="faq-q-inner">
+                                <span class="faq-q-badge">Q</span>
+                                <div>
+                                    <span class="faq-q-cat">${f.cat}</span>
+                                    <h4 class="faq-q-text">${f.q}</h4>
+                                </div>
+                            </div>
+                            <span class="material-symbols-outlined faq-chevron">expand_more</span>
+                        </button>
+                        <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
+                    </div>
+                `).join('');
+                listEl.querySelectorAll('.faq-item').forEach(it => {
+                    it.querySelector('.faq-q').onclick = () => {
+                        const id = it.dataset.id;
+                        openId = (openId === id) ? null : id;
+                        renderList();
+                    };
+                });
             }
-        });
-    }, { threshold: 0.1 });
 
-    document.querySelectorAll('section').forEach(section => {
-        observer.observe(section);
-    });
-</script>
+            renderCats();
+            renderList();
+        })();
+    </script>
+    <script>
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                e.preventDefault();
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    const offset = 80;
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Typing Effect Logic
+        const typingElement = document.getElementById('typing-text');
+        const words = [
+            "Semangat mengabdi hari ini",
+            "Udah makan apa belom?",
+            "Jangan lupa bahagiain diri, ya!",
+            "Healing-healing dlu deh sebelum kerja!"
+        ];
+        
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let typeSpeed = 100;
+
+        function type() {
+            const currentWord = words[wordIndex];
+            if(!typingElement) return;
+            
+            if (isDeleting) {
+                typingElement.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+                typeSpeed = 50;
+            } else {
+                typingElement.textContent = currentWord.substring(0, charIndex + 1);
+                charIndex++;
+                typeSpeed = 100;
+            }
+
+            if (!isDeleting && charIndex === currentWord.length) {
+                isDeleting = true;
+                typeSpeed = 2000;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+                typeSpeed = 500;
+            }
+
+            setTimeout(type, typeSpeed);
+        }
+
+        window.onload = () => {
+            type();
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-reveal');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+    <Analytics />
+</body>
+</html>
