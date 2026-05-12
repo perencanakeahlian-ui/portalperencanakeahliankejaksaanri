@@ -52,61 +52,160 @@ import Analytics from '@vercel/analytics/astro'
         .hero-glow {
             box-shadow: 0 0 100px -20px rgba(255, 217, 0, 0.12);
         }
-        /* FAQ Styles */
-        .faq-pill {
-            padding: 10px 20px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* FAQ Dropdown */
+        .faq-select-wrap {
             position: relative;
-            overflow: hidden;
+            max-width: 420px;
+            margin: 0 auto;
+            z-index: 20;
         }
-        .faq-pill::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,217,0,0.1), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .faq-pill:hover::before { opacity: 1; }
-        .faq-pill:hover {
-            background: rgba(255, 255, 255, 0.06);
+        .faq-select-btn {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 16px;
+            background: rgba(8, 42, 7, 0.5);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #fff;
-            border-color: rgba(255, 217, 0, 0.35);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px -3px rgba(0,0,0,0.3);
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Manrope', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
         }
-        .faq-pill.active {
-            background: linear-gradient(135deg, #FFD900, #f5c800);
-            color: #073902;
+        .faq-select-btn:hover {
+            border-color: rgba(255, 217, 0, 0.4);
+            background: rgba(8, 42, 7, 0.7);
+        }
+        .faq-select-btn.open {
             border-color: #FFD900;
-            box-shadow: 0 8px 25px -5px rgba(255, 217, 0, 0.45);
-            transform: translateY(-2px);
+            box-shadow: 0 0 30px -10px rgba(255, 217, 0, 0.2);
+            border-radius: 16px 16px 0 0;
         }
-        .faq-pill.active::before { opacity: 0; }
-        .faq-pill:active { transform: scale(0.97); }
-        .faq-counter {
-            display: inline-flex;
+        .faq-select-btn .sel-icon {
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            color: rgba(255,255,255,0.4);
+            font-size: 22px;
+        }
+        .faq-select-btn.open .sel-icon {
+            transform: rotate(180deg);
+            color: #FFD900;
+        }
+        .faq-select-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+        .faq-select-label .sel-badge {
+            flex-shrink: 0;
+            width: 32px; height: 32px;
+            border-radius: 10px;
+            background: rgba(255, 217, 0, 0.12);
+            color: #FFD900;
+            display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 20px;
-            height: 20px;
-            border-radius: 999px;
-            font-size: 10px;
-            font-weight: 800;
-            margin-left: 6px;
+            font-size: 18px;
         }
-        .faq-pill .faq-counter { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); }
-        .faq-pill.active .faq-counter { background: rgba(7,57,2,0.2); color: #073902; }
+        .faq-select-label .sel-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: #FFD900;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .faq-select-label .sel-count {
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.35);
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        .faq-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(5, 30, 4, 0.95);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 0;
+            border-radius: 0 0 16px 16px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s;
+            opacity: 0;
+        }
+        .faq-dropdown.show {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .faq-dropdown-item {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-family: 'Inter', sans-serif;
+        }
+        .faq-dropdown-item:last-child { border-bottom: none; }
+        .faq-dropdown-item:hover {
+            background: rgba(255, 217, 0, 0.06);
+        }
+        .faq-dropdown-item.active {
+            background: rgba(255, 217, 0, 0.1);
+        }
+        .faq-dropdown-item .dd-badge {
+            width: 28px; height: 28px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .faq-dropdown-item.active .dd-badge {
+            background: rgba(255, 217, 0, 0.15);
+            color: #FFD900;
+        }
+        .faq-dropdown-item:hover .dd-badge {
+            background: rgba(255, 217, 0, 0.12);
+            color: #FFD900;
+        }
+        .faq-dropdown-item .dd-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.75);
+            flex: 1;
+            transition: color 0.2s;
+        }
+        .faq-dropdown-item.active .dd-text { color: #FFD900; }
+        .faq-dropdown-item:hover .dd-text { color: #fff; }
+        .faq-dropdown-item .dd-count {
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.25);
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.05);
+        }
+        .faq-dropdown-item.active .dd-count {
+            color: #FFD900;
+            background: rgba(255, 217, 0, 0.08);
+        }
 
         .faq-item {
             background: rgba(8, 42, 7, 0.25);
@@ -719,8 +818,18 @@ import Analytics from '@vercel/analytics/astro'
                 </div>
             </div>
 
-            <!-- Category Filter Pills -->
-            <div id="faq-categories" class="flex flex-wrap gap-2.5 mb-10 justify-center max-w-5xl mx-auto"></div>
+            <!-- Category Dropdown -->
+            <div class="faq-select-wrap mb-10">
+                <button id="faq-select-btn" class="faq-select-btn">
+                    <div class="faq-select-label">
+                        <span class="material-symbols-outlined sel-badge">category</span>
+                        <span class="sel-text" id="faq-sel-text">TUGAS & FUNGSI PERENCANA</span>
+                        <span class="sel-count" id="faq-sel-count"></span>
+                    </div>
+                    <span class="material-symbols-outlined sel-icon">expand_more</span>
+                </button>
+                <div id="faq-dropdown" class="faq-dropdown"></div>
+            </div>
 
             <!-- FAQ List -->
             <div id="faq-list" class="space-y-3 max-w-4xl mx-auto"></div>
@@ -759,27 +868,108 @@ import Analytics from '@vercel/analytics/astro'
     <script is:inline async type="module" src="https://embed.styledcalendar.com/assets/parent-window.js"></script>
     <script is:inline src="faq-data.js"></script>
     <script is:inline>
-        // FAQ Renderer
+        // FAQ Renderer with Dropdown
         (function() {
             const data = window.FAQ_DATA || [];
             const cats = Array.from(new Set(data.map(f => f.cat)));
             let activeCat = 'TUGAS & FUNGSI PERENCANA';
             let openId = null;
             let searchQuery = '';
+            let dropdownOpen = false;
 
-            const catEl = document.getElementById('faq-categories');
             const listEl = document.getElementById('faq-list');
             const emptyEl = document.getElementById('faq-empty');
             const searchInput = document.getElementById('faq-search');
             const searchClear = document.getElementById('faq-search-clear');
-            if (!catEl || !listEl) return;
+            const selectBtn = document.getElementById('faq-select-btn');
+            const selText = document.getElementById('faq-sel-text');
+            const selCount = document.getElementById('faq-sel-count');
+            const dropdown = document.getElementById('faq-dropdown');
+            if (!listEl || !selectBtn) return;
+
+            // Category icon map
+            const catIcons = {
+                'TUGAS & FUNGSI PERENCANA': 'work',
+                'PERJA & RENCANA KINERJA': 'handshake',
+                'SOP KEJAKSAAN': 'rule',
+                'SILABIN': 'description',
+                'SIMANRIS': 'security',
+                'SICANA': 'troubleshoot',
+                'SUNCANA': 'edit_calendar',
+                'REFORMASI BIROKRASI': 'autorenew',
+                'E-SAKIP': 'assessment',
+                'E-MONEV BAPPENAS': 'monitoring',
+                'SAKTI': 'account_balance',
+                'NKA & IKPA': 'trending_up',
+                'RPJPN & RPJMN': 'flag',
+                'RENJA': 'event_note',
+                'IKU': 'speed',
+            };
+
+            function getCatIcon(cat) { return catIcons[cat] || 'category'; }
+            function getCatCount(cat) {
+                if (searchQuery) {
+                    return data.filter(f => f.cat === cat && (f.q.toLowerCase().includes(searchQuery) || f.a.toLowerCase().includes(searchQuery))).length;
+                }
+                return data.filter(f => f.cat === cat).length;
+            }
+
+            // Dropdown toggle
+            selectBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownOpen = !dropdownOpen;
+                selectBtn.classList.toggle('open', dropdownOpen);
+                dropdown.classList.toggle('show', dropdownOpen);
+                if (dropdownOpen) renderDropdown();
+            });
+
+            // Close on outside click
+            document.addEventListener('click', function() {
+                if (dropdownOpen) {
+                    dropdownOpen = false;
+                    selectBtn.classList.remove('open');
+                    dropdown.classList.remove('show');
+                }
+            });
+
+            function renderDropdown() {
+                dropdown.innerHTML = cats.map(c => {
+                    const count = getCatCount(c);
+                    const icon = getCatIcon(c);
+                    return `<div class="faq-dropdown-item ${c === activeCat ? 'active' : ''}" data-cat="${c}">
+                        <span class="material-symbols-outlined dd-badge">${icon}</span>
+                        <span class="dd-text">${c}</span>
+                        <span class="dd-count">${count}</span>
+                    </div>`;
+                }).join('');
+                dropdown.querySelectorAll('.faq-dropdown-item').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        activeCat = this.dataset.cat;
+                        openId = null;
+                        dropdownOpen = false;
+                        selectBtn.classList.remove('open');
+                        dropdown.classList.remove('show');
+                        updateSelectBtn();
+                        renderList();
+                    });
+                });
+            }
+
+            function updateSelectBtn() {
+                if (selText) selText.textContent = activeCat;
+                if (selCount) selCount.textContent = getCatCount(activeCat) + ' pertanyaan';
+                const badge = selectBtn.querySelector('.sel-badge');
+                if (badge) badge.textContent = getCatIcon(activeCat);
+            }
 
             // Search
             if (searchInput) {
                 searchInput.addEventListener('input', function() {
                     searchQuery = this.value.trim().toLowerCase();
-                    searchClear.classList.toggle('hidden', !searchQuery);
+                    if (searchClear) searchClear.classList.toggle('hidden', !searchQuery);
                     openId = null;
+                    updateSelectBtn();
                     renderList();
                 });
             }
@@ -789,38 +979,8 @@ import Analytics from '@vercel/analytics/astro'
                     searchQuery = '';
                     this.classList.add('hidden');
                     openId = null;
+                    updateSelectBtn();
                     renderList();
-                });
-            }
-
-            function getCatCount(cat) {
-                if (searchQuery) {
-                    return data.filter(f => f.cat === cat && (f.q.toLowerCase().includes(searchQuery) || f.a.toLowerCase().includes(searchQuery))).length;
-                }
-                return data.filter(f => f.cat === cat).length;
-            }
-
-            function renderCats() {
-                catEl.innerHTML = cats.map(c => {
-                    const count = getCatCount(c);
-                    return `<button data-cat="${c}" class="faq-pill ${c === activeCat ? 'active' : ''}">${c}<span class="faq-counter">${count}</span></button>`;
-                }).join('');
-                catEl.querySelectorAll('button').forEach(b => {
-                    b.onclick = () => {
-                        activeCat = b.dataset.cat;
-                        openId = null;
-                        renderCats();
-                        renderList();
-                        catEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    };
-                });
-            }
-
-            function updatePillCounts() {
-                catEl.querySelectorAll('.faq-pill').forEach(btn => {
-                    const cat = btn.dataset.cat;
-                    const counter = btn.querySelector('.faq-counter');
-                    if (counter) counter.textContent = getCatCount(cat);
                 });
             }
 
@@ -830,13 +990,11 @@ import Analytics from '@vercel/analytics/astro'
                     filtered = filtered.filter(f => f.q.toLowerCase().includes(searchQuery) || f.a.toLowerCase().includes(searchQuery));
                 }
 
-                if (emptyEl) {
-                    emptyEl.classList.toggle('hidden', filtered.length > 0);
-                }
+                if (emptyEl) emptyEl.classList.toggle('hidden', filtered.length > 0);
                 listEl.classList.toggle('hidden', filtered.length === 0);
 
                 listEl.innerHTML = filtered.map((f, i) => `
-                    <div class="faq-item ${openId === f.id ? 'open' : ''}" data-id="${f.id}" style="animation-delay: ${i * 60}ms">
+                    <div class="faq-item ${openId === f.id ? 'open' : ''}" data-id="${f.id}" style="animation-delay: ${i * 50}ms">
                         <button class="faq-q" aria-expanded="${openId === f.id}">
                             <div class="faq-q-inner">
                                 <span class="faq-q-badge">${i + 1}</span>
@@ -857,18 +1015,14 @@ import Analytics from '@vercel/analytics/astro'
                         if (!wasOpen) {
                             setTimeout(() => {
                                 const openItem = listEl.querySelector('.faq-item.open');
-                                if (openItem) {
-                                    openItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                                }
+                                if (openItem) openItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                             }, 100);
                         }
                     };
                 });
-
-                updatePillCounts();
             }
 
-            renderCats();
+            updateSelectBtn();
             renderList();
         })();
     </script>
