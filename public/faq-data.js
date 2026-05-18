@@ -1,804 +1,436 @@
----
-import Analytics from '@vercel/analytics/astro'
----
-<!DOCTYPE html>
-<html class="dark" lang="id">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>GanaSatya Dhiracana DCXXV - Portal Perencana</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'&gt;&lt;defs&gt;&lt;linearGradient id='g' x1='0' y1='0' x2='1' y2='1'&gt;&lt;stop offset='0%25' stop-color='%23FFD900'/&gt;&lt;stop offset='100%25' stop-color='%23B8860B'/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;&lt;rect width='64' height='64' rx='14' fill='url(%23g)'/&gt;&lt;path d='M14 26l18-12 18 12v3H14v-3zm4 5h6v15h-6V31zm10 0h6v15h-6V31zm10 0h6v15h-6V31zM12 49h40v4H12v-4z' fill='%23010800'/&gt;&lt;/svg&gt;"/>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
-    <script is:inline src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <style is:inline>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #010800;
-        }
-        .font-headline {
-            font-family: 'Manrope', sans-serif;
-        }
-        .glass-panel {
-            background: rgba(8, 42, 7, 0.4);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .hero-glow {
-            box-shadow: 0 0 100px -20px rgba(255, 217, 0, 0.12);
-        }
-        /* FAQ Styles */
-        .faq-pill {
-            padding: 8px 16px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-family: 'Space Grotesk', sans-serif;
-            cursor: pointer;
-            transition: all 0.25s ease;
-        }
-        .faq-pill:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: #fff;
-            border-color: rgba(255, 217, 0, 0.3);
-        }
-        .faq-pill.active {
-            background: #FFD900;
-            color: #073902;
-            border-color: #FFD900;
-            box-shadow: 0 8px 20px -8px rgba(255, 217, 0, 0.5);
-        }
-        .faq-item {
-            background: rgba(8, 42, 7, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 20px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(12px);
-        }
-        .faq-item:hover {
-            border-color: rgba(255, 255, 255, 0.12);
-            background: rgba(8, 42, 7, 0.5);
-        }
-        .faq-item.open {
-            border-color: rgba(255, 217, 0, 0.25);
-            background: rgba(8, 42, 7, 0.6);
-            box-shadow: 0 0 40px -10px rgba(255, 217, 0, 0.15);
-        }
-        .faq-q {
-            width: 100%;
-            padding: 22px 24px;
-            background: transparent;
-            border: 0;
-            color: #fff;
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 16px;
-            cursor: pointer;
-            text-align: left;
-        }
-        .faq-q-inner { display: flex; gap: 16px; align-items: flex-start; flex: 1; }
-        .faq-q-badge {
-            flex-shrink: 0;
-            width: 32px; height: 32px;
-            border-radius: 10px;
-            background: rgba(255, 217, 0, 0.1);
-            color: #FFD900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 12px;
-            font-family: 'Space Grotesk', sans-serif;
-            transition: all 0.3s;
-        }
-        .faq-item.open .faq-q-badge {
-            background: #FFD900;
-            color: #073902;
-        }
-        .faq-q-cat {
-            display: block;
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: rgba(255, 217, 0, 0.7);
-            margin-bottom: 4px;
-            font-family: 'Space Grotesk', sans-serif;
-        }
-        .faq-q-text {
-            font-size: 15px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.92);
-            line-height: 1.4;
-            font-family: 'Space Grotesk', sans-serif;
-        }
-        .faq-chevron {
-            color: rgba(255, 255, 255, 0.4);
-            transition: transform 0.35s ease, color 0.3s;
-            flex-shrink: 0;
-        }
-        .faq-item.open .faq-chevron {
-            transform: rotate(180deg);
-            color: #FFD900;
-        }
-        .faq-a {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-        }
-        .faq-item.open .faq-a {
-            max-height: 3000px;
-        }
-        .faq-a-inner {
-            padding: 0 24px 24px 72px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            line-height: 1.7;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 18px;
-            margin-top: 4px;
-        }
-        .faq-a-inner p { margin-bottom: 10px; }
-        .faq-a-inner ul, .faq-a-inner ol {
-            margin: 8px 0 12px 18px;
-            list-style: disc;
-        }
-        .faq-a-inner ol { list-style: decimal; }
-        .faq-a-inner li { margin-bottom: 6px; }
-        .faq-a-inner b { color: #fff; font-weight: 600; }
-        .faq-a-inner a { color: #FFD900; text-decoration: underline; }
-        .faq-a-inner table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 10px 0;
-            font-size: 13px;
-        }
-        .faq-a-inner th, .faq-a-inner td {
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 8px 10px;
-            text-align: left;
-        }
-        .faq-a-inner th {
-            background: rgba(255, 217, 0, 0.06);
-            color: #FFD900;
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .faq-a-inner td:first-child { font-weight: 600; color: rgba(255,255,255,0.9); }
-        .faq-a-inner .note {
-            margin-top: 12px;
-            padding: 10px 14px;
-            background: rgba(255, 217, 0, 0.06);
-            border-left: 3px solid #FFD900;
-            border-radius: 8px;
-            color: rgba(255, 217, 0, 0.85);
-            font-size: 13px;
-        }
-        .faq-a-inner .note.danger {
-            background: rgba(239, 68, 68, 0.08);
-            border-left-color: #ef4444;
-            color: rgba(248, 113, 113, 0.95);
-        }
-        .faq-a-inner .code {
-            margin-top: 10px;
-            padding: 10px 14px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            font-family: 'Space Grotesk', monospace;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        @media (max-width: 640px) {
-            .faq-a-inner { padding-left: 24px; }
-            .faq-a-inner table { font-size: 11px; }
-            .faq-a-inner th, .faq-a-inner td { padding: 6px; }
-        }
-        .nav-link {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.55);
-            transition: color 0.25s ease;
-            text-decoration: none;
-            position: relative;
-        }
-        .nav-link:hover { color: #FFD900; }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            bottom: -6px;
-            width: 0;
-            height: 2px;
-            background: #FFD900;
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-        .nav-link:hover::after { width: 100%; }
-        .section-divider {
-            background: linear-gradient(90deg, transparent, rgba(255, 217, 0, 0.15), transparent);
-            height: 1px;
-            width: 100%;
-        }
-        .btn-primary {
-            background-color: #FFD900;
-            color: #073902;
-            height: 56px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 32px;
-            border-radius: 0.75rem;
-            font-weight: 700;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-decoration: none;
-        }
-        .btn-primary:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 30px -5px rgba(255, 217, 0, 0.3);
-        }
-        .btn-secondary {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-            height: 56px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 32px;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-decoration: none;
-        }
-        .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-color: #9fd58c;
-            color: #9fd58c;
-            transform: translateY(-3px);
-        }
-        
-        /* Animations */
-        @keyframes fadeInBlur {
-            from { opacity: 0; filter: blur(10px); transform: translateY(20px); }
-            to { opacity: 1; filter: blur(0); transform: translateY(0); }
-        }
-        .animate-reveal {
-            animation: fadeInBlur 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        .stagger-1 { animation-delay: 0.1s; }
-        .stagger-2 { animation-delay: 0.2s; }
-        .stagger-3 { animation-delay: 0.3s; }
+window.FAQ_DATA = [
+  // ===== TUGAS DAN FUNGSI PERENCANA =====
+  {
+    id: 'tupoksi-1', cat: 'Tugas & Fungsi Perencana',
+    q: 'Apa saja tugas pokok Jabatan Fungsional Perencana di Kejaksaan?',
+    a: `<p>Peran utama JFP adalah memastikan akuntabilitas kinerja institusi melalui pengelolaan SAKIP, manajemen risiko, serta optimalisasi pelaporan berbasis elektronik untuk mewujudkan tata kelola organisasi yang transparan dan terukur.</p>
+    <p>Berdasarkan Permenpan-RB dan kebijakan internal Kejaksaan, tugas pokok JFP meliputi:</p>
+    <ul>
+      <li><b>Penyusunan Anggaran:</b> Menyusun rencana kerja dan anggaran (RKA-KL) unit kerja secara terinci dan terukur.</li>
+      <li><b>Analisis Strategis:</b> Melakukan analisis kebutuhan, prioritas program, dan kesesuaian dengan kebijakan nasional serta melakukan kajian kebijakan terkait perencanaan.</li>
+      <li><b>Koordinasi Dokumen:</b> Mengoordinasikan dokumen perencanaan strategis seperti Renstra, Renja, RKP K/L, dan LAKIP.</li>
+      <li><b>Pengendalian &amp; Evaluasi:</b> Memantau dan mengevaluasi pelaksanaan program serta anggaran secara berkala.</li>
+      <li><b>Pelaporan Kinerja:</b> Menyiapkan bahan LKjIP/LAKIP, termasuk melakukan pengukuran dan analisis capaian kinerja.</li>
+      <li><b>Digitalisasi Data:</b> Menginput dan memutakhirkan data pada berbagai aplikasi seperti SICANA, SUNCANA, e-SAKIP, dan e-Monev Bappenas.</li>
+      <li><b>Manajemen Risiko &amp; RB:</b> Menyiapkan bahan pendukung untuk pelaksanaan reformasi birokrasi dan manajemen risiko di satuan kerja.</li>
+    </ul>`
+  },
+  {
+    id: 'tupoksi-2', cat: 'Tugas & Fungsi Perencana',
+    q: 'Bagaimana jenjang karier Jabatan Fungsional Perencana?',
+    a: `<p>Jenjang JFP terbagi menjadi empat tingkatan berdasarkan golongan ruang:</p>
+    <ul>
+      <li><b>Perencana Ahli Pertama</b> (Golongan III/a - III/b)</li>
+      <li><b>Perencana Ahli Muda</b> (Golongan III/c - III/d)</li>
+      <li><b>Perencana Ahli Madya</b> (Golongan IV/a - IV/c)</li>
+      <li><b>Perencana Ahli Utama</b> (Golongan IV/d - IV/e)</li>
+    </ul>`
+  },
+  {
+    id: 'tupoksi-3', cat: 'Tugas & Fungsi Perencana',
+    q: 'Apa saja aplikasi yang wajib dikelola oleh seorang Perencana?',
+    a: `<p>Perencana bertanggung jawab melakukan pelaporan capaian kinerja dan anggaran secara akurat melalui berbagai aplikasi, antara lain: <b>E-Monev BAPPENAS, SICANA, SUNCANA, SIMANRIS, SILABIN, e-SAKIP</b> dan lain-lain.</p>`
+  },
+  {
+    id: 'tupoksi-4', cat: 'Tugas & Fungsi Perencana',
+    q: 'Bagaimana cara Perencana mengelola kinerja secara periodik?',
+    a: `<p>Dengan menyusun laporan rutin, yaitu:</p>
+    <ul>
+      <li><b>Triwulanan:</b> Menyusun Laporan Kinerja (LKjIP), Laporan Rapat Staf EKA, Laporan Monitoring dan Evaluasi Rencana Aksi, serta laporan Survei Kepuasan Masyarakat (SKM).</li>
+      <li><b>Semesteran:</b> Menyusun laporan Manajemen Risiko (MANRIS) dan melakukan monitoring serta evaluasi Standar Operasional Prosedur (SOP).</li>
+    </ul>`
+  },
+  {
+    id: 'tupoksi-5', cat: 'Tugas & Fungsi Perencana',
+    q: 'Dalam setahun, sebenarnya apa saja sih yang dikerjakan seorang Perencana?',
+    a: `<p>Kerja perencana itu ada polanya. Kita bagi dalam empat fase besar supaya kamu gampang bagi waktunya:</p>
 
-        .card-hover {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .card-hover:hover {
-            background: rgba(13, 53, 12, 0.6);
-            border-color: rgba(255, 217, 0, 0.3);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
-        }
+    <p><b>1. Awal Tahun: Fase "Masak" Anggaran &amp; Rencana (Januari - Februari)</b></p>
+    <p>Ini masa paling sibuk buat nyiapin "resep" kerja kantor setahun ke depan:</p>
+    <ul>
+      <li><b>Dokumen Strategis:</b> Renstra, Renja, dan penetapan IKU.</li>
+      <li><b>Urusan Duit:</b> Memastikan RKAKL dan DIPA sudah sesuai untuk operasional.</li>
+      <li><b>Janji Kinerja:</b> Membuat Rencana Aksi dan menyusun Perjanjian Kinerja (PK) sebagai komitmen kepada pimpinan.</li>
+    </ul>
 
-        .glass-hero-pattern {
-            background: radial-gradient(circle at 50% 50%, rgba(255, 217, 0, 0.08) 0%, transparent 50%),
-                        linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 100%);
-        }
+    <p><b>2. Tiap Triwulan: Fase "Lapor" Progres (Maret, Juni, September, Desember)</b></p>
+    <p>Setiap tiga bulan, kamu wajib bikin "rapor" perkembangan kantor:</p>
+    <ul>
+      <li><b>Laporan Kinerja (LKjIP):</b> Sejauh mana target sudah tercapai.</li>
+      <li><b>Capaian Kinerja:</b> Input data realisasi ke aplikasi (seperti SICANA &amp; e-Monev).</li>
+      <li><b>Rapat Staf EKA:</b> Evaluasi Kinerja Anggaran bareng pimpinan dan bidang-bidang.</li>
+      <li><b>Monev Renaksi:</b> Mengecek apakah rencana aksi yang dibuat di awal tahun benar-benar jalan.</li>
+    </ul>
 
-        /* Typing Effect Cursor */
-        .typing-cursor::after {
-            content: '|';
-            animation: blink 1s infinite;
-            margin-left: 4px;
-            color: #FFD900;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
+    <p><b>3. Tiap Semester: Fase "Tertib Administrasi"</b></p>
+    <p>Setiap 6 bulan sekali (Semester I &amp; II), fokusnya ke tata kelola:</p>
+    <ul>
+      <li><b>Penyusunan &amp; Review SOP:</b> Memastikan Standar Operasional Prosedur (SOP AP) tetap relevan dengan kondisi di kantor.</li>
+    </ul>
 
-        .calendar-frame-container {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 1.5rem;
-            overflow: hidden;
-        }
+    <p><b>4. Pertengahan - Akhir Tahun: Fase "Evaluasi &amp; Persiapan" (Juli - Desember)</b></p>
+    <p>Selain mengevaluasi yang sudah jalan, kamu juga mulai curi start buat tahun depan:</p>
+    <ul>
+      <li><b>LHE AKIP &amp; TL:</b> Menerima hasil evaluasi (nilai SAKIP) dan melakukan Tindak Lanjut (TL) perbaikan.</li>
+      <li><b>Persiapan Masa Depan:</b> Menyusun TOR (Term of Reference) dan RAB (Rincian Anggaran Biaya). Ini penting banget buat usulan kegiatan tahun depan supaya anggaran kita disetujui pusat.</li>
+    </ul>`
+  },
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #010800; }
-        ::-webkit-scrollbar-thumb { background: #1a4a18; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #FFD900; }
-    </style>
-    <script is:inline id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#FFD900",
-                        "on-primary": "#073902",
-                        "surface": "#010800",
-                        "surface-container": "#082a07",
-                        "surface-container-high": "#0d350c",
-                        "neon-accent": "#9fd58c",
-                        "on-surface": "#f8faf5",
-                        "on-surface-variant": "#c2c9ba",
-                    },
-                },
-            },
-        }
-    </script>
-</head>
-<body class="text-on-surface antialiased overflow-x-hidden selection:bg-primary/30 selection:text-primary">
+  // ===== SILABIN =====
+  {
+    id: 'silabin-1', cat: 'SILABIN',
+    q: 'Apa itu SILABIN?',
+    a: `<p><b>SILABIN</b> (Sistem Laporan Bulanan Bidang Pembinaan) adalah aplikasi untuk menginput, memvalidasi, dan menilai laporan bulanan di tiga tingkatan: <b>Kejaksaan Negeri, Kejaksaan Tinggi, dan Kejaksaan Agung</b>.</p>`
+  },
+  {
+    id: 'silabin-2', cat: 'SILABIN',
+    q: 'Bagaimana cara login di SILABIN?',
+    a: `<p>Buka aplikasi <a href="https://silabin.kejaksaan.go.id/login" target="_blank">https://silabin.kejaksaan.go.id/login</a>, masukkan username dan password, pilih Bulan dan Tahun Laporan, centang "Aku manusia", lalu klik <b>"Masuk"</b>.</p>`
+  },
+  {
+    id: 'silabin-3', cat: 'SILABIN',
+    q: 'Apa saja bidang laporan di SILABIN?',
+    a: `<p>Ada <b>8 bidang</b>: Perencanaan, Umum, Kepegawaian, Keuangan, Perlengkapan, Hukum &amp; Hubungan Luar Negeri, Pusat Data Statistik Kriminal dan Teknologi Informasi (termasuk CMS Pidum, CMS Pidsus, dan EIS).</p>`
+  },
+  {
+    id: 'silabin-4', cat: 'SILABIN',
+    q: 'Bagaimana cara menambah data laporan di SILABIN?',
+    a: `<p>Klik tombol <b>(+) Tambah</b>, isi form yang muncul, unggah bukti dukung jika perlu, lalu klik <b>"Add"</b>. Data akan tampil di tabel laporan.</p>`
+  },
+  {
+    id: 'silabin-5', cat: 'SILABIN',
+    q: 'Bagaimana jika ingin mengubah laporan yang sudah divalidasi di SILABIN?',
+    a: `<p>Klik tombol ubah pada baris data, isi alasan pengajuan (minimal 10 karakter), lalu klik <b>"Ajukan Request"</b>.</p>
+    <ul>
+      <li>Jika baru divalidasi <b>Kasubagbin</b>, cukup persetujuan Kasubagbin.</li>
+      <li>Jika sudah divalidasi hingga <b>Asbin</b>, request harus disetujui Kasubagbin dulu baru diteruskan ke Asbin.</li>
+    </ul>`
+  },
 
-    <!-- Top Alert Banner -->
-    <div class="fixed top-0 left-0 right-0 z-[60] bg-gradient-to-r from-primary via-yellow-300 to-primary text-on-primary">
-        <div class="max-w-7xl mx-auto px-4 md:px-12 py-2 flex items-center justify-center gap-3 text-center">
-            <span class="material-symbols-outlined text-base animate-pulse">alarm_on</span>
-            <p class="text-[11px] md:text-xs font-bold tracking-wide">Reminder akhir bulan: SILABIN &amp; E-MONEV Bappenas nungguin laporanmu, ya!</p>
-            <a href="#kalender" class="hidden sm:inline-flex items-center gap-1 ml-2 px-3 py-1 rounded-full bg-on-primary/15 hover:bg-on-primary/25 text-[10px] font-bold uppercase tracking-widest transition-all">
-                <span class="material-symbols-outlined text-sm">calendar_month</span>
-                Cek Kalender
-            </a>
-        </div>
-    </div>
-    
-    <!-- Navigation Header -->
-    <header class="fixed top-9 right-0 h-16 bg-[#010800]/90 backdrop-blur-xl flex justify-between items-center px-6 md:px-12 z-50 border-b border-white/5 left-0 transition-all duration-300">
-        <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-yellow-600 flex items-center justify-center shadow-lg shadow-primary/20">
-                <span class="material-symbols-outlined text-on-primary font-bold">account_balance</span>
-            </div>
-            <span class="text-[10px] font-headline font-bold tracking-[0.2em] text-white opacity-90 uppercase">GanaSatya Dhiracana DCXXV</span>
-        </div>
-        <div class="hidden md:flex items-center gap-8">
-            <nav class="hidden md:flex gap-7">
-                <a href="#" class="nav-link">Beranda</a>
-                <a href="#kamus-perencana" class="nav-link">Kamus</a>
-                <a href="#aplikasi" class="nav-link">Aplikasi</a>
-                <a href="#panduan" class="nav-link">Panduan</a>
-                <a href="#kalender" class="nav-link">Kalender</a>
-                <a href="#faq" class="nav-link">FAQ</a>
-            </nav>
-        </div>
-    </header>
+  // ===== SIMANRIS =====
+  {
+    id: 'simanris-1', cat: 'SIMANRIS',
+    q: 'Apa itu SIMANRIS?',
+    a: `<p><b>SIMANRIS</b> (Sinergi Manajemen Risiko) adalah aplikasi yang dirancang untuk memudahkan satuan kerja di lingkungan Kejaksaan RI dalam melakukan pengumpulan, pendokumentasian, dan pelaporan manajemen risiko secara efektif dan efisien.</p>`
+  },
+  {
+    id: 'simanris-2', cat: 'SIMANRIS',
+    q: 'Bagaimana cara login SIMANRIS?',
+    a: `<p>Buka <a href="http://simanris.kejaksaan.go.id" target="_blank">http://Simanris.kejaksaan.go.id</a>, masukkan <b>NIP sebagai username</b> dan Kata Sandi yang sah, isi Kode Captcha sesuai yang muncul di layar, lalu klik tombol <b>Login</b>.</p>`
+  },
+  {
+    id: 'simanris-3', cat: 'SIMANRIS',
+    q: 'Apa saja tahapan manajemen risiko di SIMANRIS?',
+    a: `<p>Terdapat <b>7 tahapan utama</b> yang dilakukan secara berurutan:</p>
+    <ol>
+      <li>Penetapan Konteks</li>
+      <li>Identifikasi Risiko</li>
+      <li>Analisa Risiko</li>
+      <li>Evaluasi Risiko</li>
+      <li>Analisis Akar Masalah (RCA)</li>
+      <li>Rencana Pengendalian</li>
+      <li>Pemantauan Risiko</li>
+    </ol>`
+  },
+  {
+    id: 'simanris-4', cat: 'SIMANRIS',
+    q: 'Bagaimana cara mengisi penetapan konteks sebagai langkah awal di SIMANRIS?',
+    a: `<p>Klik tombol <b>(+)</b> di pojok kiri atas pada menu <b>Penetapan Konteks</b>, lengkapi formulir (seperti jenis konteks, kategori risiko, indikator, dan tujuan), lalu klik tombol <b>"Simpan"</b> agar data tersimpan dan Anda bisa lanjut ke tahap identifikasi.</p>`
+  },
+  {
+    id: 'simanris-5', cat: 'SIMANRIS',
+    q: 'Bagaimana jika terjadi kesalahan saat memasukkan data di SIMANRIS?',
+    a: `<p>Anda masih dapat mengubah data melalui tombol <b>edit</b> di kolom aksi selama belum melanjutkan ke tahapan berikutnya. Anda akan diminta mengecek perubahan dan memasukkan alasan perubahan data sebelum mengeklik tombol <b>"Simpan"</b> kembali.</p>`
+  },
 
-    <main class="pt-32 pb-20 px-6 md:px-12 max-w-7xl mx-auto space-y-16 md:space-y-20">
-        
-        <!-- Hero Section -->
-        <section class="animate-reveal stagger-1 relative">
-            <div class="relative w-full mb-8 rounded-[2.5rem] overflow-hidden hero-glow h-[320px] lg:h-[400px] glass-hero-pattern border border-white/10">
-                <div class="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-primary/20 rounded-full blur-[100px] animate-pulse"></div>
-                <div class="absolute bottom-[-10%] left-[-5%] w-[300px] h-[300px] bg-green-500/10 rounded-full blur-[80px]"></div>
-                
-                <div class="absolute inset-0 flex items-center justify-center overflow-hidden">
-                    <div class="w-full h-full opacity-20 mix-blend-overlay" style="background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');"></div>
-                    <div class="absolute top-1/4 left-1/4 w-32 h-32 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 rotate-12 animate-bounce transition-all duration-[5s]"></div>
-                    <div class="absolute bottom-1/4 right-1/3 w-48 h-48 bg-primary/5 backdrop-blur-lg rounded-[3rem] border border-primary/20 -rotate-12"></div>
-                </div>
-                
-                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#010800]/10 to-[#010800]"></div>
-                
-                <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-                    <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-xl">
-                        <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
-                        <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-primary font-headline">Portal Perencana Keahlian</span>
-                    </div>
-                    <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold font-headline tracking-tight leading-[1.1]">
-                        <span class="text-[#FFD900]">Halo, teman perencana!</span> <br/>
-                        <span class="text-white typing-cursor" id="typing-text">Selamat datang di rumah kita</span>
-                    </h1>
-                </div>
-            </div>
-            
-            <div class="max-w-3xl mx-auto text-center">
-                <p class="text-base md:text-lg text-on-surface-variant font-light leading-relaxed">
-                    Capek lompat-lompat tab buat cari aplikasi, panduan, sampai kalender deadline? Di sini semua udah dirapihin jadi satu pintu, biar kerjamu makin sat-set, gak pakai ribet.
-                </p>
-                <p class="text-sm md:text-base text-white/50 font-light leading-relaxed mt-4">
-                    Yuk, kita mulai dari kenalan dulu sama dunia perencana di bawah ini 👇
-                </p>
-            </div>
-        </section>
+  // ===== SICANA =====
+  {
+    id: 'sicana-1', cat: 'SICANA',
+    q: 'Apa itu SICANA?',
+    a: `<p><b>SICANA</b> (Sistem Informasi Perencanaan) adalah aplikasi Biro Perencanaan Kejaksaan Agung RI yang berfungsi sebagai pusat informasi dan pengelolaan data perencanaan secara terintegrasi bagi satuan kerja pusat maupun daerah.</p>`
+  },
+  {
+    id: 'sicana-2', cat: 'SICANA',
+    q: 'Bagaimana cara login SICANA?',
+    a: `<p>Buka situs <a href="https://sicana.kejaksaan.go.id" target="_blank">https://sicana.kejaksaan.go.id</a>, masukkan Username dan Password menggunakan <b>6 digit kode satker</b>, lalu klik <b>"Masuk"</b>.</p>
+    <p class="note">⚠ Segera ubah password setelah login pertama kali untuk keamanan.</p>`
+  },
+  {
+    id: 'sicana-3', cat: 'SICANA',
+    q: 'Bagaimana tahapan penginputan data kinerja SAKIP di SICANA?',
+    a: `<p>Proses dilakukan melalui menu <b>"Tata Kelola AKIP"</b> pada bagian <b>"SAKIP"</b> dengan tiga langkah utama:</p>
 
-        <div class="section-divider opacity-10"></div>
+    <p><b>1. Input Target</b> (Menu Tata Kelola AKIP &gt; Perencanaan &gt; Pengukuran Kinerja)</p>
+    <ul>
+      <li>Unggah dokumen Perjanjian Kinerja (PK) Kasatker (jika belum ada).</li>
+      <li>Klik anak panah pada Jabatan Kasatker, masukkan seluruh target IKSS tahun 2026 sesuai dokumen PK, lalu klik <b>Simpan</b>.</li>
+    </ul>
 
-        <!-- Kamus Perencana Section (LIVE) -->
-        <section id="kamus-perencana" class="animate-reveal scroll-mt-24">
-            <div class="glass-panel rounded-[2rem] p-8 md:p-12 border border-white/5 relative overflow-hidden group">
-                <div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                <div class="relative z-10">
-                    <div class="flex flex-col md:flex-row md:items-start justify-between mb-12 gap-8">
-                        <div class="max-w-3xl">
-                            <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md">
-                                <span class="w-1.5 h-1.5 rounded-full bg-neon-accent animate-pulse"></span>
-                                <span class="text-[9px] font-bold uppercase tracking-widest text-neon-accent font-headline">Kenalan dulu</span>
-                            </div>
-                            <h3 class="text-3xl md:text-4xl font-extrabold font-headline mb-6 text-white">Kenalan dulu yuk, sama formasi perencana!</h3>
-                            <p class="text-on-surface-variant text-lg font-light leading-relaxed">
-                                Sebelum nyemplung ke aplikasi, mampir dulu ke kamus ini. Mulai dari tugas fungsi, PERJA, SOP, sampai contoh PK &amp; RK. Semuanya kami kupas tuntas biar kamu makin pede sama formasi sendiri. Punya referensi keren? Bagi-bagi juga ya!
-                            </p>
-                        </div>
-                        <div class="shrink-0 hidden lg:block">
-                            <div class="w-24 h-24 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center rotate-6 group-hover:rotate-0 transition-transform duration-700">
-                                <span class="material-symbols-outlined text-5xl text-primary/40 group-hover:text-primary transition-colors">auto_stories</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
-                        <a href="https://drive.google.com/drive/folders/1N2auyLcogovM31OzDa-18lT3BjgCvCU5?usp=sharing" target="_blank" class="p-6 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-4 group/item hover:bg-white/10 hover:border-primary/30 transition-all">
-                            <div class="flex items-start justify-between">
-                                <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                                    <span class="material-symbols-outlined text-2xl">collections_bookmark</span>
-                                </div>
-                                <span class="material-symbols-outlined text-white/20 group-hover/item:text-primary transition-colors">arrow_outward</span>
-                            </div>
-                            <h5 class="text-base font-bold font-headline leading-tight">Referensi PK &amp; RK Perencana</h5>
-                        </a>
-                        <a href="https://drive.google.com/drive/folders/1lplZaVqXsA0Vrk6HxcWHUtxNFmR81uul?usp=sharing" target="_blank" class="p-6 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-4 group/item hover:bg-white/10 hover:border-primary/30 transition-all">
-                            <div class="flex items-start justify-between">
-                                <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                                    <span class="material-symbols-outlined text-2xl">gavel</span>
-                                </div>
-                                <span class="material-symbols-outlined text-white/20 group-hover/item:text-primary transition-colors">arrow_outward</span>
-                            </div>
-                            <h5 class="text-base font-bold font-headline leading-tight">PERJA &amp; SOP Kejaksaan</h5>
-                        </a>
-                        <a href="https://drive.google.com/drive/folders/1zheJgbij-asMSZSOjxx3kCtQIW3r9iHd?usp=sharing" target="_blank" class="p-6 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-4 group/item hover:bg-white/10 hover:border-primary/30 transition-all">
-                            <div class="flex items-start justify-between">
-                                <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                                    <span class="material-symbols-outlined text-2xl">library_books</span>
-                                </div>
-                                <span class="material-symbols-outlined text-white/20 group-hover/item:text-primary transition-colors">arrow_outward</span>
-                            </div>
-                            <h5 class="text-base font-bold font-headline leading-tight">Tugas &amp; Fungsi Perencana</h5>
-                        </a>
-                    </div>
-                    <a href="https://docs.google.com/spreadsheets/d/1UtTdYHejXk78tHQxK5-Goh0x8crWR26q6p5asmTHfbw/edit?usp=sharing" target="_blank" class="btn-primary group gap-3 shadow-xl shadow-primary/10 h-14 w-full justify-center flex">
-                        <span class="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">groups</span>
-                        Daftar Perencana Se Indonesia
-                        <span class="material-symbols-outlined text-base ml-1 group-hover:translate-x-1 transition-transform">arrow_outward</span>
-                    </a>
-                </div>
-            </div>
-        </section>
+    <p><b>2. Input Capaian</b> (Menu Tata Kelola AKIP &gt; Pengukuran &gt; Bidang Kajati/Kajari/Kacabjari)</p>
+    <ul>
+      <li>Masukkan angka capaian kinerja pada seluruh IKSS sesuai dengan periode triwulan yang sedang berjalan, lalu klik <b>Simpan</b>.</li>
+    </ul>
 
-        <div class="section-divider opacity-10"></div>
+    <p><b>3. Input Analisis</b> (Menu Tata Kelola AKIP &gt; Pelaporan &gt; Capaian Kinerja)</p>
+    <ul>
+      <li>Pilih bidang yang sesuai, kemudian masukkan analisis capaian kinerja (faktor kendala dan upaya optimalisasi) sesuai dengan yang tertuang dalam Laporan Kinerja triwulan terkait.</li>
+      <li>Klik <b>Simpan</b> untuk setiap indikator yang telah dianalisis.</li>
+    </ul>`
+  },
+  {
+    id: 'sicana-4', cat: 'SICANA',
+    q: 'Apa saja cakupan menu SAKIP di SICANA?',
+    a: `<p>Menu ini berfungsi sebagai instrumen digital untuk pengelolaan akuntabilitas kinerja yang terdiri dari:</p>
+    <ul>
+      <li><b>Perencanaan:</b> Untuk input Renstra, IKU, Renja, RKAKL, DIPA, Rencana Aksi, serta unggah dokumen Perjanjian Kinerja (PK).</li>
+      <li><b>Pengukuran:</b> Untuk input angka realisasi kinerja (capaian) tiap indikator (IKSS) berdasarkan periode triwulan (TW1-TW4).</li>
+      <li><b>Pelaporan:</b> Untuk penyusunan Laporan Kinerja (LKjIP), input analisis capaian kinerja (faktor kendala &amp; solusi), serta dokumentasi Rapat Staf EKA.</li>
+      <li><b>Evaluasi:</b> Untuk pengarsipan Laporan Hasil Evaluasi (LHE AKIP), tindak lanjut rekomendasi (TL LHE), dan Monev Rencana Aksi.</li>
+    </ul>`
+  },
 
-        <!-- Applications Grid -->
-        <section id="aplikasi" class="grid grid-cols-12 gap-8 lg:gap-12 scroll-mt-24">
-            <!-- Internal Apps -->
-            <div class="col-span-12 lg:col-span-7 animate-reveal stagger-2">
-                <div class="mb-8">
-                    <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-primary/70 font-headline">Ruang kerja</span>
-                    <h3 class="text-2xl font-bold font-headline mb-3 mt-3">Nah, udah kenal? Mari kita masuk ke ruang kerjanya.</h3>
-                    <p class="text-on-surface-variant text-base font-light">Empat aplikasi internal Kejaksaan RI ini bakal jadi teman setiamu. Tinggal pilih mana yang lagi kamu butuhin, klik, login, beres. Gak perlu mikir dua kali.</p>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <a href="https://silabin.kejaksaan.go.id/" target="_blank" class="group p-6 rounded-[1.8rem] bg-surface-container/20 card-hover">
-                        <div class="flex items-start justify-between mb-8">
-                            <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-500">
-                                <span class="material-symbols-outlined text-3xl">description</span>
-                            </div>
-                            <span class="material-symbols-outlined text-white/20 group-hover:text-primary transition-colors">arrow_outward</span>
-                        </div>
-                        <h4 class="text-lg font-bold font-headline mb-1 text-white/90">SILABIN</h4>
-                        <p class="text-xs text-on-surface-variant/80 font-medium">Sistem Informasi Laporan Pembinaan</p>
-                    </a>
-                    <a href="https://sicana.kejaksaan.go.id/" target="_blank" class="group p-6 rounded-[1.8rem] bg-surface-container/20 card-hover">
-                        <div class="flex items-start justify-between mb-8">
-                            <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-500">
-                                <span class="material-symbols-outlined text-3xl">troubleshoot</span>
-                            </div>
-                            <span class="material-symbols-outlined text-white/20 group-hover:text-primary transition-colors">arrow_outward</span>
-                        </div>
-                        <h4 class="text-lg font-bold font-headline mb-1 text-white/90">SICANA & RB</h4>
-                        <p class="text-xs text-on-surface-variant/80 font-medium">Sistem Perencanaan & Reformasi Birokrasi</p>
-                    </a>
-                    <a href="https://simanris.kejaksaan.go.id/login" target="_blank" class="group p-6 rounded-[1.8rem] bg-surface-container/20 card-hover">
-                        <div class="flex items-start justify-between mb-8">
-                            <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-500">
-                                <span class="material-symbols-outlined text-3xl">security</span>
-                            </div>
-                            <span class="material-symbols-outlined text-white/20 group-hover:text-primary transition-colors">arrow_outward</span>
-                        </div>
-                        <h4 class="text-lg font-bold font-headline mb-1 text-white/90">SIMANRIS</h4>
-                        <p class="text-xs text-on-surface-variant/80 font-medium">Sinergi Informasi Manajemen Risiko</p>
-                    </a>
-                    <a href="https://birocana.kejaksaan.go.id/suncana/login.php" target="_blank" class="group p-6 rounded-[1.8rem] bg-surface-container/20 card-hover">
-                        <div class="flex items-start justify-between mb-8">
-                            <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-500">
-                                <span class="material-symbols-outlined text-3xl">edit_calendar</span>
-                            </div>
-                            <span class="material-symbols-outlined text-white/20 group-hover:text-primary transition-colors">arrow_outward</span>
-                        </div>
-                        <h4 class="text-lg font-bold font-headline mb-1 text-white/90">SUNCANA</h4>
-                        <p class="text-xs text-on-surface-variant/80 font-medium">Sistem Penyusunan Rencana Anggaran dan Program Kerja</p>
-                    </a>
-                </div>
-            </div>
+  // ===== REFORMASI BIROKRASI =====
+  {
+    id: 'rb-1', cat: 'Reformasi Birokrasi',
+    q: 'Bagaimana cara mengakses menu Reformasi Birokrasi di SICANA?',
+    a: `<p>Login ke SICANA, pilih <b>Reformasi Birokrasi</b>, lalu ada menu:</p>
+    <ul>
+      <li>Dashboard</li>
+      <li>Daftar layanan Survei Kepuasan Masyarakat (SKM) dan laporan per layanan</li>
+      <li>Menu <b>LKE-ZI</b> untuk Penilaian Mandiri pembangunan ZI menuju WBK/WBBM</li>
+      <li>Tautan survei persepsi anti korupsi dan kualitas pelayanan (<b>SPKP-SPAK</b>)</li>
+    </ul>`
+  },
+  {
+    id: 'rb-2', cat: 'Reformasi Birokrasi',
+    q: 'Apa sebenarnya tujuan utama dari Reformasi Birokrasi?',
+    a: `<p>Tujuan utamanya adalah menciptakan birokrasi pemerintah yang <b>profesional, berintegritas, dan melayani</b>. Secara nyata, RB ingin mengubah instansi pemerintah agar tidak lagi berbelit-belit, bebas dari korupsi (KKN), dan memberikan pelayanan publik yang berkualitas bagi masyarakat.</p>`
+  },
+  {
+    id: 'rb-3', cat: 'Reformasi Birokrasi',
+    q: 'Apa itu Zona Integritas (ZI) dan apa kaitannya dengan predikat WBK/WBBM?',
+    a: `<p><b>Zona Integritas</b> adalah predikat yang diberikan kepada instansi pemerintah yang pimpinan dan jajarannya berkomitmen mewujudkan RB. Jika sebuah kantor berhasil melakukan perubahan nyata pada 8 area tersebut, mereka akan diberikan predikat:</p>
+    <ul>
+      <li><b>WBK</b> (Wilayah Bebas dari Korupsi): Fokus pada pencegahan korupsi.</li>
+      <li><b>WBBM</b> (Wilayah Birokrasi Bersih dan Melayani): Fokus pada pelayanan publik yang sangat prima.</li>
+    </ul>`
+  },
+  {
+    id: 'rb-4', cat: 'Reformasi Birokrasi',
+    q: 'Apa fungsi utama dari Menu Pelayanan Publik (SKM)?',
+    a: `<p>Menu ini digunakan untuk mengelola akuntabilitas layanan Satker terhadap masyarakat.</p>
+    <ul>
+      <li><b>SKM - Daftar Layanan:</b> Digunakan untuk menginput jenis layanan apa saja yang ada di Kejaksaan Negeri (misal: Pelayanan Tilang, Izin Besuk, atau Pengambilan Barang Bukti).</li>
+      <li><b>SKM - Report per Layanan:</b> Digunakan untuk melihat hasil nilai kepuasan masyarakat secara spesifik pada tiap jenis layanan tersebut.</li>
+    </ul>`
+  },
+  {
+    id: 'rb-5', cat: 'Reformasi Birokrasi',
+    q: 'Apa kegunaan Link Survei Persepsi (SPKP-SPAK)?',
+    a: `<p>Link ini adalah instrumen eksternal untuk mengukur dua hal penting:</p>
+    <ul>
+      <li><b>SPKP</b> (Survei Persepsi Kualitas Pelayanan): Menilai seberapa baik layanan kita.</li>
+      <li><b>SPAK</b> (Survei Persepsi Anti Korupsi): Menilai apakah masih ada praktik pungli/gratifikasi.</li>
+    </ul>
+    <p><b>Tugas Perencana:</b> Memastikan link ini disebarkan kepada masyarakat pengguna layanan dan memantau jumlah responden agar memenuhi kuota penilaian.</p>`
+  },
+  {
+    id: 'rb-6', cat: 'Reformasi Birokrasi',
+    q: 'Apa yang harus dilakukan pada menu Penilaian Mandiri ZI?',
+    a: `<p>Perencana bersama Tim Kerja ZI melakukan <b>Self-Assessment</b>. Kamu harus menjawab pertanyaan-pertanyaan di Lembar Kerja Evaluasi (LKE) dan mengunggah bukti dukung (evidence) untuk <b>6 Area Perubahan</b>.</p>
+    <p>Nilai di menu ini akan menentukan apakah Satker kamu layak diusulkan meraih predikat WBK/WBBM.</p>`
+  },
 
-            <!-- External Apps Sidebar -->
-            <div class="col-span-12 lg:col-span-5 animate-reveal stagger-3">
-                <div class="glass-panel rounded-[2rem] p-8 h-full flex flex-col shadow-2xl shadow-black/40">
-                    <div class="mb-8">
-                        <div class="w-10 h-10 rounded-lg bg-neon-accent/10 flex items-center justify-center text-neon-accent mb-4">
-                            <span class="material-symbols-outlined text-2xl">captive_portal</span>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-neon-accent/70 font-headline">Lintas K/L</span>
-                        <h3 class="text-xl font-bold font-headline mb-3 mt-3 text-neon-accent">Perlu mampir ke kementerian lain?</h3>
-                        <p class="text-on-surface-variant text-sm font-light">Pintu cepatnya kami siapin di sini. Tinggal pilih tujuannya, klik, langsung cus.</p>
-                    </div>
-                    <div class="flex flex-wrap gap-3 flex-1 content-start mb-8">
-                        <a href="https://esr.menpan.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">e-SAKIP</a>
-                        <a href="https://e-monev.bappenas.go.id/portal/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">e-Monev BAPPENAS</a>
-                        <a href="https://sakti.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">SAKTI</a>
-                        <a href="https://monev.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105 text-center">NKA Monev Kemenkeu</a>
-                        <a href="https://indonesia2045.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">RPJN 2025-2045</a>
-                        <a href="https://myintress.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">IKPA MyIntress</a>
-                        <a href="http://spanint.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">IKPA OM-SPAN</a>
-                    </div>
-                    <div class="pt-6 border-t border-white/5">
-                        <div class="flex items-center gap-4 p-5 rounded-xl bg-white/5 border border-white/5">
-                            <span class="material-symbols-outlined text-primary text-xl animate-pulse">info</span>
-                            <p class="text-[11px] text-on-surface-variant/80 leading-relaxed">Akses portal ini disinkronisasi melalui SSO Pemerintah jika tersedia.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+  // ===== SOP AP =====
+  {
+    id: 'sop-1', cat: 'SOP AP',
+    q: 'Apa itu SOP AP di lingkungan Kejaksaan RI?',
+    a: `<p><b>SOP AP</b> adalah standar operasional yang berisi instruksi tertulis yang dibukukan mengenai berbagai proses penyelenggaraan administrasi pemerintahan. Tujuannya adalah untuk membangun ketatalaksanaan organisasi yang efektif, efisien, transparan, dan akuntabel sesuai dengan tugas pokok dan fungsi masing-masing satuan kerja.</p>`
+  },
+  {
+    id: 'sop-2', cat: 'SOP AP',
+    q: 'Apa saja prinsip utama dalam penyusunan SOP AP?',
+    a: `<p>Penyusunan SOP AP harus memenuhi prinsip:</p>
+    <ul>
+      <li>Kemudahan dan kejelasan</li>
+      <li>Efisiensi dan efektivitas</li>
+      <li>Keselarasan</li>
+      <li>Keterukuran</li>
+      <li>Dinamis (bisa berubah sesuai kebutuhan)</li>
+      <li>Berorientasi pada pengguna</li>
+      <li>Kepastian hukum</li>
+      <li>Kepatuhan hukum</li>
+    </ul>`
+  },
+  {
+    id: 'sop-3', cat: 'SOP AP',
+    q: 'Bagaimana cara menyusun dokumen SOP AP?',
+    a: `<p>Siklus penyusunannya terdiri dari empat tahapan utama:</p>
+    <ol>
+      <li><b>Persiapan:</b> Pembentukan tim dan identifikasi kebutuhan.</li>
+      <li><b>Penilaian Kebutuhan:</b> Menentukan SOP apa saja yang perlu dibuat atau diperbaiki.</li>
+      <li><b>Pengembangan:</b> Penulisan alur kerja, simbol flow chart, dan pengisian format standar.</li>
+      <li><b>Penerapan:</b> Pengesahan oleh pimpinan dan sosialisasi kepada seluruh pegawai.</li>
+    </ol>`
+  },
+  {
+    id: 'sop-4', cat: 'SOP AP',
+    q: 'Kapan monitoring dan evaluasi SOP AP harus dilakukan?',
+    a: `<p>Monitoring dan evaluasi dilakukan secara berkala, <b>minimal satu kali dalam satu tahun atau per semester</b>. Tujuannya adalah untuk memastikan bahwa SOP masih relevan dengan perkembangan teknologi, regulasi baru, atau perubahan struktur organisasi (restrukturisasi).</p>`
+  },
+  {
+    id: 'sop-5', cat: 'SOP AP',
+    q: 'Apa fungsi simbol flow chart dalam dokumen SOP AP?',
+    a: `<p>Simbol digunakan untuk menggambarkan alur aktivitas secara visual. Simbol utama meliputi:</p>
+    <ul>
+      <li><b>Kapsul (Terminator):</b> Untuk memulai dan mengakhiri prosedur.</li>
+      <li><b>Kotak (Process):</b> Untuk menggambarkan aktivitas eksekusi.</li>
+      <li><b>Belah Ketupat (Decision):</b> Untuk pengambilan keputusan atau percabangan alur "Ya/Tidak".</li>
+      <li><b>Anak Panah:</b> Untuk menunjukkan arah aliran dokumen atau aktivitas.</li>
+    </ul>`
+  },
 
-        <!-- Drive/Resources Section -->
-        <section id="panduan" class="animate-reveal scroll-mt-24">
-            <div class="relative p-[1px] rounded-[2rem] bg-gradient-to-br from-primary/20 via-transparent to-green-500/10">
-                <div class="bg-surface-container/40 rounded-[1.95rem] p-8 md:p-12 flex flex-col items-center justify-center gap-10 backdrop-blur-2xl text-center">
-                    <div class="relative z-10 max-w-2xl">
-                        <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-primary/70 font-headline">Bekal kerja</span>
-                        <h3 class="text-2xl md:text-4xl font-extrabold font-headline mb-4 mt-3">Aplikasinya udah kenal, sekarang format laporannya!</h3>
-                        <p class="text-on-surface-variant text-base md:text-lg font-light leading-relaxed">Template, panduan, sampai cover &amp; format SAKIP. Semuanya kami kumpulin biar kamu tinggal pakai. Gak perlu lagi nyari sana-sini.</p>
-                    </div>
-                    <div class="relative z-10 flex flex-col sm:flex-row gap-5 w-full justify-center max-w-xl">
-                        <a class="btn-primary group gap-4 px-10 h-14 w-full sm:w-auto" href="https://drive.google.com/drive/folders/1pVzQUj2RJ7Zxi28NK616EFvXSOPR29ES?usp=sharing" target="_blank">
-                            <span class="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform">cloud_download</span>
-                            <span class="text-base">Cek panduannya</span>
-                        </a>
-                        <a class="btn-secondary group gap-4 px-10 h-14 w-full sm:w-auto" href="https://linktr.ee/perencanakeahlian" target="_blank">
-                            <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">folder_shared</span>
-                            <span class="text-base">Cek cover & format SAKIP</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
+  // ===== SUNCANA =====
+  {
+    id: 'suncana-1', cat: 'SUNCANA',
+    q: 'Apa itu SUNCANA?',
+    a: `<p><b>SUNCANA</b> adalah aplikasi berbasis web milik Biro Perencanaan Kejaksaan Agung Republik Indonesia yang digunakan untuk mendukung proses pengelolaan usulan perencanaan dan anggaran di lingkungan Kejaksaan RI. Nama "SUNCANA" merupakan singkatan dari <b>Sistem Usulan Cana</b> (Perencanaan/Anggaran).</p>`
+  },
+  {
+    id: 'suncana-2', cat: 'SUNCANA',
+    q: 'Siapa yang mengelola SUNCANA?',
+    a: `<p>SUNCANA dikelola oleh <b>Biro Perencanaan (Birocana) Kejaksaan Agung Republik Indonesia</b>, yang bertugas melaksanakan pengelolaan data, penyusunan rencana anggaran dan program kerja, pemantauan dan evaluasi kinerja, serta pengembangan organisasi di lingkungan Kejaksaan.</p>`
+  },
+  {
+    id: 'suncana-3', cat: 'SUNCANA',
+    q: 'Bagaimana cara masuk (login) ke SUNCANA?',
+    a: `<p>Pengguna dapat mengakses halaman login di alamat: <a href="https://birocana.kejaksaan.go.id/suncana/login" target="_blank">https://birocana.kejaksaan.go.id/suncana/login</a></p>
+    <p>Kemudian masukkan username dan password yang telah diberikan oleh administrator/Biro Perencanaan Kejaksaan Agung.</p>`
+  },
 
-        <!-- Calendar Section -->
-        <section id="kalender" class="grid grid-cols-12 gap-8 lg:gap-16 scroll-mt-24">
-            <div class="col-span-12 lg:col-span-4 flex flex-col justify-center animate-reveal">
-                <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6">
-                    <span class="material-symbols-outlined text-3xl">event_upcoming</span>
-                </div>
-                <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-primary/70 font-headline mb-3 inline-block">Jaga ritme</span>
-                <h3 class="text-3xl font-extrabold font-headline mb-6 leading-tight text-white">Biar nggak kaget pas deadline mepet</h3>
-                <p class="text-on-surface-variant mb-8 text-base font-light leading-relaxed">Semua tenggat penting udah kami susun rapi di kalender ini. Simpan ke Google Calendar-mu, biar HP yang ingetin. Kamu tinggal fokus kerja.</p>
-                <div class="flex flex-col gap-4">
-                    <a href="https://bit.ly/SimpankeKalendermu" target="_blank" class="btn-primary group gap-3 shadow-xl shadow-primary/10 h-14">
-                        <span class="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">calendar_add_on</span>
-                        Simpan ke Google Kalender!
-                    </a>
-                    <a class="text-white/60 text-center text-xs font-bold uppercase tracking-widest hover:text-primary transition-all flex items-center justify-center gap-3 py-3 rounded-xl hover:bg-white/5" href="https://bit.ly/WebKalenderPerencana" target="_blank">
-                        Cek tampilan penuh kalendar
-                        <span class="material-symbols-outlined text-base">open_in_new</span>
-                    </a>
-                </div>
-            </div>
-            <div class="col-span-12 lg:col-span-8 animate-reveal">
-                <div class="glass-panel rounded-[2rem] p-4 shadow-2xl relative overflow-hidden group">
-                    <div class="calendar-frame-container">
-                        <iframe src="https://embed.styledcalendar.com/#OlkGF8UsvN8yj5imHuDL" title="Styled Calendar" class="styled-calendar-container" style="width: 100%; height: 100%; border: none;" data-cy="calendar-embed-iframe"></iframe>
-                    </div>
-                    
-                    <div class="flex items-center gap-4 text-on-surface-variant/80 italic text-[11px] mt-6 bg-black/40 p-4 rounded-xl border border-white/5">
-                        <span class="material-symbols-outlined text-primary text-lg">info</span>
-                        <p>Kalender lebih asik dibuka di laptop. Kalau di HP, klik tombol di atas untuk tampilan penuh ya!</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+  // ===== e-SAKIP Reviu (ESR) =====
+  {
+    id: 'esr-1', cat: 'e-SAKIP Reviu (ESR)',
+    q: 'Apa itu aplikasi esr.menpan.go.id (e-SAKIP Reviu)?',
+    a: `<p><b>ESR</b> adalah aplikasi yang dibangun oleh Kementerian PANRB untuk meningkatkan kualitas akuntabilitas kinerja instansi pemerintah. Aplikasi ini digunakan sebagai wadah untuk mengunggah dokumen SAKIP secara nasional guna proses Reviu dan Evaluasi oleh tim evaluator Kementerian PANRB.</p>`
+  },
+  {
+    id: 'esr-2', cat: 'e-SAKIP Reviu (ESR)',
+    q: 'Apa saja dokumen yang wajib diunggah ke e-SAKIP Reviu?',
+    a: `<p>Dokumen yang diunggah mencakup seluruh siklus SAKIP, antara lain:</p>
+    <ul>
+      <li><b>Perencanaan:</b> RPJMD/Renstra, IKU, dan RKPD/Renja.</li>
+      <li><b>Pengukuran:</b> Perjanjian Kinerja (PK) dari level pimpinan hingga eselon di bawahnya.</li>
+      <li><b>Pelaporan:</b> Laporan Kinerja Instansi Pemerintah (LKjIP).</li>
+      <li><b>Evaluasi Internal:</b> Laporan Hasil Evaluasi (LHE) internal dan matriks tindak lanjut rekomendasi.</li>
+    </ul>`
+  },
+  {
+    id: 'esr-3', cat: 'e-SAKIP Reviu (ESR)',
+    q: 'Bagaimana cara akses e-SAKIP Reviu?',
+    a: `<p>Akses dilakukan melalui tautan <a href="https://esr.menpan.go.id/" target="_blank">https://esr.menpan.go.id/</a> menggunakan username dan password yang diberikan oleh bagian organisasi/perencanaan instansi.</p>`
+  },
+  {
+    id: 'esr-4', cat: 'e-SAKIP Reviu (ESR)',
+    q: 'Apa peran penting Perencana dalam pengelolaan e-SAKIP Reviu?',
+    a: `<p>Perencana berperan sebagai <b>"penjaga pintu" data</b>. Tugasnya bukan hanya mengunggah file, tetapi memastikan penjejangan kinerja (<i>cascading</i>) dalam dokumen yang diunggah sudah logis (misalnya: target di PK sesuai dengan IKU dan Renstra).</p>
+    <p>Perencana juga harus memantau notifikasi di ESR agar setiap catatan dari evaluator pusat bisa segera ditindaklanjuti sebelum tenggat waktu penilaian berakhir.</p>`
+  },
 
-        <!-- FAQ Section -->
-        <section id="faq" class="animate-reveal scroll-mt-24">
-            <div class="text-center mb-12">
-                <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md">
-                    <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-                    <span class="text-[9px] font-bold uppercase tracking-widest text-primary font-headline">Masih penasaran?</span>
-                </div>
-                <h3 class="text-3xl md:text-4xl font-extrabold font-headline mb-4 text-white">Tanya-jawab sebelum nanya ke grup</h3>
-                <p class="text-on-surface-variant text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto">Pertanyaan-pertanyaan paling sering muncul soal formasi, tugas, dan teknis kerjaan udah kami rangkum di sini. Cek dulu, siapa tau jawabannya udah ada.</p>
-            </div>
+  // ===== SAKTI =====
+  {
+    id: 'sakti-1', cat: 'SAKTI',
+    q: 'Apa itu aplikasi SAKTI?',
+    a: `<p><b>SAKTI</b> adalah aplikasi terintegrasi yang digunakan oleh seluruh instansi pemerintah untuk mengelola siklus keuangan negara, mulai dari penganggaran (perencanaan), pelaksanaan, hingga pelaporan/pertanggungjawaban anggaran dalam satu platform (database terpusat).</p>`
+  },
+  {
+    id: 'sakti-2', cat: 'SAKTI',
+    q: 'Apa peran utama Perencana di aplikasi SAKTI?',
+    a: `<p>Perencana fokus pada <b>Modul Penganggaran</b>. Tugasnya meliputi:</p>
+    <ul>
+      <li>Penyusunan/revisi anggaran</li>
+      <li>Penginputan RKA-KL</li>
+      <li>Pembuatan detail belanja (RAB)</li>
+      <li>Proses pengiriman <b>ADK</b> (Arsip Data Komputer) ke sistem untuk divalidasi menjadi DIPA</li>
+    </ul>`
+  },
+  {
+    id: 'sakti-3', cat: 'SAKTI',
+    q: 'Bagaimana cara mengakses SAKTI?',
+    a: `<p>Akses dilakukan melalui tautan <a href="https://sakti.kemenkeu.go.id/" target="_blank">https://sakti.kemenkeu.go.id/</a>. Login menggunakan user dan password yang telah didaftarkan melalui SK pimpinan satuan kerja (biasanya terdiri dari <b>operator, validator/pemeriksa, dan approver/KPA</b>).</p>`
+  },
+  {
+    id: 'sakti-4', cat: 'SAKTI',
+    q: 'Apa itu "Revisi Anggaran" di SAKTI dan kapan dilakukan?',
+    a: `<p><b>Revisi anggaran</b> adalah proses mengubah detail belanja yang sudah ada di DIPA. Ini dilakukan jika ada pergeseran antar-akun, perubahan target output, atau kebutuhan mendesak di Satker.</p>
+    <p>Perencana melakukan perubahan di <b>Modul Penganggaran</b>, lalu mengirimkan <b>ADK Revisi</b> untuk disetujui oleh Kanwil DJPb atau Direktorat Jenderal Anggaran.</p>`
+  },
+  {
+    id: 'sakti-5', cat: 'SAKTI',
+    q: 'Apa hubungan SAKTI dengan aplikasi pelaporan lain (seperti e-Monev atau SICANA)?',
+    a: `<p>SAKTI adalah <b>sumber data keuangan utama</b> (realisasi anggaran). Angka realisasi yang muncul di e-Monev Bappenas atau SICANA biasanya ditarik dari data SAKTI.</p>
+    <p class="note">⚠ Oleh karena itu, jika data di SAKTI belum update atau ada kesalahan input akun, maka laporan kinerja lainnya juga akan ikut tidak akurat.</p>`
+  },
 
-            <!-- Category Filter Pills -->
-            <div id="faq-categories" class="flex flex-wrap gap-2 mb-8 justify-center"></div>
+  // ===== EMONEV BAPPENAS =====
+  {
+    id: 'emonev-1', cat: 'e-Monev Bappenas',
+    q: 'Apa itu aplikasi e-Monev Bappenas?',
+    a: `<p><b>e-Monev Bappenas (Generasi 4)</b> adalah aplikasi berbasis web yang digunakan untuk melakukan pemantauan dan evaluasi pelaksanaan rencana kerja kementerian/lembaga (satuan kerja) guna memastikan kesesuaian antara realisasi dengan target yang telah ditetapkan.</p>`
+  },
+  {
+    id: 'emonev-2', cat: 'e-Monev Bappenas',
+    q: 'Bagaimana cara mengakses dan login ke aplikasi e-Monev Bappenas?',
+    a: `<p>Buka tautan <a href="https://e-monev.bappenas.go.id" target="_blank">https://e-monev.bappenas.go.id</a>, klik menu <b>"Masuk"</b>, lalu masukkan username dan password akun Satuan Kerja Anda. Pastikan untuk mengisi kode captcha yang muncul sebelum mengeklik tombol <b>"Login"</b>.</p>`
+  },
+  {
+    id: 'emonev-3', cat: 'e-Monev Bappenas',
+    q: 'Apa tugas utama akun Satuan Kerja (K8) di aplikasi e-Monev Bappenas?',
+    a: `<p>Tugas utamanya adalah melakukan pelaporan capaian secara berkala, yang meliputi:</p>
+    <ul>
+      <li>Input realisasi volume keluaran (RO)</li>
+      <li>Progres capaian komponen</li>
+      <li>Realisasi anggaran</li>
+      <li>Memberikan keterangan terkait kendala atau faktor pendukung pelaksanaan kegiatan</li>
+    </ul>`
+  },
+  {
+    id: 'emonev-4', cat: 'e-Monev Bappenas',
+    q: 'Bagaimana cara melakukan pelaporan capaian di aplikasi e-Monev Bappenas?',
+    a: `<p>Masuk ke menu <b>"Pelaporan"</b>, pilih tahun anggaran dan periode bulan/triwulan yang diinginkan, klik pada baris rincian output/komponen, masukkan data realisasi fisik dan anggaran, lalu klik tombol <b>"Simpan"</b> agar data dapat divalidasi oleh tingkat di atasnya.</p>`
+  },
+  {
+    id: 'emonev-5', cat: 'e-Monev Bappenas',
+    q: 'Bagaimana cara mengunduh laporan hasil input data ke format Excel?',
+    a: `<p>Klik menu <b>"Generate"</b> pada bagian sidebar, pilih <b>"Unduh Excel"</b>, kemudian pilih menu <b>"Komponen Satker"</b>. Tentukan nomenklatur Satuan Kerja dan periode bulan yang diinginkan, lalu klik tombol <b>"Unduh Excel"</b> untuk menyimpan file ke perangkat Anda.</p>`
+  },
 
-            <!-- FAQ List -->
-            <div id="faq-list" class="space-y-3 max-w-4xl mx-auto"></div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="py-16 px-6 md:px-12 w-full bg-[#010800] border-t border-white/5">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
-            <div class="flex flex-col gap-4 max-w-lg text-center md:text-left">
-                <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
-                    <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                        <span class="material-symbols-outlined text-on-primary text-xl font-bold">account_balance</span>
-                    </div>
-                    <span class="text-[10px] font-headline font-black tracking-widest text-white uppercase">GanaSatya Dhiracana</span>
-                </div>
-                <p class="text-[10px] font-medium text-neon-accent/60 leading-relaxed uppercase tracking-wider">
-                    Dibuat khusus untuk 500+ perencana keahlian kejaksaan RI. Selamat mengabdi, Teman!
-                </p>
-                <p class="text-[9px] text-white/20 uppercase tracking-[0.4em]">© 2026 ORI RINALDI • VERSI 2.0</p>
-            </div>
-            <div class="flex flex-wrap justify-center gap-8 md:gap-12">
-                <a class="text-[9px] text-white/40 hover:text-primary transition-all font-bold uppercase tracking-[0.2em]" href="#">Kebijakan</a>
-                <a class="text-[9px] text-white/40 hover:text-primary transition-all font-bold uppercase tracking-[0.2em]" href="#">Ketentuan</a>
-                <a class="text-[9px] text-white/40 hover:text-primary transition-all font-bold uppercase tracking-[0.2em]" href="#">Bantuan</a>
-            </div>
-        </div>
-    </footer>
-
-    <script is:inline async type="module" src="https://embed.styledcalendar.com/assets/parent-window.js"></script>
-    <script is:inline src="/faq-data.js"></script>
-    <script is:inline>
-        // FAQ Renderer
-        (function() {
-            const data = window.FAQ_DATA || [];
-            const cats = Array.from(new Set(data.map(f => f.cat)));
-            let activeCat = 'Tugas & Fungsi Perencana';
-            let openId = null;
-
-            const catEl = document.getElementById('faq-categories');
-            const listEl = document.getElementById('faq-list');
-            if (!catEl || !listEl) return;
-
-            function renderCats() {
-                catEl.innerHTML = cats.map(c => `
-                    <button data-cat="${c}" class="faq-pill ${c === activeCat ? 'active' : ''}">${c}</button>
-                `).join('');
-                catEl.querySelectorAll('button').forEach(b => {
-                    b.onclick = () => { activeCat = b.dataset.cat; openId = null; renderCats(); renderList(); };
-                });
-            }
-
-            function renderList() {
-                const filtered = activeCat === 'Semua' ? data : data.filter(f => f.cat === activeCat);
-                listEl.innerHTML = filtered.map(f => `
-                    <div class="faq-item ${openId === f.id ? 'open' : ''}" data-id="${f.id}">
-                        <button class="faq-q">
-                            <div class="faq-q-inner">
-                                <span class="faq-q-badge">Q</span>
-                                <div>
-                                    <span class="faq-q-cat">${f.cat}</span>
-                                    <h4 class="faq-q-text">${f.q}</h4>
-                                </div>
-                            </div>
-                            <span class="material-symbols-outlined faq-chevron">expand_more</span>
-                        </button>
-                        <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
-                    </div>
-                `).join('');
-                listEl.querySelectorAll('.faq-item').forEach(it => {
-                    it.querySelector('.faq-q').onclick = () => {
-                        const id = it.dataset.id;
-                        openId = (openId === id) ? null : id;
-                        renderList();
-                    };
-                });
-            }
-
-            renderCats();
-            renderList();
-        })();
-    </script>
-    <script is:inline>
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                e.preventDefault();
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    const offset = 80;
-                    const elementPosition = targetElement.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        // Typing Effect Logic
-        const typingElement = document.getElementById('typing-text');
-        const words = [
-            "Semangat mengabdi hari ini",
-            "Udah makan apa belom?",
-            "Jangan lupa bahagiain diri, ya!",
-            "Healing-healing dlu deh sebelum kerja!"
-        ];
-        
-        let wordIndex = 0;
-        let charIndex = 0;
-        let isDeleting = false;
-        let typeSpeed = 100;
-
-        function type() {
-            const currentWord = words[wordIndex];
-            if(!typingElement) return;
-            
-            if (isDeleting) {
-                typingElement.textContent = currentWord.substring(0, charIndex - 1);
-                charIndex--;
-                typeSpeed = 50;
-            } else {
-                typingElement.textContent = currentWord.substring(0, charIndex + 1);
-                charIndex++;
-                typeSpeed = 100;
-            }
-
-            if (!isDeleting && charIndex === currentWord.length) {
-                isDeleting = true;
-                typeSpeed = 2000;
-            } else if (isDeleting && charIndex === 0) {
-                isDeleting = false;
-                wordIndex = (wordIndex + 1) % words.length;
-                typeSpeed = 500;
-            }
-
-            setTimeout(type, typeSpeed);
-        }
-
-        window.onload = () => {
-            type();
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-reveal');
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('section').forEach(section => {
-            observer.observe(section);
-        });
-    </script>
-    <Analytics />
-</body>
-</html>
-
+  // ===== MY-INTRESS =====
+  {
+    id: 'myintress-1', cat: 'MY-INTRESS',
+    q: 'Apa itu MyIntress?',
+    a: `<p><b>MyIntress</b> adalah sistem/aplikasi yang digunakan untuk mendukung pengelolaan data, administrasi, monitoring, dan pelaporan secara digital sesuai kebutuhan instansi atau organisasi.</p>
+    <p><b>Fungsi utama MyIntress:</b></p>
+    <ul>
+      <li>Pengelolaan data secara terintegrasi</li>
+      <li>Monitoring kegiatan dan capaian</li>
+      <li>Penyusunan laporan</li>
+      <li>Penyimpanan dokumen digital</li>
+      <li>Mempermudah proses administrasi dan koordinasi</li>
+    </ul>`
+  },
+  {
+    id: 'myintress-2', cat: 'MY-INTRESS',
+    q: 'Bagaimana cara login ke MyIntress?',
+    a: `<p>Pengguna dapat login menggunakan:</p>
+    <ul>
+      <li><b>Username:</b> NIK/NIP/Username Kasubagbin atau yang telah didaftarkan</li>
+      <li><b>Password:</b> Sesuai password yang telah didaftarkan</li>
+    </ul>`
+  },
+  {
+    id: 'myintress-3', cat: 'MY-INTRESS',
+    q: 'Di mana dapat menemukan data Capaian IKPA?',
+    a: `<p>Pada dashboard terdapat kolom <b>Capaian IKPA</b>, kemudian klik menu <b>"Selengkapnya"</b>. Pada menu tersebut tersedia seluruh data yang dibutuhkan untuk pengisian LKjIP.</p>`
+  }
+];
