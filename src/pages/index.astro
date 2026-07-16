@@ -807,294 +807,129 @@ import Analytics from '@vercel/analytics/astro'
         });
     </script>
     <Analytics />
-<!-- === FITUR GANA AI (Mulai dari sini, paste sebelum tag </body>) === -->
-<!-- PERBAIKAN UTAMA: Tambahkan is:inline agar Astro tidak memblokir CSS untuk elemen Javascript -->
-<style is:inline>
-  .ai-widget-container {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 99999;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  }
-
-  .ai-chat-box {
-    display: none;
-    width: 360px;
-    height: 520px;
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-    flex-direction: column;
-    overflow: hidden;
-    margin-bottom: 20px;
-    transform: translateY(20px);
-    opacity: 0;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    border: 1px solid #e2e8f0;
-  }
-
-  .ai-chat-box.active {
-    display: flex;
-    transform: translateY(0);
-    opacity: 1;
-  }
-
-  .ai-header {
-    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-    color: white;
-    padding: 18px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .ai-header-title {
-    font-weight: 600;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .ai-close-btn {
-    background: rgba(255, 255, 255, 0.15);
-    border: none;
-    color: white;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s ease;
-  }
-
-  .ai-close-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-  }
-
-  .ai-body {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    background: #f8fafc;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .chat-bubble {
-    max-width: 85%;
-    padding: 14px 18px;
-    border-radius: 18px;
-    font-size: 14.5px;
-    line-height: 1.5;
-    word-wrap: break-word;
-  }
-
-  /* Warna Balasan AI (GANA AI) - Terang dengan Teks Hitam */
-  .chat-bot {
-    background: #ffffff;
-    color: #0f172a !important; /* Teks sangat gelap agar kontras */
-    align-self: flex-start;
-    border-bottom-left-radius: 4px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    border: 1px solid #cbd5e1;
-  }
-
-  /* Warna Chat User - Hijau dengan Teks Putih */
-  .chat-user {
-    background: #16a34a;
-    color: #ffffff !important;
-    align-self: flex-end;
-    border-bottom-right-radius: 4px;
-    box-shadow: 0 2px 6px rgba(22, 163, 74, 0.2);
-  }
-
-  .ai-footer {
-    padding: 16px;
-    background: #ffffff;
-    border-top: 1px solid #e2e8f0;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .ai-input {
-    flex: 1;
-    padding: 12px 18px;
-    border: 1px solid #cbd5e1;
-    border-radius: 99px;
-    outline: none;
-    font-size: 14.5px;
-    transition: border 0.2s;
-    background: #ffffff;
-    color: #0f172a !important; /* Teks Hitam Pekat */
-  }
-
-  .ai-input::placeholder {
-    color: #64748b !important;
-  }
-
-  .ai-input:focus {
-    border-color: #16a34a;
-    box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
-  }
-
-  .ai-send-btn {
-    background: #16a34a;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s, background 0.2s;
-  }
-
-  .ai-send-btn:hover {
-    transform: scale(1.05);
-    background: #15803d;
-  }
-
-  .ai-fab {
-    width: 64px;
-    height: 64px;
-    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-    border-radius: 50%;
-    box-shadow: 0 8px 24px rgba(22, 163, 74, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: white;
-    margin-left: auto;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-
-  .ai-fab:hover {
-    transform: scale(1.1);
-  }
+<!-- === FITUR GANABOT V2 (Tailwind & Glassmorphism) === -->
+<div id="ai-widget-wrapper" class="fixed bottom-6 right-6 z-[90] font-sans">
   
-  .typing-indicator {
-    display: flex;
-    gap: 5px;
-    padding: 16px 20px;
-  }
-  
-  .typing-indicator span {
-    width: 6px;
-    height: 6px;
-    background: #94a3b8;
-    border-radius: 50%;
-    animation: typing 1.2s infinite;
-  }
-  
-  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-  
-  @keyframes typing {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-  }
-</style>
-
-<div class="ai-widget-container">
-  <div class="ai-chat-box" id="ai-chat-box">
-    <div class="ai-header">
-      <div class="ai-header-title">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
-        GANA AI
+  <!-- Kotak Chat Panel (Gaya Glassmorphism persis seperti web Anda) -->
+  <div id="ai-chat-box" class="glass-panel w-[340px] sm:w-[380px] h-[520px] rounded-[2rem] flex-col mb-4 shadow-2xl shadow-black/80 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none hidden border border-white/10">
+    
+    <!-- Header -->
+    <div class="flex justify-between items-center p-5 border-b border-white/10 bg-black/20">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+          <span class="material-symbols-outlined text-sm">smart_toy</span>
+        </div>
+        <span class="font-headline font-bold text-white tracking-wide text-sm">GanaBot AI</span>
       </div>
-      <button class="ai-close-btn" id="ai-close-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      <button id="ai-close-btn" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors">
+        <span class="material-symbols-outlined text-sm">close</span>
       </button>
     </div>
     
-    <div class="ai-body" id="ai-chat-body">
-      <div class="chat-bubble chat-bot">
-        Halo teman perencana! Saya GANA AI. Ada yang bisa saya bantu hari ini terkait pekerjaan perencanaanmu?
+    <!-- Body Chat -->
+    <div id="ai-chat-body" class="flex-1 p-5 overflow-y-auto flex flex-col gap-4 scroll-smooth">
+      <div class="self-start max-w-[85%] p-3.5 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 text-sm text-white/90 leading-relaxed shadow-lg shadow-black/20">
+        Halo teman perencana! Saya GanaBot. Ada yang bisa saya bantu hari ini terkait pekerjaan perencanaanmu?
       </div>
     </div>
 
-    <div class="ai-footer">
-      <input type="text" id="ai-chat-input" class="ai-input" placeholder="Ketik pertanyaan di sini..." autocomplete="off">
-      <button id="ai-send-btn" class="ai-send-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    <!-- Footer Input -->
+    <div class="p-4 border-t border-white/10 bg-black/20 flex gap-2 items-center">
+      <input type="text" id="ai-chat-input" class="flex-1 bg-black/40 border border-white/10 rounded-full px-4 py-3 text-sm text-white focus:outline-none focus:border-primary/50 placeholder-white/30 transition-colors" placeholder="Tanya GanaBot..." autocomplete="off">
+      <button id="ai-send-btn" class="w-11 h-11 rounded-full bg-primary text-on-primary flex items-center justify-center hover:scale-105 transition-transform shrink-0 shadow-lg shadow-primary/20">
+        <span class="material-symbols-outlined text-lg">send</span>
       </button>
     </div>
   </div>
 
-  <div class="ai-fab" id="ai-fab">
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
-  </div>
+  <!-- Tombol Melayang (FAB) -->
+  <button id="ai-fab" class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-lg shadow-primary/30 hover:scale-110 transition-transform ml-auto">
+    <span class="material-symbols-outlined text-2xl">forum</span>
+  </button>
 </div>
 
 <script is:inline>
-  const apiKey = 'AQ.Ab8RN6L5uCizV4R-oXOEKjXJsadez6k46Tf9oD8HGmdhL0bGLA';
-  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
+  // API Key & Setup Gemini
+  const AI_API_KEY = 'AQ.Ab8RN6L5uCizV4R-oXOEKjXJsadez6k46Tf9oD8HGmdhL0bGLA';
+  const AI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${AI_API_KEY}`;
 
-  const fab = document.getElementById('ai-fab');
-  const chatBox = document.getElementById('ai-chat-box');
-  const closeBtn = document.getElementById('ai-close-btn');
-  const chatBody = document.getElementById('ai-chat-body');
-  const chatInput = document.getElementById('ai-chat-input');
-  const sendBtn = document.getElementById('ai-send-btn');
+  const aiFab = document.getElementById('ai-fab');
+  const aiChatBox = document.getElementById('ai-chat-box');
+  const aiCloseBtn = document.getElementById('ai-close-btn');
+  const aiChatBody = document.getElementById('ai-chat-body');
+  const aiChatInput = document.getElementById('ai-chat-input');
+  const aiSendBtn = document.getElementById('ai-send-btn');
 
-  // Buka Chat Box
-  fab.addEventListener('click', () => {
-    chatBox.classList.add('active');
-    fab.style.display = 'none';
-    setTimeout(() => { chatInput.focus(); }, 100);
+  // Buka Chat
+  aiFab.addEventListener('click', () => {
+    aiChatBox.classList.remove('hidden');
+    setTimeout(() => {
+      aiChatBox.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+      aiChatBox.classList.add('opacity-100', 'translate-y-0', 'flex');
+      aiFab.classList.add('hidden');
+      aiChatInput.focus();
+    }, 10);
   });
 
-  // Tutup Chat Box
-  closeBtn.addEventListener('click', () => {
-    chatBox.classList.remove('active');
-    setTimeout(() => { fab.style.display = 'flex'; }, 300);
+  // Tutup Chat
+  aiCloseBtn.addEventListener('click', () => {
+    aiChatBox.classList.remove('opacity-100', 'translate-y-0');
+    aiChatBox.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+    setTimeout(() => {
+      aiChatBox.classList.add('hidden');
+      aiChatBox.classList.remove('flex');
+      aiFab.classList.remove('hidden');
+    }, 300);
   });
 
-  function addMessage(text, isUser = false) {
+  // Tambah Balon Chat ke UI menggunakan Tailwind
+  function aiAddMessage(text, isUser = false) {
     const div = document.createElement('div');
-    div.className = `chat-bubble ${isUser ? 'chat-user' : 'chat-bot'}`;
+    
+    if (isUser) {
+      // Warna User (Kuning Primary khas web Anda)
+      div.className = 'self-end max-w-[85%] p-3.5 rounded-2xl rounded-tr-sm bg-primary text-on-primary font-bold text-sm shadow-lg shadow-primary/20 break-words';
+    } else {
+      // Warna Bot (Glassmorphism Gelap khas web Anda)
+      div.className = 'self-start max-w-[85%] p-3.5 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 text-sm text-white/90 leading-relaxed shadow-lg shadow-black/20 break-words';
+    }
+    
     div.innerHTML = text.replace(/\n/g, '<br>');
-    chatBody.appendChild(div);
-    chatBody.scrollTop = chatBody.scrollHeight;
+    aiChatBody.appendChild(div);
+    aiChatBody.scrollTop = aiChatBody.scrollHeight;
   }
 
-  function showTyping() {
+  function aiShowTyping() {
     const div = document.createElement('div');
-    div.className = 'chat-bubble chat-bot typing-indicator';
-    div.id = 'ai-typing';
-    div.innerHTML = '<span></span><span></span><span></span>';
-    chatBody.appendChild(div);
-    chatBody.scrollTop = chatBody.scrollHeight;
+    div.id = 'ai-typing-indicator';
+    div.className = 'self-start p-3.5 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 flex gap-1.5 items-center';
+    div.innerHTML = `
+      <div class="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+      <div class="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+      <div class="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+    `;
+    aiChatBody.appendChild(div);
+    aiChatBody.scrollTop = aiChatBody.scrollHeight;
   }
 
-  function hideTyping() {
-    const typing = document.getElementById('ai-typing');
+  function aiHideTyping() {
+    const typing = document.getElementById('ai-typing-indicator');
     if (typing) typing.remove();
   }
 
-  async function sendMessage() {
-    const text = chatInput.value.trim();
+  // Fungsi Panggil API Gemini
+  async function aiSendMessage() {
+    const text = aiChatInput.value.trim();
     if (!text) return;
 
-    // Kirim pesan User
-    addMessage(text, true);
-    chatInput.value = '';
-    showTyping();
+    aiAddMessage(text, true); // Menampilkan chat yang Anda ketik
+    aiChatInput.value = '';
+    aiShowTyping();           // Menampilkan titik-titik loading
 
-    const systemPrompt = "Kamu adalah GANA AI, asisten AI pintar, ramah, dan humble untuk Biro Perencanaan Kejaksaan RI. Sapa pengguna dengan sebutan 'teman perencana'. Jawab pertanyaan terkait perencanaan atau umum dengan singkat, padat, ramah, dan solutif. Pertanyaan dari teman perencana: ";
+    const systemPrompt = "Kamu adalah GanaBot, asisten AI pintar untuk Biro Perencanaan Kejaksaan RI. Sapa dengan 'teman perencana'. Jawab singkat, padat, ramah. Pertanyaan: ";
 
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch(AI_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1103,26 +938,31 @@ import Analytics from '@vercel/analytics/astro'
       });
 
       const data = await response.json();
-      hideTyping();
+      aiHideTyping();
 
+      // Jika ada error dari Key/Google, kita akan bisa membacanya di sini
       if (data.error) {
-        addMessage(`Waduh, maaf teman perencana, sistem GANA AI sedang ada kendala: ${data.error.message}`);
-      } else {
+        aiAddMessage(`Maaf ya, sistem GanaBot ada error dari server API: ${data.error.message}`);
+      } else if (data.candidates && data.candidates.length > 0) {
         const aiText = data.candidates[0].content.parts[0].text;
-        addMessage(aiText);
+        aiAddMessage(aiText);
+      } else {
+        aiAddMessage('Maaf, jawaban dari server kosong.');
       }
     } catch (err) {
-      hideTyping();
-      addMessage('Ups, koneksi sepertinya terputus. Coba periksa internetnya lagi ya, teman perencana!');
+      aiHideTyping();
+      aiAddMessage('Ups, koneksi terputus. Pastikan internetmu stabil ya!');
     }
   }
 
-  sendBtn.addEventListener('click', sendMessage);
-  chatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendMessage();
+  // Pemicu Klik dan Enter
+  aiSendBtn.addEventListener('click', aiSendMessage);
+  aiChatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') aiSendMessage();
   });
 </script>
-<!-- === AKHIR FITUR GANA AI === -->
+<!-- === AKHIR FITUR GANABOT V2 === -->
+
 </body>
 </html>
 
