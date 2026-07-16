@@ -809,7 +809,6 @@ import Analytics from '@vercel/analytics/astro'
     <Analytics />
 <!-- === FITUR GANA AI (Mulai dari sini, paste sebelum tag </body>) === -->
 <style>
-  /* CSS Widget GANA AI */
   .ai-widget-container {
     position: fixed;
     bottom: 24px;
@@ -840,9 +839,8 @@ import Analytics from '@vercel/analytics/astro'
     opacity: 1;
   }
 
-  /* Warna Header bisa disesuaikan dengan warna instansi Kejaksaan */
   .ai-header {
-    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); /* Warna Hijau elegan */
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
     color: white;
     padding: 18px 20px;
     display: flex;
@@ -897,7 +895,7 @@ import Analytics from '@vercel/analytics/astro'
 
   .chat-bot {
     background: #ffffff;
-    color: #334155;
+    color: #334155; /* Teks gelap */
     align-self: flex-start;
     border-bottom-left-radius: 4px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.03);
@@ -929,6 +927,11 @@ import Analytics from '@vercel/analytics/astro'
     font-size: 14.5px;
     transition: border 0.2s;
     background: #f8fafc;
+    color: #0f172a !important; /* PERBAIKAN: Memaksa teks jadi warna gelap agar terlihat */
+  }
+
+  .ai-input::placeholder {
+    color: #94a3b8;
   }
 
   .ai-input:focus {
@@ -997,7 +1000,6 @@ import Analytics from '@vercel/analytics/astro'
 </style>
 
 <div class="ai-widget-container">
-  <!-- Kotak Chat GANA AI -->
   <div class="ai-chat-box" id="ai-chat-box">
     <div class="ai-header">
       <div class="ai-header-title">
@@ -1010,7 +1012,6 @@ import Analytics from '@vercel/analytics/astro'
     </div>
     
     <div class="ai-body" id="ai-chat-body">
-      <!-- Pesan Pembuka GANA AI -->
       <div class="chat-bubble chat-bot">
         Halo teman perencana! Saya GANA AI. Ada yang bisa saya bantu hari ini terkait pekerjaan perencanaanmu?
       </div>
@@ -1024,13 +1025,13 @@ import Analytics from '@vercel/analytics/astro'
     </div>
   </div>
 
-  <!-- Tombol Melayang (FAB) -->
   <div class="ai-fab" id="ai-fab">
     <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
   </div>
 </div>
 
-<script>
+<!-- PERBAIKAN: Menambahkan is:inline agar script tidak diblokir oleh Astro -->
+<script is:inline>
   const apiKey = 'AQ.Ab8RN6L5uCizV4R-oXOEKjXJsadez6k46Tf9oD8HGmdhL0bGLA';
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
 
@@ -1045,7 +1046,7 @@ import Analytics from '@vercel/analytics/astro'
   fab.addEventListener('click', () => {
     chatBox.classList.add('active');
     fab.style.display = 'none';
-    chatInput.focus();
+    setTimeout(() => { chatInput.focus(); }, 100);
   });
 
   // Tutup Chat Box
@@ -1084,7 +1085,6 @@ import Analytics from '@vercel/analytics/astro'
     chatInput.value = '';
     showTyping();
 
-    // Sistem prompt untuk mengarahkan gaya GANA AI
     const systemPrompt = "Kamu adalah GANA AI, asisten AI pintar, ramah, dan humble untuk Biro Perencanaan Kejaksaan RI. Sapa pengguna dengan sebutan 'teman perencana'. Jawab pertanyaan terkait perencanaan atau umum dengan singkat, padat, ramah, dan solutif. Pertanyaan dari teman perencana: ";
 
     try {
@@ -1117,6 +1117,7 @@ import Analytics from '@vercel/analytics/astro'
   });
 </script>
 <!-- === AKHIR FITUR GANA AI === -->
+
 </body>
 </html>
 
