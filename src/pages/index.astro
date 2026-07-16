@@ -849,16 +849,17 @@ import Analytics from '@vercel/analytics/astro'
 </div>
 
 <script is:inline>
-  // API Key & Setup Gemini
+  // === OpenRouter API (Free Model - Google Gemma 4) ===
   const AI_API_KEY = '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';
-  const AI_API_URL = `https://openrouter.ai/api/v1/chat/completions`;
+  const AI_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+  const AI_MODEL   = 'google/gemma-4-26b-a4b-it:free';
 
-  const aiFab = document.getElementById('ai-fab');
-  const aiChatBox = document.getElementById('ai-chat-box');
-  const aiCloseBtn = document.getElementById('ai-close-btn');
-  const aiChatBody = document.getElementById('ai-chat-body');
+  const aiFab       = document.getElementById('ai-fab');
+  const aiChatBox   = document.getElementById('ai-chat-box');
+  const aiCloseBtn  = document.getElementById('ai-close-btn');
+  const aiChatBody  = document.getElementById('ai-chat-body');
   const aiChatInput = document.getElementById('ai-chat-input');
-  const aiSendBtn = document.getElementById('ai-send-btn');
+  const aiSendBtn   = document.getElementById('ai-send-btn');
 
   // Buka Chat
   aiFab.addEventListener('click', () => {
@@ -882,18 +883,14 @@ import Analytics from '@vercel/analytics/astro'
     }, 300);
   });
 
-  // Tambah Balon Chat ke UI menggunakan Tailwind
+  // Tambah balon chat ke UI
   function aiAddMessage(text, isUser = false) {
     const div = document.createElement('div');
-    
     if (isUser) {
-      // Warna User (Kuning Primary khas web Anda)
       div.className = 'self-end max-w-[85%] p-3.5 rounded-2xl rounded-tr-sm bg-primary text-on-primary font-bold text-sm shadow-lg shadow-primary/20 break-words';
     } else {
-      // Warna Bot (Glassmorphism Gelap khas web Anda)
       div.className = 'self-start max-w-[85%] p-3.5 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 text-sm text-white/90 leading-relaxed shadow-lg shadow-black/20 break-words';
     }
-    
     div.innerHTML = text.replace(/\n/g, '<br>');
     aiChatBody.appendChild(div);
     aiChatBody.scrollTop = aiChatBody.scrollHeight;
@@ -904,58 +901,71 @@ import Analytics from '@vercel/analytics/astro'
     div.id = 'ai-typing-indicator';
     div.className = 'self-start p-3.5 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 flex gap-1.5 items-center';
     div.innerHTML = `
-      <div class="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
-      <div class="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
-      <div class="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+      <div class="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style="animation-delay:0ms"></div>
+      <div class="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style="animation-delay:150ms"></div>
+      <div class="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style="animation-delay:300ms"></div>
     `;
     aiChatBody.appendChild(div);
     aiChatBody.scrollTop = aiChatBody.scrollHeight;
   }
 
   function aiHideTyping() {
-    const typing = document.getElementById('ai-typing-indicator');
-    if (typing) typing.remove();
+    const t = document.getElementById('ai-typing-indicator');
+    if (t) t.remove();
   }
 
-  // Fungsi Panggil API Gemini
+  // Riwayat percakapan agar GanaBot ingat konteks
+  const aiHistory = [
+    {
+      role: 'system',
+      content: 'Kamu adalah GanaBot, asisten AI pintar, ramah, dan humble untuk Biro Perencanaan Kejaksaan RI. Selalu sapa pengguna dengan sebutan "teman perencana". Jawab pertanyaan terkait perencanaan atau umum dengan singkat, padat, ramah, dan solutif.'
+    }
+  ];
+
   async function aiSendMessage() {
     const text = aiChatInput.value.trim();
     if (!text) return;
 
-    aiAddMessage(text, true); // Menampilkan chat yang Anda ketik
+    // Tampilkan pesan user
+    aiAddMessage(text, true);
     aiChatInput.value = '';
-    aiShowTyping();           // Menampilkan titik-titik loading
+    aiShowTyping();
 
-    const systemPrompt = "Kamu adalah GanaBot, asisten AI pintar untuk Biro Perencanaan Kejaksaan RI. Sapa dengan 'teman perencana'. Jawab singkat, padat, ramah. Pertanyaan: ";
+    // Tambahkan ke riwayat
+    aiHistory.push({ role: 'user', content: text });
 
     try {
       const response = await fetch(AI_API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + AI_API_KEY,
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'GanaBot - Portal Perencana'
+        },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: systemPrompt + text }] }]
+          model: AI_MODEL,
+          messages: aiHistory
         })
       });
 
       const data = await response.json();
       aiHideTyping();
 
-      // Jika ada error dari Key/Google, kita akan bisa membacanya di sini
       if (data.error) {
-        aiAddMessage(`Maaf ya, sistem GanaBot ada error dari server API: ${data.error.message}`);
-      } else if (data.candidates && data.candidates.length > 0) {
-        const aiText = data.candidates[0].content.parts[0].text;
-        aiAddMessage(aiText);
+        aiAddMessage('Waduh, ada error nih teman perencana: ' + data.error.message);
       } else {
-        aiAddMessage('Maaf, jawaban dari server kosong.');
+        const aiText = data.choices[0].message.content;
+        // Simpan balasan ke riwayat biar GanaBot ingat konteks
+        aiHistory.push({ role: 'assistant', content: aiText });
+        aiAddMessage(aiText);
       }
     } catch (err) {
       aiHideTyping();
-      aiAddMessage('Ups, koneksi terputus. Pastikan internetmu stabil ya!');
+      aiAddMessage('Ups, koneksi terputus. Coba lagi ya teman perencana!');
     }
   }
 
-  // Pemicu Klik dan Enter
   aiSendBtn.addEventListener('click', aiSendMessage);
   aiChatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') aiSendMessage();
