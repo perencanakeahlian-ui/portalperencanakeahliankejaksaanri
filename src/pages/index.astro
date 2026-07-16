@@ -807,7 +807,7 @@ import Analytics from '@vercel/analytics/astro'
         });
     </script>
     <Analytics />
-<!-- === FITUR GANA AI V2 (Tailwind & Glassmorphism) === -->
+<!-- === FITUR GANABOT V2 (Tailwind & Glassmorphism) === -->
 <div id="ai-widget-wrapper" class="fixed bottom-6 right-6 z-[90] font-sans">
   
   <!-- Kotak Chat Panel (Gaya Glassmorphism persis seperti web Anda) -->
@@ -819,7 +819,7 @@ import Analytics from '@vercel/analytics/astro'
         <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary">
           <span class="material-symbols-outlined text-sm">smart_toy</span>
         </div>
-        <span class="font-headline font-bold text-white tracking-wide text-sm">GANA AI AI</span>
+        <span class="font-headline font-bold text-white tracking-wide text-sm">GanaBot AI</span>
       </div>
       <button id="ai-close-btn" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors">
         <span class="material-symbols-outlined text-sm">close</span>
@@ -829,13 +829,13 @@ import Analytics from '@vercel/analytics/astro'
     <!-- Body Chat -->
     <div id="ai-chat-body" class="flex-1 p-5 overflow-y-auto flex flex-col gap-4 scroll-smooth">
       <div class="self-start max-w-[85%] p-3.5 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 text-sm text-white/90 leading-relaxed shadow-lg shadow-black/20">
-        Halo teman perencana! Saya GANA AI. Ada yang bisa saya bantu hari ini terkait pekerjaan perencanaanmu?
+        Halo teman perencana! Saya GanaBot. Ada yang bisa saya bantu hari ini terkait pekerjaan perencanaanmu?
       </div>
     </div>
 
     <!-- Footer Input -->
     <div class="p-4 border-t border-white/10 bg-black/20 flex gap-2 items-center">
-      <input type="text" id="ai-chat-input" class="flex-1 bg-black/40 border border-white/10 rounded-full px-4 py-3 text-sm text-white focus:outline-none focus:border-primary/50 placeholder-white/30 transition-colors" placeholder="Tanya GANA AI..." autocomplete="off">
+      <input type="text" id="ai-chat-input" class="flex-1 bg-black/40 border border-white/10 rounded-full px-4 py-3 text-sm text-white focus:outline-none focus:border-primary/50 placeholder-white/30 transition-colors" placeholder="Tanya GanaBot..." autocomplete="off">
       <button id="ai-send-btn" class="w-11 h-11 rounded-full bg-primary text-on-primary flex items-center justify-center hover:scale-105 transition-transform shrink-0 shadow-lg shadow-primary/20">
         <span class="material-symbols-outlined text-lg">send</span>
       </button>
@@ -849,9 +849,9 @@ import Analytics from '@vercel/analytics/astro'
 </div>
 
 <script is:inline>
-  // Ganti dengan API Key OpenRouter Anda
-  const AI_API_KEY = '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'; 
-  const AI_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+  // API Key & Setup Gemini
+  const AI_API_KEY = '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';
+  const AI_API_URL = `https://openrouter.ai/api/v1/chat/completions`;
 
   const aiFab = document.getElementById('ai-fab');
   const aiChatBox = document.getElementById('ai-chat-box');
@@ -860,44 +860,91 @@ import Analytics from '@vercel/analytics/astro'
   const aiChatInput = document.getElementById('ai-chat-input');
   const aiSendBtn = document.getElementById('ai-send-btn');
 
-  // ... (Fungsi aiFab, aiCloseBtn, aiAddMessage, aiShowTyping, aiHideTyping tetap sama) ...
+  // Buka Chat
+  aiFab.addEventListener('click', () => {
+    aiChatBox.classList.remove('hidden');
+    setTimeout(() => {
+      aiChatBox.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+      aiChatBox.classList.add('opacity-100', 'translate-y-0', 'flex');
+      aiFab.classList.add('hidden');
+      aiChatInput.focus();
+    }, 10);
+  });
 
+  // Tutup Chat
+  aiCloseBtn.addEventListener('click', () => {
+    aiChatBox.classList.remove('opacity-100', 'translate-y-0');
+    aiChatBox.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+    setTimeout(() => {
+      aiChatBox.classList.add('hidden');
+      aiChatBox.classList.remove('flex');
+      aiFab.classList.remove('hidden');
+    }, 300);
+  });
+
+  // Tambah Balon Chat ke UI menggunakan Tailwind
+  function aiAddMessage(text, isUser = false) {
+    const div = document.createElement('div');
+    
+    if (isUser) {
+      // Warna User (Kuning Primary khas web Anda)
+      div.className = 'self-end max-w-[85%] p-3.5 rounded-2xl rounded-tr-sm bg-primary text-on-primary font-bold text-sm shadow-lg shadow-primary/20 break-words';
+    } else {
+      // Warna Bot (Glassmorphism Gelap khas web Anda)
+      div.className = 'self-start max-w-[85%] p-3.5 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 text-sm text-white/90 leading-relaxed shadow-lg shadow-black/20 break-words';
+    }
+    
+    div.innerHTML = text.replace(/\n/g, '<br>');
+    aiChatBody.appendChild(div);
+    aiChatBody.scrollTop = aiChatBody.scrollHeight;
+  }
+
+  function aiShowTyping() {
+    const div = document.createElement('div');
+    div.id = 'ai-typing-indicator';
+    div.className = 'self-start p-3.5 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 flex gap-1.5 items-center';
+    div.innerHTML = `
+      <div class="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+      <div class="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+      <div class="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+    `;
+    aiChatBody.appendChild(div);
+    aiChatBody.scrollTop = aiChatBody.scrollHeight;
+  }
+
+  function aiHideTyping() {
+    const typing = document.getElementById('ai-typing-indicator');
+    if (typing) typing.remove();
+  }
+
+  // Fungsi Panggil API Gemini
   async function aiSendMessage() {
     const text = aiChatInput.value.trim();
     if (!text) return;
 
-    aiAddMessage(text, true);
+    aiAddMessage(text, true); // Menampilkan chat yang Anda ketik
     aiChatInput.value = '';
-    aiShowTyping();
+    aiShowTyping();           // Menampilkan titik-titik loading
 
-    // System Prompt untuk OpenRouter
-    const systemPrompt = "Kamu adalah GANA AI, asisten AI pintar untuk Biro Perencanaan Kejaksaan RI. Sapa dengan 'teman perencana'. Jawab singkat, padat, dan ramah.";
+    const systemPrompt = "Kamu adalah GanaBot, asisten AI pintar untuk Biro Perencanaan Kejaksaan RI. Sapa dengan 'teman perencana'. Jawab singkat, padat, ramah. Pertanyaan: ";
 
     try {
       const response = await fetch(AI_API_URL, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${AI_API_KEY}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': window.location.origin, // Opsional untuk dashboard OpenRouter
-          'X-Title': 'GanaBot'                 // Opsional
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: "google/gemini-2.0-flash-lite-preview-02-05:free", // Model gratis dari OpenRouter
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: text }
-          ]
+          contents: [{ parts: [{ text: systemPrompt + text }] }]
         })
       });
 
       const data = await response.json();
       aiHideTyping();
 
+      // Jika ada error dari Key/Google, kita akan bisa membacanya di sini
       if (data.error) {
-        aiAddMessage(`Error: ${data.error.message}`);
-      } else if (data.choices && data.choices.length > 0) {
-        const aiText = data.choices[0].message.content;
+        aiAddMessage(`Maaf ya, sistem GanaBot ada error dari server API: ${data.error.message}`);
+      } else if (data.candidates && data.candidates.length > 0) {
+        const aiText = data.candidates[0].content.parts[0].text;
         aiAddMessage(aiText);
       } else {
         aiAddMessage('Maaf, jawaban dari server kosong.');
@@ -914,8 +961,7 @@ import Analytics from '@vercel/analytics/astro'
     if (e.key === 'Enter') aiSendMessage();
   });
 </script>
-<!-- === AKHIR FITUR GANA AI V2 === -->
-
+<!-- === AKHIR FITUR GANABOT V2 === -->
 </body>
 </html>
 
