@@ -808,7 +808,8 @@ import Analytics from '@vercel/analytics/astro'
     </script>
     <Analytics />
 <!-- === FITUR GANA AI (Mulai dari sini, paste sebelum tag </body>) === -->
-<style>
+<!-- PERBAIKAN UTAMA: Tambahkan is:inline agar Astro tidak memblokir CSS untuk elemen Javascript -->
+<style is:inline>
   .ai-widget-container {
     position: fixed;
     bottom: 24px;
@@ -823,14 +824,14 @@ import Analytics from '@vercel/analytics/astro'
     height: 520px;
     background: #ffffff;
     border-radius: 20px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
     flex-direction: column;
     overflow: hidden;
     margin-bottom: 20px;
     transform: translateY(20px);
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    border: 1px solid #f1f5f9;
+    border: 1px solid #e2e8f0;
   }
 
   .ai-chat-box.active {
@@ -871,7 +872,7 @@ import Analytics from '@vercel/analytics/astro'
   }
 
   .ai-close-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.3);
   }
 
   .ai-body {
@@ -893,18 +894,20 @@ import Analytics from '@vercel/analytics/astro'
     word-wrap: break-word;
   }
 
+  /* Warna Balasan AI (GANA AI) - Terang dengan Teks Hitam */
   .chat-bot {
     background: #ffffff;
-    color: #334155; /* Teks gelap */
+    color: #0f172a !important; /* Teks sangat gelap agar kontras */
     align-self: flex-start;
     border-bottom-left-radius: 4px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    border: 1px solid #cbd5e1;
   }
 
+  /* Warna Chat User - Hijau dengan Teks Putih */
   .chat-user {
     background: #16a34a;
-    color: #ffffff;
+    color: #ffffff !important;
     align-self: flex-end;
     border-bottom-right-radius: 4px;
     box-shadow: 0 2px 6px rgba(22, 163, 74, 0.2);
@@ -913,9 +916,10 @@ import Analytics from '@vercel/analytics/astro'
   .ai-footer {
     padding: 16px;
     background: #ffffff;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid #e2e8f0;
     display: flex;
     gap: 10px;
+    align-items: center;
   }
 
   .ai-input {
@@ -926,17 +930,17 @@ import Analytics from '@vercel/analytics/astro'
     outline: none;
     font-size: 14.5px;
     transition: border 0.2s;
-    background: #f8fafc;
-    color: #0f172a !important; /* PERBAIKAN: Memaksa teks jadi warna gelap agar terlihat */
+    background: #ffffff;
+    color: #0f172a !important; /* Teks Hitam Pekat */
   }
 
   .ai-input::placeholder {
-    color: #94a3b8;
+    color: #64748b !important;
   }
 
   .ai-input:focus {
     border-color: #16a34a;
-    background: #ffffff;
+    box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
   }
 
   .ai-send-btn {
@@ -946,15 +950,17 @@ import Analytics from '@vercel/analytics/astro'
     border-radius: 50%;
     width: 44px;
     height: 44px;
+    flex-shrink: 0;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background 0.2s;
   }
 
   .ai-send-btn:hover {
     transform: scale(1.05);
+    background: #15803d;
   }
 
   .ai-fab {
@@ -1018,7 +1024,7 @@ import Analytics from '@vercel/analytics/astro'
     </div>
 
     <div class="ai-footer">
-      <input type="text" id="ai-chat-input" class="ai-input" placeholder="Tanya GANA AI..." autocomplete="off">
+      <input type="text" id="ai-chat-input" class="ai-input" placeholder="Ketik pertanyaan di sini..." autocomplete="off">
       <button id="ai-send-btn" class="ai-send-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
@@ -1030,7 +1036,6 @@ import Analytics from '@vercel/analytics/astro'
   </div>
 </div>
 
-<!-- PERBAIKAN: Menambahkan is:inline agar script tidak diblokir oleh Astro -->
 <script is:inline>
   const apiKey = 'AQ.Ab8RN6L5uCizV4R-oXOEKjXJsadez6k46Tf9oD8HGmdhL0bGLA';
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
@@ -1081,6 +1086,7 @@ import Analytics from '@vercel/analytics/astro'
     const text = chatInput.value.trim();
     if (!text) return;
 
+    // Kirim pesan User
     addMessage(text, true);
     chatInput.value = '';
     showTyping();
@@ -1117,7 +1123,6 @@ import Analytics from '@vercel/analytics/astro'
   });
 </script>
 <!-- === AKHIR FITUR GANA AI === -->
-
 </body>
 </html>
 
