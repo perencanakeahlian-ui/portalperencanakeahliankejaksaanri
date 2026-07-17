@@ -883,17 +883,34 @@ import Analytics from '@vercel/analytics/astro'
   const AI_API_KEY = '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';
   const AI_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
-  // Vision-capable models diletakkan paling atas (untuk handle upload gambar)
+  // === 16 LAPIS FALLBACK - Berdasarkan ranking OpenRouter Juli 2026 ===
+  // Vision-capable models diletakkan di atas agar bisa handle upload gambar
   const AI_MODELS = [
-    'google/gemma-4-26b-a4b-it:free',           // ✅ L1 - Google Gemma 4 26B (Vision)
-    'nvidia/nemotron-nano-12b-v2-vl:free',       // ✅ L2 - NVIDIA Nemotron VL (Vision)
-    'nvidia/nemotron-3-ultra-550b-a55b:free',    // ✅ L3 - NVIDIA Nemotron Ultra
-    'nvidia/nemotron-3-nano-30b-a3b:free',       // ✅ L4 - NVIDIA Nemotron Nano
-    'openai/gpt-oss-20b:free',                   // ✅ L5 - OpenAI OSS 20B
-    'tencent/hy3:free',                          // ✅ L6 - Tencent HY3
-    'google/gemma-4-31b-it:free',                // 🔄 L7 - Google Gemma 4 31B
-    'meta-llama/llama-3.3-70b-instruct:free',    // 🔄 L8 - LLaMA 3.3 70B
-    'qwen/qwen3-next-80b-a3b-instruct:free',     // 🔄 L9 - Qwen3 80B
+    // ===== TIER 1: Vision/Multimodal (Prioritas utama, bisa baca gambar) =====
+    'google/gemma-4-26b-a4b-it:free',              // ✅ L1  - Google Gemma4 26B MoE (Vision+Video) 262K ctx
+    'google/gemma-4-31b-it:free',                  // ✅ L2  - Google Gemma4 31B (Vision) 262K ctx
+    'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free', // ✅ L3  - NVIDIA Omni (Text+Image+Video+Audio!) 256K ctx
+    'nvidia/nemotron-nano-12b-v2-vl:free',         // ✅ L4  - NVIDIA Nemotron VL (Vision) 128K ctx
+
+    // ===== TIER 2: Top Usage (9T+ token pakai, paling populer & stabil) =====
+    'tencent/hy3:free',                            // ✅ L5  - Tencent HY3 295B MoE (#1 ranking!) 256K ctx
+    'nvidia/nemotron-3-ultra-550b-a55b:free',      // ✅ L6  - NVIDIA Ultra 550B MoE, 1M ctx!
+    'poolside/laguna-m.1:free',                    // ✅ L7  - Poolside Laguna M.1 (562B tokens used)
+    'nvidia/nemotron-3-super-120b-a12b:free',      // ✅ L8  - NVIDIA Super 120B, 1M ctx
+    'poolside/laguna-xs-2.1:free',                 // ✅ L9  - Poolside Laguna XS 2.1
+
+    // ===== TIER 3: Reliable Workhorses (Tested & Confirmed Works) =====
+    'nvidia/nemotron-3-nano-30b-a3b:free',         // ✅ L10 - NVIDIA Nano 30B (confirmed OK)
+    'openai/gpt-oss-20b:free',                     // ✅ L11 - OpenAI OSS 20B (confirmed OK)
+    'nvidia/nemotron-nano-9b-v2:free',             // ✅ L12 - NVIDIA Nano 9B V2
+
+    // ===== TIER 4: Heavy Backup (Model besar, kadang antri tapi powerful) =====
+    'meta-llama/llama-3.3-70b-instruct:free',      // 🔄 L13 - Meta LLaMA 3.3 70B
+    'qwen/qwen3-next-80b-a3b-instruct:free',       // 🔄 L14 - Qwen3 80B
+    'nousresearch/hermes-3-llama-3.1-405b:free',   // 🔄 L15 - Hermes 3 LLaMA 405B
+
+    // ===== TIER 5: Last Resort (Auto-router OpenRouter milihkan sendiri) =====
+    'openrouter/free',                             // 🆘 L16 - OpenRouter auto-select (safety net!)
   ];
 
   // === DOM Elements ===
