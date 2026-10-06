@@ -12,639 +12,513 @@ import Analytics from '@vercel/analytics/astro'
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.svg?v=3" />
     <link rel="apple-touch-icon" href="/favicon.svg?v=3" />
     <link rel="mask-icon" href="/favicon.svg?v=3" color="#D19200" />
+    <meta name="theme-color" content="#0A0C0A" />
     <script is:inline src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <!-- Terapkan tema sedini mungkin (hindari flash) -->
+    <script is:inline>
+      (function () {
+        try {
+          var saved = localStorage.getItem('pp-theme');
+          var dark = saved ? saved === 'dark' : true;
+          document.documentElement.classList.toggle('dark', dark);
+        } catch (e) {}
+      })();
+    </script>
+
     <style is:inline>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #010800;
-        }
-        .font-headline {
-            font-family: 'Manrope', sans-serif;
-        }
-        .glass-panel {
-            background: rgba(8, 42, 7, 0.4);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .hero-glow {
-            box-shadow: 0 0 100px -20px rgba(255, 217, 0, 0.12);
-        }
-        /* FAQ Styles */
-        .faq-pill {
-            padding: 8px 16px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-family: 'Manrope', sans-serif;
-            cursor: pointer;
-            transition: all 0.25s ease;
-        }
-        .faq-pill:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: #fff;
-            border-color: rgba(255, 217, 0, 0.3);
-        }
-        .faq-pill.active {
-            background: #FFD900;
-            color: #073902;
-            border-color: #FFD900;
-            box-shadow: 0 8px 20px -8px rgba(255, 217, 0, 0.5);
-        }
-        .faq-item {
-            background: rgba(8, 42, 7, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 20px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(12px);
-        }
-        .faq-item:hover {
-            border-color: rgba(255, 255, 255, 0.12);
-            background: rgba(8, 42, 7, 0.5);
-        }
-        .faq-item.open {
-            border-color: rgba(255, 217, 0, 0.25);
-            background: rgba(8, 42, 7, 0.6);
-            box-shadow: 0 0 40px -10px rgba(255, 217, 0, 0.15);
-        }
-        .faq-q {
-            width: 100%;
-            padding: 22px 24px;
-            background: transparent;
-            border: 0;
-            color: #fff;
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 16px;
-            cursor: pointer;
-            text-align: left;
-        }
-        .faq-q-inner { display: flex; gap: 16px; align-items: flex-start; flex: 1; }
-        .faq-q-badge {
-            flex-shrink: 0;
-            width: 32px; height: 32px;
-            border-radius: 10px;
-            background: rgba(255, 217, 0, 0.1);
-            color: #FFD900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 12px;
-            font-family: 'Manrope', sans-serif;
-            transition: all 0.3s;
-        }
-        .faq-item.open .faq-q-badge {
-            background: #FFD900;
-            color: #073902;
-        }
-        .faq-q-cat {
-            display: block;
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: rgba(255, 217, 0, 0.7);
-            margin-bottom: 4px;
-            font-family: 'Manrope', sans-serif;
-        }
-        .faq-q-text {
-            font-size: 15px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.92);
-            line-height: 1.4;
-            font-family: 'Manrope', sans-serif;
-        }
-        .faq-chevron {
-            color: rgba(255, 255, 255, 0.4);
-            transition: transform 0.35s ease, color 0.3s;
-            flex-shrink: 0;
-        }
-        .faq-item.open .faq-chevron {
-            transform: rotate(180deg);
-            color: #FFD900;
-        }
-        .faq-a {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-        }
-        .faq-item.open .faq-a {
-            max-height: 3000px;
-        }
-        .faq-a-inner {
-            padding: 0 24px 24px 72px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            line-height: 1.7;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 18px;
-            margin-top: 4px;
-        }
-        .faq-a-inner p { margin-bottom: 10px; }
-        .faq-a-inner ul, .faq-a-inner ol {
-            margin: 8px 0 12px 18px;
-            list-style: disc;
-        }
-        .faq-a-inner ol { list-style: decimal; }
-        .faq-a-inner li { margin-bottom: 6px; }
-        .faq-a-inner b { color: #fff; font-weight: 600; }
-        .faq-a-inner a { color: #FFD900; text-decoration: underline; }
-        .faq-a-inner table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 10px 0;
-            font-size: 13px;
-        }
-        .faq-a-inner th, .faq-a-inner td {
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 8px 10px;
-            text-align: left;
-        }
-        .faq-a-inner th {
-            background: rgba(255, 217, 0, 0.06);
-            color: #FFD900;
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .faq-a-inner td:first-child { font-weight: 600; color: rgba(255,255,255,0.9); }
-        .faq-a-inner .note {
-            margin-top: 12px;
-            padding: 10px 14px;
-            background: rgba(255, 217, 0, 0.06);
-            border-left: 3px solid #FFD900;
-            border-radius: 8px;
-            color: rgba(255, 217, 0, 0.85);
-            font-size: 13px;
-        }
-        .faq-a-inner .note.danger {
-            background: rgba(239, 68, 68, 0.08);
-            border-left-color: #ef4444;
-            color: rgba(248, 113, 113, 0.95);
-        }
-        .faq-a-inner .code {
-            margin-top: 10px;
-            padding: 10px 14px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            font-family: ui-monospace, 'SFMono-Regular', 'Menlo', monospace;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        @media (max-width: 640px) {
-            .faq-a-inner { padding-left: 24px; }
-            .faq-a-inner table { font-size: 11px; }
-            .faq-a-inner th, .faq-a-inner td { padding: 6px; }
-        }
-        .nav-link {
-            font-family: 'Manrope', sans-serif;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.55);
-            transition: color 0.25s ease;
-            text-decoration: none;
-            position: relative;
-        }
-        .nav-link:hover { color: #FFD900; }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            bottom: -6px;
-            width: 0;
-            height: 2px;
-            background: #FFD900;
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-        .nav-link:hover::after { width: 100%; }
-        .section-divider {
-            background: linear-gradient(90deg, transparent, rgba(255, 217, 0, 0.15), transparent);
-            height: 1px;
-            width: 100%;
-        }
-        .btn-primary {
-            background-color: #FFD900;
-            color: #073902;
-            height: 56px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 32px;
-            border-radius: 0.75rem;
-            font-weight: 700;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-decoration: none;
-        }
-        .btn-primary:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 30px -5px rgba(255, 217, 0, 0.3);
-        }
-        .btn-secondary {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-            height: 56px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 32px;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-decoration: none;
-        }
-        .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-color: #9fd58c;
-            color: #9fd58c;
-            transform: translateY(-3px);
-        }
-        
-        /* Animations */
-        @keyframes fadeInBlur {
-            from { opacity: 0; filter: blur(10px); transform: translateY(20px); }
-            to { opacity: 1; filter: blur(0); transform: translateY(0); }
-        }
-        .animate-reveal {
-            animation: fadeInBlur 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        .stagger-1 { animation-delay: 0.1s; }
-        .stagger-2 { animation-delay: 0.2s; }
-        .stagger-3 { animation-delay: 0.3s; }
+        /* ================================================================
+           DESIGN SYSTEM — Portal Perencana  ·  "MIDNIGHT GOLD"
+           ----------------------------------------------------------------
+           Dark base netral-hangat yang dalam (bukan hijau-hitam flat) +
+           aksen kuning emas #FFD900 sebagai sorotan utama, emas redup utk
+           teks sekunder, dan sage hijau sebagai aksen pendukung.
+           Gaya: command-center / bento, bersudut tegas, glow terukur.
+           Light theme kontras tersedia via toggle. Konten TIDAK diubah.
+           ================================================================ */
 
-        .card-hover {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .card-hover:hover {
-            background: rgba(13, 53, 12, 0.6);
-            border-color: rgba(255, 217, 0, 0.3);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
-        }
-
-        .glass-hero-pattern {
-            background: radial-gradient(circle at 50% 50%, rgba(255, 217, 0, 0.08) 0%, transparent 50%),
-                        linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 100%);
-        }
-
-        /* Typing Effect Cursor */
-        .typing-cursor::after {
-            content: '|';
-            animation: blink 1s infinite;
-            margin-left: 4px;
-            color: #FFD900;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        .calendar-frame-container {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 1.5rem;
-            overflow: hidden;
-        }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #010800; }
-        ::-webkit-scrollbar-thumb { background: #1a4a18; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #FFD900; }
-
-        /* ==========================================================
-           DESIGN SYSTEM (preview) - token & komponen terstandar
-           Wording/konten tidak diubah. Hanya konsistensi visual.
-           ========================================================== */
         :root {
-            --radius-sm: 0.5rem;   /* chip/badge */
-            --radius-md: 0.75rem;  /* ikon container, tombol */
-            --radius-lg: 1rem;     /* kartu */
-            --radius-xl: 1.5rem;   /* panel */
-            --radius-2xl: 2rem;    /* section wrapper/hero */
-            --icon-sm: 2.5rem;     /* 40px */
-            --icon-md: 3rem;       /* 48px */
-            --ds-shadow-hover: 0 8px 20px -6px rgba(0,0,0,0.45), 0 20px 48px -16px rgba(0,0,0,0.6);
+            /* Brand emas + pendukung (dipakai di dua mode) */
+            --gold:        #FFD900;
+            --gold-soft:   #FFE873;
+            --gold-dim:    #C9A227;   /* emas redup utk teks aksen */
+            --gold-deep:   #8a6d00;   /* emas pekat utk mode terang */
+            --on-gold:     #0A0C0A;
+            --sage:        #9fd58c;
+
+            /* ===== LIGHT ===== */
+            --bg:            #faf9f4;
+            --bg-grid:       rgba(10,12,10,0.04);
+            --bg-subtle:     #f1efe6;
+            --surface:       #ffffff;
+            --surface-2:     #f6f4ec;
+            --surface-3:     #efece1;
+            --border:        #e4e1d6;
+            --border-strong: #d2cdbd;
+            --text:          #14160f;
+            --text-soft:     #3c4035;
+            --text-muted:    #6c7161;
+            --text-faint:    #9aa08c;
+            --accent:        var(--gold-deep);
+            --accent-on:     #ffffff;
+            --accent-text:   #7a6000;
+            --chip-bg:       #fff6d6;
+            --chip-fg:       #7a6000;
+            --ring:          rgba(138,109,0,0.3);
+            --glow:          0 0 0 rgba(0,0,0,0);
+            --shadow-soft:   0 1px 2px rgba(20,22,15,0.05), 0 10px 28px rgba(20,22,15,0.07);
+            --shadow-lift:   0 2px 8px rgba(20,22,15,0.07), 0 26px 56px rgba(20,22,15,0.13);
+
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-2xl: 2rem;
+            --icon-sm: 2.75rem;
+            --icon-md: 3.25rem;
         }
 
-        /* Eyebrow label - satu gaya untuk seluruh situs */
-        .ds-eyebrow {
-            display: inline-flex; align-items: center; gap: 8px;
-            font-family: 'Manrope', sans-serif;
-            font-size: 10px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.22em;
-            color: rgba(255,217,0,0.75);
+        html.dark {
+            /* ===== DARK · Midnight Gold ===== */
+            --bg:            #0A0C0A;   /* near-black, sedikit hangat */
+            --bg-grid:       rgba(255,217,0,0.035);
+            --bg-subtle:     #0E110D;
+            --surface:       #14180F;   /* kartu */
+            --surface-2:     #191E13;   /* elevated */
+            --surface-3:     #212717;   /* elevated-2 */
+            --border:        rgba(255,255,255,0.07);
+            --border-strong: rgba(255,217,0,0.30);
+            --text:          #F5F6EF;
+            --text-soft:     #C7CDBB;
+            --text-muted:    #949C86;
+            --text-faint:    #656D59;
+            --accent:        #FFD900;
+            --accent-on:     #0A0C0A;
+            --accent-text:   #FFD900;
+            --chip-bg:       rgba(255,217,0,0.11);
+            --chip-fg:       #FFE873;
+            --ring:          rgba(255,217,0,0.4);
+            --glow:          0 0 60px -14px rgba(255,217,0,0.35);
+            --shadow-soft:   0 1px 2px rgba(0,0,0,0.5), 0 12px 32px rgba(0,0,0,0.55);
+            --shadow-lift:   0 2px 10px rgba(0,0,0,0.55), 0 30px 64px rgba(0,0,0,0.7);
         }
-        .ds-eyebrow .dot { width: 6px; height: 6px; border-radius: 999px; background: #FFD900; flex-shrink: 0; }
-        .ds-eyebrow.accent { color: rgba(159,213,140,0.8); }
-        .ds-eyebrow.accent .dot { background: #9fd58c; }
 
-        /* Ikon container - 2 ukuran, radius konsisten */
+        * { -webkit-font-smoothing: antialiased; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text);
+            background-color: var(--bg);
+            background-image:
+                linear-gradient(var(--bg-grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+            background-size: 56px 56px;
+            transition: background-color .4s ease, color .4s ease;
+        }
+        .font-headline { font-family: 'Manrope', 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+        .t-text{color:var(--text)} .t-soft{color:var(--text-soft)} .t-muted{color:var(--text-muted)}
+        .t-faint{color:var(--text-faint)} .t-accent{color:var(--accent-text)}
+        .bg-app{background:var(--bg)} .bg-subtle{background:var(--bg-subtle)}
+
+        section[id] { scroll-margin-top: 6rem; }
+
+        /* Label section: mono + garis emas (identitas command-center) */
+        .sec-label {
+            display:inline-flex; align-items:center; gap:10px;
+            font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600;
+            letter-spacing:0.18em; text-transform:uppercase; color:var(--accent-text);
+        }
+        .sec-label::before {
+            content:''; width:28px; height:2px; background:var(--accent); display:inline-block; border-radius:2px;
+        }
+        .sec-label.sage { color:var(--sage); }
+        .sec-label.sage::before { background:var(--sage); }
+        .hl { color: var(--accent-text); }
+
+        /* Ikon container bersudut */
         .ds-icon {
-            width: var(--icon-md); height: var(--icon-md);
-            border-radius: var(--radius-md);
-            background: rgba(255,217,0,0.10); color: #FFD900;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            transition: background .35s ease, color .35s ease;
+            width:var(--icon-md); height:var(--icon-md); border-radius:var(--radius-md);
+            background:var(--chip-bg); color:var(--accent-text);
+            display:flex; align-items:center; justify-content:center; flex-shrink:0;
+            transition:background .35s ease, color .35s ease, transform .35s ease, box-shadow .35s ease;
         }
-        .ds-icon.sm { width: var(--icon-sm); height: var(--icon-sm); }
+        .ds-icon.sm { width:var(--icon-sm); height:var(--icon-sm); }
 
-        /* Kartu aplikasi - layout compact horizontal, hover seragam */
+        /* Kartu dasar bento */
+        .bento {
+            position:relative; background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius-xl); overflow:hidden;
+            transition:transform .35s cubic-bezier(.4,0,.2,1), border-color .35s, box-shadow .35s, background .35s;
+        }
+        .bento-hover:hover { transform:translateY(-5px); border-color:var(--border-strong); box-shadow:var(--shadow-lift); }
+
+        /* Kartu aplikasi (bento item) */
         .ds-app-card {
-            display: flex; align-items: center; gap: 1rem;
-            padding: 1.25rem 1.35rem;
-            border-radius: var(--radius-lg);
-            background: rgba(8,42,7,0.25);
-            border: 1px solid rgba(255,255,255,0.06);
-            text-decoration: none;
-            height: 100%;
-            transition: transform .3s cubic-bezier(.4,0,.2,1), background .3s, border-color .3s, box-shadow .3s;
+            display:flex; align-items:center; gap:1rem; padding:1.2rem 1.3rem;
+            background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+            text-decoration:none; height:100%; position:relative; overflow:hidden;
+            transition:transform .35s cubic-bezier(.4,0,.2,1), background .35s, border-color .35s, box-shadow .35s;
         }
-        .ds-app-card h4 { margin-bottom: 2px; }
-        .ds-app-card p { line-height: 1.35; }
-        .ds-app-card:hover {
-            transform: translateY(-4px);
-            background: rgba(13,53,12,0.55);
-            border-color: rgba(255,217,0,0.28);
-            box-shadow: var(--ds-shadow-hover);
+        .ds-app-card::after {
+            content:''; position:absolute; inset:0; pointer-events:none; opacity:0;
+            background:radial-gradient(120% 120% at 100% 0%, rgba(255,217,0,0.10), transparent 55%);
+            transition:opacity .35s;
         }
-        .ds-app-card:hover .ds-icon { background: #FFD900; color: #073902; }
-        .ds-app-card:focus-visible { outline: 2px solid #FFD900; outline-offset: 3px; }
-        .ds-app-card .ds-arrow { color: rgba(255,255,255,0.18); transition: color .3s; }
-        .ds-app-card:hover .ds-arrow { color: #FFD900; }
-
-        /* Kartu nonaktif / sedang perbaikan */
-        .ds-app-card.is-disabled {
-            opacity: .5; cursor: not-allowed; filter: grayscale(.5);
-            background: rgba(8,42,7,0.12);
-        }
-        .ds-app-card.is-disabled:hover {
-            transform: none; box-shadow: none;
-            border-color: rgba(255,255,255,0.06); background: rgba(8,42,7,0.12);
-        }
-        .ds-app-card.is-disabled .ds-icon { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4); }
-
+        .ds-app-card h4 { margin-bottom:2px; color:var(--text); }
+        .ds-app-card p  { line-height:1.4; color:var(--text-muted); }
+        .ds-app-card:hover { transform:translateY(-5px); border-color:var(--border-strong); box-shadow:var(--shadow-lift); }
+        .ds-app-card:hover::after { opacity:1; }
+        .ds-app-card:hover .ds-icon { background:var(--accent); color:var(--accent-on); box-shadow:var(--glow); }
+        .ds-app-card:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+        .ds-app-card .ds-arrow { color:var(--text-faint); transition:color .3s, transform .3s; }
+        .ds-app-card:hover .ds-arrow { color:var(--accent-text); transform:translate(2px,-2px); }
+        .ds-app-card.is-disabled { opacity:.5; cursor:not-allowed; filter:grayscale(.4); }
+        .ds-app-card.is-disabled:hover { transform:none; box-shadow:none; border-color:var(--border); }
+        .ds-app-card.is-disabled .ds-icon { background:var(--surface-2); color:var(--text-faint); }
         .ds-status-chip {
-            display: inline-flex; align-items: center; gap: 4px;
-            padding: 2px 8px; border-radius: 999px;
-            background: rgba(251,191,36,0.12); color: rgba(252,211,77,0.95);
-            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+            display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:999px;
+            background:var(--chip-bg); color:var(--chip-fg);
+            font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em;
         }
 
-        /* Panel Gana AI inline (di FAQ) */
-        .ai-faq-panel { border-radius: var(--radius-2xl); }
-        .ai-quick {
-            padding: 8px 14px; border-radius: 999px;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
-            cursor: pointer; transition: all .25s; color: #fff;
+        /* Pill eksternal */
+        .pp-pill {
+            display:inline-flex; align-items:center; justify-content:center; text-align:center;
+            padding:0.65rem 1.05rem; border-radius:var(--radius-sm); background:var(--surface-2); border:1px solid var(--border);
+            font-size:12px; font-weight:700; color:var(--text-soft); text-decoration:none; transition:all .25s ease;
         }
-        .ai-quick:hover { background: #FFD900; color: #073902; border-color: #FFD900; }
-        .ai-faq-input {
-            flex: 1; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 999px; padding: 12px 18px; font-size: 14px; color: #fff; font-family: 'Inter', sans-serif;
+        .pp-pill:hover { background:var(--accent); color:var(--accent-on); border-color:var(--accent); transform:translateY(-2px); box-shadow:var(--shadow-soft); }
+
+        .pp-note {
+            display:flex; align-items:center; gap:0.9rem; padding:1rem 1.1rem;
+            border-radius:var(--radius-md); background:var(--surface-2); border:1px solid var(--border);
         }
-        .ai-faq-input:focus { outline: none; border-color: rgba(255,217,0,0.5); }
-        .ai-faq-input::placeholder { color: rgba(255,255,255,0.3); }
-        .ai-faq-send {
-            width: 44px; height: 44px; border-radius: 999px; background: #FFD900; color: #073902;
-            display: flex; align-items: center; justify-content: center; border: 0; cursor: pointer;
-            flex-shrink: 0; transition: transform .2s;
+
+        /* Navigasi */
+        .nav-link {
+            font-family:'Manrope',sans-serif; font-size:13px; font-weight:600; letter-spacing:0.01em;
+            color:var(--text-soft); transition:color .25s ease; text-decoration:none; position:relative;
         }
-        .ai-faq-send:hover { transform: scale(1.05); }
+        .nav-link:hover { color:var(--accent-text); }
+        .nav-link::after {
+            content:''; position:absolute; left:0; bottom:-6px; width:0; height:2px; background:var(--accent); transition:width .3s ease;
+        }
+        .nav-link:hover::after { width:100%; }
+
+        /* Tombol */
+        .btn-primary {
+            background-color:var(--accent); color:var(--accent-on);
+            height:52px; display:inline-flex; align-items:center; justify-content:center;
+            padding:0 28px; border-radius:var(--radius-md); font-weight:800; text-decoration:none;
+            transition:all .3s cubic-bezier(.4,0,.2,1);
+        }
+        .btn-primary:hover { transform:translateY(-2px); box-shadow:var(--glow), var(--shadow-lift); filter:brightness(1.04); }
+        .btn-secondary {
+            background-color:transparent; color:var(--text);
+            height:52px; display:inline-flex; align-items:center; justify-content:center;
+            padding:0 26px; border-radius:var(--radius-md); font-weight:600; border:1px solid var(--border-strong); text-decoration:none;
+            transition:all .3s cubic-bezier(.4,0,.2,1);
+        }
+        .btn-secondary:hover { border-color:var(--accent); color:var(--accent-text); transform:translateY(-2px); }
+
+        /* HERO gaya lama: panel gradien + glow emas */
+        .hero-wrap {
+            position:relative; overflow:hidden; border-radius:var(--radius-2xl);
+            border:1px solid var(--border);
+            background:
+                radial-gradient(900px 360px at 50% -8%, rgba(255,217,0,0.14), transparent 60%),
+                linear-gradient(160deg, var(--surface-2), var(--surface) 60%, var(--bg));
+            box-shadow:var(--shadow-lift);
+        }
+        .hero-wrap::before {
+            content:''; position:absolute; top:-18%; right:-8%; width:380px; height:380px;
+            background:radial-gradient(circle, rgba(255,217,0,0.16), transparent 70%); filter:blur(20px);
+        }
+        .hero-wrap::after {
+            content:''; position:absolute; inset:0; opacity:.5; pointer-events:none;
+            background-image:url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); mix-blend-mode:overlay;
+        }
+        html.dark .hero-wrap::after { opacity:.35; }
+        html:not(.dark) .hero-wrap::after { opacity:.08; }
+
+        /* Theme toggle */
+        .theme-toggle {
+            width:40px; height:40px; border-radius:var(--radius-md); display:inline-flex; align-items:center; justify-content:center;
+            border:1px solid var(--border); background:var(--surface); color:var(--text-soft); cursor:pointer; transition:all .25s ease;
+        }
+        .theme-toggle:hover { color:var(--accent-text); border-color:var(--accent); }
+        .theme-toggle .icon-moon { display:none; }
+        html.dark .theme-toggle .icon-moon { display:inline; }
+        html.dark .theme-toggle .icon-sun  { display:none; }
+
+        /* Reveal (dipakai JS: animate-reveal) */
+        @keyframes fadeUp { from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
+        .animate-reveal { animation:fadeUp .7s cubic-bezier(.22,1,.36,1) both; }
+        .stagger-1{animation-delay:.05s} .stagger-2{animation-delay:.12s} .stagger-3{animation-delay:.19s}
+
+        /* Typing cursor (dipakai JS: #typing-text) */
+        .typing-cursor::after { content:'|'; animation:blink 1s infinite; margin-left:4px; color:var(--accent); }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+        /* Kalender */
+        .calendar-frame-container {
+            position:relative; width:100%; height:500px; background:var(--surface-2);
+            border-radius:var(--radius-lg); overflow:hidden;
+        }
+
+        /* ===== FAQ (markup dirender JS — nama class WAJIB dipertahankan) ===== */
+        .faq-pill {
+            padding:8px 16px; border-radius:999px; background:var(--surface-2); border:1px solid var(--border);
+            color:var(--text-muted); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;
+            font-family:'Manrope',sans-serif; cursor:pointer; transition:all .25s ease;
+        }
+        .faq-pill:hover { color:var(--text); border-color:var(--border-strong); }
+        .faq-pill.active { background:var(--accent); color:var(--accent-on); border-color:var(--accent); box-shadow:var(--shadow-soft); }
+        .faq-item { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden; transition:all .3s ease; }
+        .faq-item:hover { border-color:var(--border-strong); }
+        .faq-item.open { border-color:var(--accent); box-shadow:var(--shadow-soft); }
+        .faq-q { width:100%; padding:20px 22px; background:transparent; border:0; color:var(--text); display:flex; align-items:flex-start; justify-content:space-between; gap:16px; cursor:pointer; text-align:left; }
+        .faq-q-inner { display:flex; gap:16px; align-items:flex-start; flex:1; }
+        .faq-q-badge { flex-shrink:0; width:32px; height:32px; border-radius:9px; background:var(--chip-bg); color:var(--accent-text); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12px; font-family:'Manrope',sans-serif; transition:all .3s; }
+        .faq-item.open .faq-q-badge { background:var(--accent); color:var(--accent-on); }
+        .faq-q-cat { display:block; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.14em; color:var(--accent-text); margin-bottom:4px; font-family:'Manrope',sans-serif; }
+        .faq-q-text { font-size:15px; font-weight:600; color:var(--text); line-height:1.4; font-family:'Manrope',sans-serif; }
+        .faq-chevron { color:var(--text-faint); transition:transform .35s ease, color .3s; flex-shrink:0; }
+        .faq-item.open .faq-chevron { transform:rotate(180deg); color:var(--accent-text); }
+        .faq-a { max-height:0; overflow:hidden; transition:max-height .4s ease; }
+        .faq-item.open .faq-a { max-height:3000px; }
+        .faq-a-inner { padding:0 22px 22px 70px; color:var(--text-soft); font-size:14px; line-height:1.7; border-top:1px solid var(--border); padding-top:18px; margin-top:4px; }
+        .faq-a-inner p { margin-bottom:10px; }
+        .faq-a-inner ul, .faq-a-inner ol { margin:8px 0 12px 18px; list-style:disc; }
+        .faq-a-inner ol { list-style:decimal; }
+        .faq-a-inner li { margin-bottom:6px; }
+        .faq-a-inner b { color:var(--text); font-weight:700; }
+        .faq-a-inner a { color:var(--accent-text); text-decoration:underline; }
+        .faq-a-inner table { width:100%; border-collapse:collapse; margin:10px 0; font-size:13px; }
+        .faq-a-inner th, .faq-a-inner td { border:1px solid var(--border); padding:8px 10px; text-align:left; }
+        .faq-a-inner th { background:var(--surface-2); color:var(--accent-text); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; }
+        .faq-a-inner td:first-child { font-weight:600; color:var(--text); }
+        .faq-a-inner .note { margin-top:12px; padding:10px 14px; background:var(--surface-2); border-left:3px solid var(--accent); border-radius:8px; color:var(--text-soft); font-size:13px; }
+        .faq-a-inner .note.danger { background:rgba(239,68,68,0.08); border-left-color:#ef4444; color:#e2525f; }
+        .faq-a-inner .code { margin-top:10px; padding:10px 14px; background:var(--surface-2); border:1px solid var(--border); border-radius:8px; font-family:ui-monospace,'SFMono-Regular','Menlo',monospace; font-size:12px; color:var(--text-soft); }
+        @media (max-width:640px) { .faq-a-inner { padding-left:22px; } .faq-a-inner table { font-size:11px; } .faq-a-inner th, .faq-a-inner td { padding:6px; } }
+
+        /* Panel Gana AI inline (FAQ) */
+        .ai-faq-panel { border-radius:var(--radius-xl); background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-soft); }
+        .ai-quick { padding:8px 14px; border-radius:999px; background:var(--surface-2); border:1px solid var(--border); font-size:12px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; transition:all .25s; color:var(--text-soft); }
+        .ai-quick:hover { background:var(--accent); color:var(--accent-on); border-color:var(--accent); }
+        .ai-faq-input { flex:1; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:12px 18px; font-size:14px; color:var(--text); font-family:'Inter',sans-serif; }
+        .ai-faq-input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--ring); }
+        .ai-faq-input::placeholder { color:var(--text-faint); }
+        .ai-faq-send { width:44px; height:44px; border-radius:999px; background:var(--accent); color:var(--accent-on); display:flex; align-items:center; justify-content:center; border:0; cursor:pointer; flex-shrink:0; transition:transform .2s; }
+        .ai-faq-send:hover { transform:scale(1.05); }
+
+        /* Chatbox */
+        .pp-chatbox { background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-lift); }
+        .pp-chat-head { background:var(--surface-2); border-bottom:1px solid var(--border); }
+        .pp-chat-foot { background:var(--surface-2); border-top:1px solid var(--border); }
+        .pp-chat-input { flex:1; background:var(--bg); border:1px solid var(--border); border-radius:999px; padding:0.6rem 1rem; font-size:14px; color:var(--text); }
+        .pp-chat-input:focus { outline:none; border-color:var(--accent); }
+        .pp-chat-input::placeholder { color:var(--text-faint); }
+        .pp-bubble-bot { align-self:flex-start; max-width:85%; padding:0.85rem 0.9rem; border-radius:1rem; border-top-left-radius:.35rem; background:var(--surface-2); border:1px solid var(--border); font-size:14px; color:var(--text); line-height:1.6; }
+
+        ::-webkit-scrollbar { width:8px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:10px; }
+        ::-webkit-scrollbar-thumb:hover { background:var(--accent); }
 
         @media (prefers-reduced-motion: reduce) {
-            .animate-reveal, .animate-pulse, .animate-ping, .animate-bounce,
-            .typing-cursor::after { animation: none !important; }
-            * { transition-duration: .01ms !important; }
+            .animate-reveal, .animate-pulse, .animate-bounce, .typing-cursor::after { animation:none !important; }
+            * { transition-duration:.01ms !important; scroll-behavior:auto; }
         }
     </style>
+
     <script is:inline id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#FFD900",
-                        "on-primary": "#073902",
-                        "surface": "#010800",
-                        "surface-container": "#082a07",
-                        "surface-container-high": "#0d350c",
-                        "neon-accent": "#9fd58c",
-                        "on-surface": "#f8faf5",
-                        "on-surface-variant": "#c2c9ba",
-                    },
-                },
-            },
+            theme: { extend: { colors: {
+                "primary": "#FFD900", "on-primary": "#0A0C0A",
+                "surface": "#0A0C0A", "surface-container": "#14180F", "surface-container-high": "#191E13",
+                "neon-accent": "#9fd58c", "on-surface": "#F5F6EF", "on-surface-variant": "#949C86",
+            } } },
         }
     </script>
 </head>
-<body class="text-on-surface antialiased overflow-x-hidden selection:bg-primary/30 selection:text-primary">
+<body class="antialiased overflow-x-hidden">
 
     <!-- Top Alert Banner -->
-    <div class="fixed top-0 left-0 right-0 z-[60] bg-gradient-to-r from-primary via-yellow-300 to-primary text-on-primary">
-        <div class="max-w-7xl mx-auto px-4 md:px-12 py-2 flex items-center justify-center gap-3 text-center">
+    <div class="fixed top-0 left-0 right-0 z-[60]" style="background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-dim)); color: var(--on-gold);">
+        <div class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-center gap-3 text-center">
             <span class="material-symbols-outlined text-base animate-pulse">alarm_on</span>
-            <p class="text-[11px] md:text-xs font-bold tracking-wide">Duduk manis di atas meja, yuk kerjain RKAKL, SILABIN, dan E-Monev Bappenas!</p>
-            <a href="#kalender" class="hidden sm:inline-flex items-center gap-1 ml-2 px-3 py-1 rounded-full bg-on-primary/15 hover:bg-on-primary/25 text-[10px] font-bold uppercase tracking-widest transition-all">
+            <p class="text-[11px] md:text-xs font-bold tracking-wide">Siapin kopi terbaikmu, yuk bareng-bareng kita beresin LKJIP, RASTAF EKA, SKM, &amp; Monev Renaksi TW III!</p>
+            <a href="#kalender" class="hidden sm:inline-flex items-center gap-1 ml-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all" style="background: rgba(10,12,10,0.14);">
                 <span class="material-symbols-outlined text-sm">calendar_month</span>
                 Cek Kalender
             </a>
         </div>
     </div>
-    
+
     <!-- Navigation Header -->
-    <header class="fixed top-9 right-0 h-16 bg-[#010800]/90 backdrop-blur-xl flex justify-between items-center px-6 md:px-12 z-50 border-b border-white/5 left-0 transition-all duration-300">
-        <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-yellow-600 flex items-center justify-center shadow-lg shadow-primary/20">
-                <span class="material-symbols-outlined text-on-primary font-bold">account_balance</span>
+    <header class="fixed top-9 right-0 left-0 h-16 z-50 border-b transition-all duration-300"
+            style="background: color-mix(in srgb, var(--bg) 82%, transparent); border-color: var(--border); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);">
+        <div class="max-w-6xl mx-auto h-full px-4 md:px-6 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, var(--gold), var(--gold-dim)); box-shadow: var(--glow);">
+                    <span class="material-symbols-outlined font-bold" style="color: var(--on-gold);">account_balance</span>
+                </div>
+                <span class="hidden sm:block text-[11px] font-headline font-bold tracking-[0.14em] t-text uppercase">GanaSatya Dhiracana DCXXV</span>
             </div>
-            <span class="text-[10px] font-headline font-bold tracking-[0.2em] text-white opacity-90 uppercase">GanaSatya Dhiracana DCXXV</span>
-        </div>
-        <div class="hidden md:flex items-center gap-8">
-            <nav class="hidden md:flex gap-7">
-                <a href="#" class="nav-link">Beranda</a>
-                <a href="#kamus-perencana" class="nav-link">Kamus</a>
-                <a href="#aplikasi" class="nav-link">Aplikasi</a>
-                <a href="#panduan" class="nav-link">Panduan</a>
-                <a href="#kalender" class="nav-link">Kalender</a>
-                <a href="#faq" class="nav-link">FAQ</a>
-            </nav>
+            <div class="flex items-center gap-6">
+                <nav class="hidden md:flex gap-7">
+                    <a href="#" class="nav-link">Beranda</a>
+                    <a href="#kamus-perencana" class="nav-link">Kamus</a>
+                    <a href="#aplikasi" class="nav-link">Aplikasi</a>
+                    <a href="#panduan" class="nav-link">Panduan</a>
+                    <a href="#kalender" class="nav-link">Kalender</a>
+                    <a href="#faq" class="nav-link">FAQ</a>
+                </nav>
+                <button id="theme-toggle" type="button" class="theme-toggle" aria-label="Ganti tema terang/gelap">
+                    <span class="material-symbols-outlined text-[20px] icon-sun">light_mode</span>
+                    <span class="material-symbols-outlined text-[20px] icon-moon">dark_mode</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <main class="pt-32 pb-20 px-6 md:px-12 max-w-7xl mx-auto space-y-16 md:space-y-20">
-        
-        <!-- Hero Section -->
-        <section class="animate-reveal stagger-1 relative">
-            <div class="relative w-full mb-8 rounded-[2rem] overflow-hidden hero-glow h-[320px] lg:h-[400px] glass-hero-pattern border border-white/10">
-                <div class="absolute top-[-10%] right-[-5%] w-[360px] h-[360px] bg-primary/12 rounded-full blur-[110px]"></div>
+    <main class="pt-28 md:pt-32 pb-20 px-5 md:px-6 max-w-6xl mx-auto space-y-16 md:space-y-24">
 
-                <div class="absolute inset-0 flex items-center justify-center overflow-hidden">
-                    <div class="w-full h-full opacity-15 mix-blend-overlay" style="background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');"></div>
-                    <div class="absolute bottom-1/4 right-1/3 w-48 h-48 bg-primary/5 backdrop-blur-lg rounded-[2rem] border border-primary/20 -rotate-12"></div>
-                </div>
-
-                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#010800]/10 to-[#010800]"></div>
-
-                <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-                    <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-xl">
-                        <span class="w-2 h-2 rounded-full bg-primary"></span>
-                        <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-primary font-headline">Portal Perencana Keahlian</span>
-                    </div>
-                    <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold font-headline tracking-tight leading-[1.1]">
-                        <span class="text-[#FFD900]">Halo, teman perencana!</span> <br/>
-                        <span class="text-white typing-cursor" id="typing-text">Selamat datang di rumah kita</span>
+        <!-- Hero Section (gaya lama: panel gradien + glow + typing) -->
+        <section class="animate-reveal stagger-1">
+            <div class="hero-wrap p-8 md:p-14 lg:p-16">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="sec-label mb-7">Portal Perencana Keahlian</span>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold font-headline tracking-tight leading-[1.08] mt-5">
+                        <span class="hl">Halo, teman perencana!</span><br/>
+                        <span class="t-text typing-cursor" id="typing-text">Selamat datang di rumah kita</span>
                     </h1>
-                    <a href="https://sipena.bappenas.go.id/login/index.php" target="_blank" rel="noopener noreferrer" class="btn-primary group mt-8 gap-3">
-                        <span class="material-symbols-outlined text-xl group-hover:rotate-6 transition-transform">school</span>
-                        <span>Cek Diklat</span>
-                        <span class="material-symbols-outlined text-base opacity-70 group-hover:translate-x-1 transition-transform">arrow_outward</span>
+                    <p class="text-base md:text-lg t-soft font-light leading-relaxed mt-6 max-w-2xl">
+                        Capek lompat-lompat tab buat cari aplikasi, panduan, sampai kalender deadline? Di sini semua udah dirapihin jadi satu pintu, biar kerjamu makin sat-set, gak pakai ribet.
+                    </p>
+                    <p class="text-sm md:text-base t-muted font-light leading-relaxed mt-3">
+                        Yuk, kita mulai dari kenalan dulu sama dunia perencana di bawah ini 👇
+                    </p>
+                    <div class="mt-8 flex flex-wrap gap-3">
+                        <a href="https://sipena.bappenas.go.id/login/index.php" target="_blank" rel="noopener noreferrer" class="btn-primary group gap-3">
+                            <span class="material-symbols-outlined text-xl group-hover:rotate-6 transition-transform">school</span>
+                            <span>Cek Diklat</span>
+                            <span class="material-symbols-outlined text-base opacity-70 group-hover:translate-x-1 transition-transform">arrow_outward</span>
+                        </a>
+                        <a href="#aplikasi" class="btn-secondary gap-2">
+                            Jelajahi aplikasi
+                            <span class="material-symbols-outlined text-base">arrow_downward</span>
+                        </a>
+                    </div>
+                    <div class="mt-10 flex flex-wrap gap-x-10 gap-y-4 pt-8" style="border-top:1px solid var(--border);">
+                        <div><p class="text-2xl font-extrabold font-headline hl font-mono">6</p><p class="text-xs t-muted mt-1">Aplikasi internal</p></div>
+                        <div><p class="text-2xl font-extrabold font-headline hl font-mono">7</p><p class="text-xs t-muted mt-1">Portal lintas K/L</p></div>
+                        <div><p class="text-2xl font-extrabold font-headline hl font-mono">500+</p><p class="text-xs t-muted mt-1">Perencana terhubung</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kamus Perencana Section (LIVE) -->
+        <section id="kamus-perencana" class="animate-reveal">
+            <div class="bento p-8 md:p-12">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                    <div class="max-w-2xl">
+                        <span class="sec-label sage mb-5">Kenalan dulu</span>
+                        <h3 class="text-3xl md:text-4xl font-extrabold font-headline mb-4 mt-4 t-text leading-tight">Kenalan dulu yuk, sama formasi perencana!</h3>
+                        <p class="t-soft text-lg font-light leading-relaxed">
+                            Sebelum nyemplung ke aplikasi, mampir dulu ke kamus ini. Mulai dari tugas fungsi, PERJA, SOP, sampai contoh PK &amp; RK. Semuanya kami kupas tuntas biar kamu makin pede sama formasi sendiri. Punya referensi keren? Bagi-bagi juga ya!
+                        </p>
+                    </div>
+                    <div class="ds-icon shrink-0" style="width:4.5rem;height:4.5rem;border-radius:var(--radius-lg);">
+                        <span class="material-symbols-outlined text-4xl">auto_stories</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <a href="https://drive.google.com/drive/folders/1N2auyLcogovM31OzDa-18lT3BjgCvCU5?usp=sharing" target="_blank" class="ds-app-card">
+                        <div class="ds-icon sm"><span class="material-symbols-outlined">collections_bookmark</span></div>
+                        <div class="min-w-0 flex-1"><h4 class="text-base font-bold font-headline leading-tight t-text">Referensi PK &amp; RK Perencana</h4></div>
+                        <span class="material-symbols-outlined ds-arrow">arrow_outward</span>
+                    </a>
+                    <a href="https://drive.google.com/drive/folders/1lplZaVqXsA0Vrk6HxcWHUtxNFmR81uul?usp=sharing" target="_blank" class="ds-app-card">
+                        <div class="ds-icon sm"><span class="material-symbols-outlined">gavel</span></div>
+                        <div class="min-w-0 flex-1"><h4 class="text-base font-bold font-headline leading-tight t-text">PERJA &amp; SOP Kejaksaan</h4></div>
+                        <span class="material-symbols-outlined ds-arrow">arrow_outward</span>
+                    </a>
+                    <a href="https://drive.google.com/drive/folders/1zheJgbij-asMSZSOjxx3kCtQIW3r9iHd?usp=sharing" target="_blank" class="ds-app-card">
+                        <div class="ds-icon sm"><span class="material-symbols-outlined">library_books</span></div>
+                        <div class="min-w-0 flex-1"><h4 class="text-base font-bold font-headline leading-tight t-text">Materi Diklat, Tugas &amp; Fungsi Perencana</h4></div>
+                        <span class="material-symbols-outlined ds-arrow">arrow_outward</span>
                     </a>
                 </div>
             </div>
-            
-            <div class="max-w-3xl mx-auto text-center">
-                <p class="text-base md:text-lg text-on-surface-variant font-light leading-relaxed">
-                    Capek lompat-lompat tab buat cari aplikasi, panduan, sampai kalender deadline? Di sini semua udah dirapihin jadi satu pintu, biar kerjamu makin sat-set, gak pakai ribet.
-                </p>
-                <p class="text-sm md:text-base text-white/50 font-light leading-relaxed mt-4">
-                    Yuk, kita mulai dari kenalan dulu sama dunia perencana di bawah ini 👇
-                </p>
-            </div>
         </section>
 
-        <div class="section-divider opacity-10"></div>
-
-        <!-- Kamus Perencana Section (LIVE) -->
-        <section id="kamus-perencana" class="animate-reveal scroll-mt-24">
-            <div class="glass-panel rounded-[2rem] p-8 md:p-12 border border-white/5 relative overflow-hidden group">
-                <div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                <div class="relative z-10">
-                    <div class="flex flex-col md:flex-row md:items-start justify-between mb-12 gap-8">
-                        <div class="max-w-3xl">
-                            <span class="ds-eyebrow accent mb-6"><span class="dot"></span>Kenalan dulu</span>
-                            <h3 class="text-3xl md:text-4xl font-extrabold font-headline mb-6 mt-3 text-white">Kenalan dulu yuk, sama formasi perencana!</h3>
-                            <p class="text-on-surface-variant text-lg font-light leading-relaxed">
-                                Sebelum nyemplung ke aplikasi, mampir dulu ke kamus ini. Mulai dari tugas fungsi, PERJA, SOP, sampai contoh PK &amp; RK. Semuanya kami kupas tuntas biar kamu makin pede sama formasi sendiri. Punya referensi keren? Bagi-bagi juga ya!
-                            </p>
-                        </div>
-                        <div class="shrink-0 hidden lg:block">
-                            <div class="w-20 h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-primary/30 transition-colors duration-500">
-                                <span class="material-symbols-outlined text-5xl text-primary/40 group-hover:text-primary transition-colors">auto_stories</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
-                        <a href="https://drive.google.com/drive/folders/1N2auyLcogovM31OzDa-18lT3BjgCvCU5?usp=sharing" target="_blank" class="p-6 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-4 group/item hover:bg-white/10 hover:border-primary/30 transition-all">
-                            <div class="flex items-start justify-between">
-                                <div class="ds-icon sm">
-                                    <span class="material-symbols-outlined text-2xl">collections_bookmark</span>
-                                </div>
-                                <span class="material-symbols-outlined text-white/20 group-hover/item:text-primary transition-colors">arrow_outward</span>
-                            </div>
-                            <h5 class="text-base font-bold font-headline leading-tight">Referensi PK &amp; RK Perencana</h5>
-                        </a>
-                        <a href="https://drive.google.com/drive/folders/1lplZaVqXsA0Vrk6HxcWHUtxNFmR81uul?usp=sharing" target="_blank" class="p-6 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-4 group/item hover:bg-white/10 hover:border-primary/30 transition-all">
-                            <div class="flex items-start justify-between">
-                                <div class="ds-icon sm">
-                                    <span class="material-symbols-outlined text-2xl">gavel</span>
-                                </div>
-                                <span class="material-symbols-outlined text-white/20 group-hover/item:text-primary transition-colors">arrow_outward</span>
-                            </div>
-                            <h5 class="text-base font-bold font-headline leading-tight">PERJA &amp; SOP Kejaksaan</h5>
-                        </a>
-                        <a href="https://drive.google.com/drive/folders/1zheJgbij-asMSZSOjxx3kCtQIW3r9iHd?usp=sharing" target="_blank" class="p-6 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-4 group/item hover:bg-white/10 hover:border-primary/30 transition-all">
-                            <div class="flex items-start justify-between">
-                                <div class="ds-icon sm">
-                                    <span class="material-symbols-outlined text-2xl">library_books</span>
-                                </div>
-                                <span class="material-symbols-outlined text-white/20 group-hover/item:text-primary transition-colors">arrow_outward</span>
-                            </div>
-                            <h5 class="text-base font-bold font-headline leading-tight">Materi Diklat, Tugas &amp; Fungsi Perencana</h5>
-                        </a>
-                    </div>
-            </div>
-        </section>
-
-        <div class="section-divider opacity-10"></div>
-
-        <!-- Applications Grid -->
-        <section id="aplikasi" class="grid grid-cols-12 gap-8 lg:gap-12 scroll-mt-24">
+        <!-- Applications (bento grid: internal + eksternal) -->
+        <section id="aplikasi" class="grid grid-cols-12 gap-6 lg:gap-7 animate-reveal">
             <!-- Internal Apps -->
-            <div class="col-span-12 lg:col-span-7 animate-reveal stagger-2 flex flex-col">
+            <div class="col-span-12 lg:col-span-7 flex flex-col stagger-2">
                 <div class="mb-6">
-                    <span class="ds-eyebrow"><span class="dot"></span>Ruang kerja</span>
-                    <h3 class="text-2xl font-bold font-headline mb-3 mt-3">Nah, udah kenal? Mari kita masuk ke ruang kerjanya.</h3>
-                    <p class="text-on-surface-variant text-base font-light">Enam aplikasi internal Kejaksaan RI ini bakal jadi teman setiamu. Tinggal pilih mana yang lagi kamu butuhin, klik, login, beres. Gak perlu mikir dua kali.</p>
+                    <span class="sec-label">Ruang kerja</span>
+                    <h3 class="text-2xl md:text-3xl font-bold font-headline mb-3 mt-4 t-text">Nah, udah kenal? Mari kita masuk ke ruang kerjanya.</h3>
+                    <p class="t-soft text-base font-light">Enam aplikasi internal Kejaksaan RI ini bakal jadi teman setiamu. Tinggal pilih mana yang lagi kamu butuhin, klik, login, beres. Gak perlu mikir dua kali.</p>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1 auto-rows-fr">
                     <a href="https://silabin.kejaksaan.go.id/" target="_blank" class="ds-app-card">
                         <div class="ds-icon sm"><span class="material-symbols-outlined">description</span></div>
                         <div class="min-w-0 flex-1">
-                            <h4 class="text-base font-bold font-headline text-white/90 leading-tight">SILABIN</h4>
-                            <p class="text-xs text-on-surface-variant/80 font-medium">Sistem Informasi Laporan Pembinaan</p>
+                            <h4 class="text-base font-bold font-headline leading-tight">SILABIN</h4>
+                            <p class="text-xs font-medium">Sistem Informasi Laporan Pembinaan</p>
                         </div>
                         <span class="material-symbols-outlined ds-arrow text-lg">arrow_outward</span>
                     </a>
                     <a href="https://panev.kejaksaan.go.id/e-sakip/login-auto" target="_blank" class="ds-app-card">
                         <div class="ds-icon sm"><span class="material-symbols-outlined">verified</span></div>
                         <div class="min-w-0 flex-1">
-                            <h4 class="text-base font-bold font-headline text-white/90 leading-tight">SAKIP</h4>
-                            <p class="text-xs text-on-surface-variant/80 font-medium">Sistem Akuntabilitas Kinerja Instansi Pemerintah</p>
+                            <h4 class="text-base font-bold font-headline leading-tight">SAKIP</h4>
+                            <p class="text-xs font-medium">Sistem Akuntabilitas Kinerja Instansi Pemerintah</p>
                         </div>
                         <span class="material-symbols-outlined ds-arrow text-lg">arrow_outward</span>
                     </a>
                     <a href="https://reformasibirokrasi.kejaksaan.go.id/login/admin" target="_blank" class="ds-app-card">
                         <div class="ds-icon sm"><span class="material-symbols-outlined">published_with_changes</span></div>
                         <div class="min-w-0 flex-1">
-                            <h4 class="text-base font-bold font-headline text-white/90 leading-tight">Reformasi Birokrasi</h4>
-                            <p class="text-xs text-on-surface-variant/80 font-medium">Portal Reformasi Birokrasi Kejaksaan RI</p>
+                            <h4 class="text-base font-bold font-headline leading-tight">Reformasi Birokrasi</h4>
+                            <p class="text-xs font-medium">Portal Reformasi Birokrasi Kejaksaan RI</p>
                         </div>
                         <span class="material-symbols-outlined ds-arrow text-lg">arrow_outward</span>
                     </a>
                     <a href="https://sicana.kejaksaan.go.id/" target="_blank" class="ds-app-card">
                         <div class="ds-icon sm"><span class="material-symbols-outlined">troubleshoot</span></div>
                         <div class="min-w-0 flex-1">
-                            <h4 class="text-base font-bold font-headline text-white/90 leading-tight">SICANA</h4>
-                            <p class="text-xs text-on-surface-variant/80 font-medium">Sistem Perencanaan (Akses akun setelah pelatihan)</p>
+                            <h4 class="text-base font-bold font-headline leading-tight">SICANA</h4>
+                            <p class="text-xs font-medium">Sistem Perencanaan (Akses akun setelah pelatihan)</p>
                         </div>
                         <span class="material-symbols-outlined ds-arrow text-lg">arrow_outward</span>
                     </a>
                     <a href="https://simanris.kejaksaan.go.id/login" target="_blank" class="ds-app-card">
                         <div class="ds-icon sm"><span class="material-symbols-outlined">security</span></div>
                         <div class="min-w-0 flex-1">
-                            <h4 class="text-base font-bold font-headline text-white/90 leading-tight">SIMANRIS</h4>
-                            <p class="text-xs text-on-surface-variant/80 font-medium">Sinergi Informasi Manajemen Risiko</p>
+                            <h4 class="text-base font-bold font-headline leading-tight">SIMANRIS</h4>
+                            <p class="text-xs font-medium">Sinergi Informasi Manajemen Risiko</p>
                         </div>
                         <span class="material-symbols-outlined ds-arrow text-lg">arrow_outward</span>
                     </a>
                     <a href="https://birocana.kejaksaan.go.id/suncana/login.php" target="_blank" class="ds-app-card">
                         <div class="ds-icon sm"><span class="material-symbols-outlined">edit_calendar</span></div>
                         <div class="min-w-0 flex-1">
-                            <h4 class="text-base font-bold font-headline text-white/90 leading-tight">SUNCANA</h4>
-                            <p class="text-xs text-on-surface-variant/80 font-medium">Sistem Penyusunan Rencana Anggaran dan Program Kerja</p>
+                            <h4 class="text-base font-bold font-headline leading-tight">SUNCANA</h4>
+                            <p class="text-xs font-medium">Sistem Penyusunan Rencana Anggaran dan Program Kerja</p>
                         </div>
                         <span class="material-symbols-outlined ds-arrow text-lg">arrow_outward</span>
                     </a>
@@ -652,29 +526,29 @@ import Analytics from '@vercel/analytics/astro'
             </div>
 
             <!-- External Apps Sidebar -->
-            <div class="col-span-12 lg:col-span-5 animate-reveal stagger-3">
-                <div class="glass-panel rounded-[2rem] p-8 h-full flex flex-col shadow-2xl shadow-black/40">
+            <div class="col-span-12 lg:col-span-5 stagger-3">
+                <div class="bento p-8 h-full flex flex-col">
                     <div class="mb-8">
-                        <div class="ds-icon sm mb-4" style="background:rgba(159,213,140,0.1);color:#9fd58c">
+                        <div class="ds-icon sm mb-4" style="background: color-mix(in srgb, var(--sage) 14%, transparent); color: var(--sage)">
                             <span class="material-symbols-outlined text-2xl">captive_portal</span>
                         </div>
-                        <span class="ds-eyebrow accent"><span class="dot"></span>Lintas K/L</span>
-                        <h3 class="text-xl font-bold font-headline mb-3 mt-3 text-neon-accent">Perlu mampir ke kementerian lain?</h3>
-                        <p class="text-on-surface-variant text-sm font-light">Pintu cepatnya kami siapin di sini. Tinggal pilih tujuannya, klik, langsung cus.</p>
+                        <span class="sec-label sage">Lintas K/L</span>
+                        <h3 class="text-xl font-bold font-headline mb-3 mt-4 t-text">Perlu mampir ke kementerian lain?</h3>
+                        <p class="t-soft text-sm font-light">Pintu cepatnya kami siapin di sini. Tinggal pilih tujuannya, klik, langsung cus.</p>
                     </div>
                     <div class="flex flex-wrap gap-3 flex-1 content-start mb-8">
-                        <a href="https://esr.menpan.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">e-SAKIP</a>
-                        <a href="https://e-monev.bappenas.go.id/portal/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">e-Monev BAPPENAS</a>
-                        <a href="https://sakti.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">SAKTI</a>
-                        <a href="https://monev.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105 text-center">NKA Monev Kemenkeu</a>
-                        <a href="https://indonesia2045.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">RPJN 2025-2045</a>
-                        <a href="https://myintress.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">IKPA MyIntress</a>
-                        <a href="http://spanint.kemenkeu.go.id/" target="_blank" class="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold hover:bg-primary hover:text-on-primary transition-all hover:scale-105">IKPA OM-SPAN</a>
+                        <a href="https://esr.menpan.go.id/" target="_blank" class="pp-pill">e-SAKIP</a>
+                        <a href="https://e-monev.bappenas.go.id/portal/" target="_blank" class="pp-pill">e-Monev BAPPENAS</a>
+                        <a href="https://sakti.kemenkeu.go.id/" target="_blank" class="pp-pill">SAKTI</a>
+                        <a href="https://monev.kemenkeu.go.id/" target="_blank" class="pp-pill">NKA Monev Kemenkeu</a>
+                        <a href="https://indonesia2045.go.id/" target="_blank" class="pp-pill">RPJN 2025-2045</a>
+                        <a href="https://myintress.kemenkeu.go.id/" target="_blank" class="pp-pill">IKPA MyIntress</a>
+                        <a href="http://spanint.kemenkeu.go.id/" target="_blank" class="pp-pill">IKPA OM-SPAN</a>
                     </div>
-                    <div class="pt-6 border-t border-white/5">
-                        <div class="flex items-center gap-4 p-5 rounded-xl bg-white/5 border border-white/5">
-                            <span class="material-symbols-outlined text-primary text-xl animate-pulse">info</span>
-                            <p class="text-[11px] text-on-surface-variant/80 leading-relaxed">Akses portal ini disinkronisasi melalui SSO Pemerintah jika tersedia.</p>
+                    <div class="pt-6" style="border-top:1px solid var(--border);">
+                        <div class="pp-note">
+                            <span class="material-symbols-outlined t-accent text-xl">info</span>
+                            <p class="text-[11px] t-muted leading-relaxed">Akses portal ini disinkronisasi melalui SSO Pemerintah jika tersedia.</p>
                         </div>
                     </div>
                 </div>
@@ -682,56 +556,51 @@ import Analytics from '@vercel/analytics/astro'
         </section>
 
         <!-- Drive/Resources Section -->
-        <section id="panduan" class="animate-reveal scroll-mt-24">
-            <div class="relative p-[1px] rounded-[2rem] bg-gradient-to-br from-primary/20 via-transparent to-green-500/10">
-                <div class="bg-surface-container/40 rounded-[1.95rem] p-8 md:p-12 flex flex-col items-center justify-center gap-10 backdrop-blur-2xl text-center">
-                    <div class="relative z-10 max-w-2xl">
-                        <span class="ds-eyebrow"><span class="dot"></span>Bekal kerja</span>
-                        <h3 class="text-2xl md:text-4xl font-extrabold font-headline mb-4 mt-3">Aplikasinya udah kenal, sekarang format laporannya!</h3>
-                        <p class="text-on-surface-variant text-base md:text-lg font-light leading-relaxed">Template, panduan, sampai cover &amp; format laporan atau SAKIP. Semuanya kami kumpulin biar kamu tinggal pakai. Gak perlu lagi nyari sana-sini.</p>
-                    </div>
-                    <div class="relative z-10 flex flex-col sm:flex-row gap-5 w-full justify-center max-w-xl">
-                        <a class="btn-primary group gap-4 px-10 h-14 w-full sm:w-auto" href="https://drive.google.com/drive/folders/1pVzQUj2RJ7Zxi28NK616EFvXSOPR29ES?usp=sharing" target="_blank">
-                            <span class="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform">cloud_download</span>
-                            <span class="text-base">Cek panduannya</span>
-                        </a>
-                        <a class="btn-secondary group gap-4 px-10 h-14 w-full sm:w-auto" href="https://linktr.ee/perencanakeahlian" target="_blank">
-                            <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">folder_shared</span>
-                            <span class="text-base">Cek semua template</span>
-                        </a>
-                    </div>
+        <section id="panduan" class="animate-reveal">
+            <div class="bento p-8 md:p-14 text-center flex flex-col items-center" style="background: radial-gradient(700px 260px at 50% 0%, rgba(255,217,0,0.08), transparent 60%), var(--surface);">
+                <div class="max-w-2xl">
+                    <span class="sec-label mx-auto" style="justify-content:center;">Bekal kerja</span>
+                    <h3 class="text-2xl md:text-4xl font-extrabold font-headline mb-4 mt-4 t-text leading-tight">Aplikasinya udah kenal, sekarang format laporannya!</h3>
+                    <p class="t-soft text-base md:text-lg font-light leading-relaxed">Template, panduan, sampai cover &amp; format laporan atau SAKIP. Semuanya kami kumpulin biar kamu tinggal pakai. Gak perlu lagi nyari sana-sini.</p>
+                </div>
+                <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                    <a class="btn-primary group gap-3" href="https://drive.google.com/drive/folders/1pVzQUj2RJ7Zxi28NK616EFvXSOPR29ES?usp=sharing" target="_blank">
+                        <span class="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform">cloud_download</span>
+                        <span class="text-base">Cek panduannya</span>
+                    </a>
+                    <a class="btn-secondary group gap-3" href="https://linktr.ee/perencanakeahlian" target="_blank">
+                        <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">folder_shared</span>
+                        <span class="text-base">Cek semua template</span>
+                    </a>
                 </div>
             </div>
         </section>
 
         <!-- Calendar Section -->
-        <section id="kalender" class="grid grid-cols-12 gap-8 lg:gap-16 scroll-mt-24">
-            <div class="col-span-12 lg:col-span-4 flex flex-col justify-center animate-reveal">
-                <div class="ds-icon mb-6">
-                    <span class="material-symbols-outlined text-3xl">event_upcoming</span>
-                </div>
-                <span class="ds-eyebrow mb-3"><span class="dot"></span>Jaga ritme</span>
-                <h3 class="text-3xl font-extrabold font-headline mb-6 leading-tight text-white">Biar nggak kaget pas deadline mepet</h3>
-                <p class="text-on-surface-variant mb-8 text-base font-light leading-relaxed">Semua tenggat penting udah kami susun rapi di kalender ini. Simpan ke Google Calendar-mu, biar HP yang ingetin. Kamu tinggal fokus kerja.</p>
+        <section id="kalender" class="grid grid-cols-12 gap-8 lg:gap-10 animate-reveal">
+            <div class="col-span-12 lg:col-span-4 flex flex-col justify-center">
+                <div class="ds-icon mb-6"><span class="material-symbols-outlined text-3xl">event_upcoming</span></div>
+                <span class="sec-label mb-3">Jaga ritme</span>
+                <h3 class="text-3xl font-extrabold font-headline mb-5 mt-4 leading-tight t-text">Biar nggak kaget pas deadline mepet</h3>
+                <p class="t-soft mb-8 text-base font-light leading-relaxed">Semua tenggat penting udah kami susun rapi di kalender ini. Simpan ke Google Calendar-mu, biar HP yang ingetin. Kamu tinggal fokus kerja.</p>
                 <div class="flex flex-col gap-4">
-                    <a href="https://bit.ly/SimpankeKalendermu" target="_blank" class="btn-primary group gap-3 shadow-xl shadow-primary/10 h-14">
+                    <a href="https://bit.ly/SimpankeKalendermu" target="_blank" class="btn-primary group gap-3">
                         <span class="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">calendar_add_on</span>
                         Simpan ke Google Kalender!
                     </a>
-                    <a class="text-white/60 text-center text-xs font-bold uppercase tracking-widest hover:text-primary transition-all flex items-center justify-center gap-3 py-3 rounded-xl hover:bg-white/5" href="https://bit.ly/WebKalenderPerencana" target="_blank">
+                    <a class="t-muted text-center text-xs font-bold uppercase tracking-widest hover:t-accent transition-all flex items-center justify-center gap-3 py-3 rounded-xl" href="https://bit.ly/WebKalenderPerencana" target="_blank">
                         Cek tampilan penuh kalendar
                         <span class="material-symbols-outlined text-base">open_in_new</span>
                     </a>
                 </div>
             </div>
-            <div class="col-span-12 lg:col-span-8 animate-reveal">
-                <div class="glass-panel rounded-[2rem] p-4 shadow-2xl relative overflow-hidden group">
+            <div class="col-span-12 lg:col-span-8">
+                <div class="bento p-4">
                     <div class="calendar-frame-container">
                         <iframe src="https://embed.styledcalendar.com/#OlkGF8UsvN8yj5imHuDL" title="Styled Calendar" class="styled-calendar-container" style="width: 100%; height: 100%; border: none;" data-cy="calendar-embed-iframe"></iframe>
                     </div>
-                    
-                    <div class="flex items-center gap-4 text-on-surface-variant/80 italic text-[11px] mt-6 bg-black/40 p-4 rounded-xl border border-white/5">
-                        <span class="material-symbols-outlined text-primary text-lg">info</span>
+                    <div class="pp-note mt-5 italic text-[11px] t-muted">
+                        <span class="material-symbols-outlined t-accent text-lg">info</span>
                         <p>Kalender lebih asik dibuka di laptop. Kalau di HP, klik tombol di atas untuk tampilan penuh ya!</p>
                     </div>
                 </div>
@@ -739,11 +608,11 @@ import Analytics from '@vercel/analytics/astro'
         </section>
 
         <!-- FAQ Section -->
-        <section id="faq" class="animate-reveal scroll-mt-24">
+        <section id="faq" class="animate-reveal">
             <div class="text-center mb-12">
-                <div class="flex justify-center mb-6"><span class="ds-eyebrow"><span class="dot"></span>Masih penasaran?</span></div>
-                <h3 class="text-3xl md:text-4xl font-extrabold font-headline mb-4 mt-3 text-white">Tanya-jawab sebelum nanya ke grup</h3>
-                <p class="text-on-surface-variant text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto">Pertanyaan-pertanyaan paling sering muncul soal formasi, tugas, dan teknis kerjaan udah kami rangkum di sini. Cek dulu, siapa tau jawabannya udah ada.</p>
+                <div class="flex justify-center mb-5"><span class="sec-label" style="justify-content:center;">Masih penasaran?</span></div>
+                <h3 class="text-3xl md:text-4xl font-extrabold font-headline mb-4 mt-4 t-text">Tanya-jawab sebelum nanya ke grup</h3>
+                <p class="t-soft text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto">Pertanyaan-pertanyaan paling sering muncul soal formasi, tugas, dan teknis kerjaan udah kami rangkum di sini. Cek dulu, siapa tau jawabannya udah ada.</p>
             </div>
 
             <!-- Category Filter Pills -->
@@ -753,20 +622,20 @@ import Analytics from '@vercel/analytics/astro'
             <div id="faq-list" class="space-y-3 max-w-4xl mx-auto"></div>
 
             <!-- Gana AI - entry point di dalam FAQ -->
-            <div class="glass-panel ai-faq-panel p-6 md:p-8 max-w-4xl mx-auto mt-8">
+            <div class="ai-faq-panel p-6 md:p-8 max-w-4xl mx-auto mt-8">
                 <div class="flex items-center gap-4 mb-5">
                     <div class="relative">
-                        <div class="w-12 h-12 rounded-2xl bg-primary/15 flex items-center justify-center text-primary">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background: var(--chip-bg); color: var(--accent-text);">
                             <span class="material-symbols-outlined text-2xl">smart_toy</span>
                         </div>
-                        <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-surface"></span>
+                        <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full" style="border:2px solid var(--surface);"></span>
                     </div>
                     <div>
-                        <span class="ds-eyebrow"><span class="dot"></span>Nggak nemu jawabannya?</span>
-                        <h4 class="text-xl font-bold font-headline text-white mt-1">Tanya langsung ke Gana AI</h4>
+                        <span class="sec-label">Nggak nemu jawabannya?</span>
+                        <h4 class="text-xl font-bold font-headline t-text mt-2">Tanya langsung ke Gana AI</h4>
                     </div>
                 </div>
-                <p class="text-on-surface-variant text-sm font-light leading-relaxed mb-5">Belum ketemu di daftar atas? Tanyakan apa aja soal tugas perencana, aplikasi, atau format laporan. Gana AI siap bantu, 24 jam.</p>
+                <p class="t-soft text-sm font-light leading-relaxed mb-5">Belum ketemu di daftar atas? Tanyakan apa aja soal tugas perencana, aplikasi, atau format laporan. Gana AI siap bantu, 24 jam.</p>
 
                 <div class="flex flex-wrap gap-2 mb-5">
                     <button type="button" class="ai-quick" data-ai-ask="Apa beda PK dan RK?">Apa beda PK dan RK?</button>
@@ -778,36 +647,49 @@ import Analytics from '@vercel/analytics/astro'
                     <input id="ai-faq-input" class="ai-faq-input" placeholder="Ketik pertanyaanmu di sini..." autocomplete="off">
                     <button type="button" id="ai-faq-send" class="ai-faq-send" aria-label="Kirim pertanyaan ke Gana AI"><span class="material-symbols-outlined">send</span></button>
                 </div>
-                <p class="text-center text-[10px] text-white/25 mt-3 font-medium">Ditenagai Gana AI &mdash; jawaban bisa saja keliru, cek ulang untuk hal penting.</p>
+                <p class="text-center text-[10px] t-faint mt-3 font-medium">Ditenagai Gana AI &mdash; jawaban bisa saja keliru, cek ulang untuk hal penting.</p>
             </div>
         </section>
     </main>
 
     <!-- Footer -->
-    <footer class="py-16 px-6 md:px-12 w-full bg-[#010800] border-t border-white/5">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
+    <footer class="w-full border-t" style="background: var(--surface); border-color: var(--border);">
+        <div class="max-w-6xl mx-auto px-5 md:px-6 py-16 flex flex-col md:flex-row justify-between items-center gap-10">
             <div class="flex flex-col gap-4 max-w-lg text-center md:text-left">
-                <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
-                    <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                        <span class="material-symbols-outlined text-on-primary text-xl font-bold">account_balance</span>
+                <div class="flex items-center justify-center md:justify-start gap-3 mb-1">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--accent);">
+                        <span class="material-symbols-outlined text-xl font-bold" style="color: var(--accent-on);">account_balance</span>
                     </div>
-                    <span class="text-[10px] font-headline font-black tracking-widest text-white uppercase">GanaSatya Dhiracana</span>
+                    <span class="text-[11px] font-headline font-black tracking-widest t-text uppercase">GanaSatya Dhiracana</span>
                 </div>
-                <p class="text-[10px] font-medium text-neon-accent/60 leading-relaxed uppercase tracking-wider">
+                <p class="text-[11px] font-medium t-muted leading-relaxed uppercase tracking-wider">
                     Dibuat khusus untuk 500+ perencana keahlian kejaksaan RI. Selamat mengabdi, Teman!
                 </p>
-                <p class="text-[9px] text-white/20 uppercase tracking-[0.4em]">© 2026 ORI RINALDI • VERSI 2.0</p>
+                <p class="text-[9px] t-faint uppercase tracking-[0.4em]">© 2026 ORI RINALDI • VERSI 2.0</p>
             </div>
             <div class="flex flex-wrap justify-center gap-8 md:gap-12">
-                <a class="text-[9px] text-white/40 hover:text-primary transition-all font-bold uppercase tracking-[0.2em]" href="#">Kebijakan</a>
-                <a class="text-[9px] text-white/40 hover:text-primary transition-all font-bold uppercase tracking-[0.2em]" href="#">Ketentuan</a>
-                <a class="text-[9px] text-white/40 hover:text-primary transition-all font-bold uppercase tracking-[0.2em]" href="#">Bantuan</a>
+                <a class="text-[10px] t-muted hover:t-accent transition-all font-bold uppercase tracking-[0.2em]" href="#">Kebijakan</a>
+                <a class="text-[10px] t-muted hover:t-accent transition-all font-bold uppercase tracking-[0.2em]" href="#">Ketentuan</a>
+                <a class="text-[10px] t-muted hover:t-accent transition-all font-bold uppercase tracking-[0.2em]" href="#">Bantuan</a>
             </div>
         </div>
     </footer>
 
     <script is:inline async type="module" src="https://embed.styledcalendar.com/assets/parent-window.js"></script>
     <script is:inline src="/faq-data.js"></script>
+
+    <!-- Theme toggle -->
+    <script is:inline>
+        (function () {
+            const btn = document.getElementById('theme-toggle');
+            if (!btn) return;
+            btn.addEventListener('click', () => {
+                const dark = document.documentElement.classList.toggle('dark');
+                try { localStorage.setItem('pp-theme', dark ? 'dark' : 'light'); } catch (e) {}
+            });
+        })();
+    </script>
+
     <script is:inline>
         // FAQ Renderer
         (function() {
@@ -875,10 +757,8 @@ import Analytics from '@vercel/analytics/astro'
                 const sendBtn = document.getElementById('ai-send-btn');
                 if (!chatBox || !input || !sendBtn) return;
 
-                // Buka chat box bila masih tertutup (klik FAB)
                 if (chatBox.classList.contains('hidden') && fab) fab.click();
 
-                // Isi & kirim setelah animasi buka selesai
                 setTimeout(() => {
                     input.value = q;
                     sendBtn.click();
@@ -901,18 +781,13 @@ import Analytics from '@vercel/analytics/astro'
             anchor.addEventListener('click', function (e) {
                 const targetId = this.getAttribute('href');
                 if (targetId === '#') return;
-                
                 e.preventDefault();
                 const targetElement = document.querySelector(targetId);
                 if (targetElement) {
                     const offset = 80;
                     const elementPosition = targetElement.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                 }
             });
         });
@@ -925,7 +800,7 @@ import Analytics from '@vercel/analytics/astro'
             "Jangan lupa bahagiain diri, ya!",
             "Healing-healing dlu deh sebelum kerja!",
         ];
-        
+
         let wordIndex = 0;
         let charIndex = 0;
         let isDeleting = false;
@@ -934,7 +809,7 @@ import Analytics from '@vercel/analytics/astro'
         function type() {
             const currentWord = words[wordIndex];
             if(!typingElement) return;
-            
+
             if (isDeleting) {
                 typingElement.textContent = currentWord.substring(0, charIndex - 1);
                 charIndex--;
@@ -978,65 +853,64 @@ import Analytics from '@vercel/analytics/astro'
 <div id="ai-widget-wrapper" class="fixed bottom-6 right-6 z-[90] font-sans">
 
   <!-- Kotak Chat -->
-  <div id="ai-chat-box" class="glass-panel w-[340px] sm:w-[380px] h-[540px] rounded-[2rem] flex-col mb-4 shadow-2xl shadow-black/80 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none hidden border border-white/10">
+  <div id="ai-chat-box" class="pp-chatbox w-[340px] sm:w-[380px] h-[540px] rounded-[2rem] flex-col mb-4 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none hidden">
 
     <!-- Header -->
-    <div class="flex justify-between items-center p-5 border-b border-white/10 bg-black/20">
+    <div class="pp-chat-head flex justify-between items-center p-5 rounded-t-[2rem]">
       <div class="flex items-center gap-3">
         <div class="relative">
-          <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--chip-bg); color: var(--accent-text);">
             <span class="material-symbols-outlined text-sm">smart_toy</span>
           </div>
-          <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full border border-black/50"></span>
+          <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full" style="border:1px solid var(--surface);"></span>
         </div>
         <div>
-          <span class="font-headline font-bold text-white tracking-wide text-sm">Gana AI</span>
-          <p class="text-[10px] text-green-400/80">Online • Siap bantu 😊</p>
+          <span class="font-headline font-bold t-text tracking-wide text-sm">Gana AI</span>
+          <p class="text-[10px] text-green-500">Online • Siap bantu 😊</p>
         </div>
       </div>
-      <button id="ai-close-btn" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors">
+      <button id="ai-close-btn" class="w-8 h-8 rounded-full flex items-center justify-center t-muted hover:t-text transition-colors" style="background: var(--surface);">
         <span class="material-symbols-outlined text-sm">close</span>
       </button>
     </div>
 
     <!-- Body Chat -->
     <div id="ai-chat-body" class="flex-1 p-4 overflow-y-auto flex flex-col gap-3 scroll-smooth">
-      <div class="self-start max-w-[85%] p-3.5 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 text-sm text-white/90 leading-relaxed">
+      <div class="pp-bubble-bot">
         Halo teman perencana! 👋 Saya <b>Gana AI</b> — teman ngobrol virtual yang siap bantu kamu soal kerjaan planning, atau sekadar curhat deadline yang mepet. 😄<br><br>Mau tanya apa nih hari ini?
       </div>
     </div>
 
     <!-- Preview File (muncul saat ada file dipilih) -->
-    <div id="ai-file-preview" class="hidden mx-4 mb-1 items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 text-xs text-white/80">
-      <span class="material-symbols-outlined text-sm text-primary shrink-0">attach_file</span>
+    <div id="ai-file-preview" class="hidden mx-4 mb-1 items-center gap-2 px-3 py-2 rounded-xl text-xs" style="background: var(--chip-bg); border: 1px solid var(--border); color: var(--text-soft);">
+      <span class="material-symbols-outlined text-sm t-accent shrink-0">attach_file</span>
       <span id="ai-file-name" class="flex-1 truncate font-medium"></span>
-      <button id="ai-file-remove" class="text-white/40 hover:text-red-400 transition-colors shrink-0">
+      <button id="ai-file-remove" class="t-faint hover:text-red-500 transition-colors shrink-0">
         <span class="material-symbols-outlined text-sm">close</span>
       </button>
     </div>
 
     <!-- Footer Input -->
-    <div class="p-4 border-t border-white/10 bg-black/20 flex gap-2 items-center">
-      <!-- Tombol Lampirkan File -->
-      <label for="ai-file-input" id="ai-attach-label" class="w-10 h-10 rounded-full bg-white/5 hover:bg-primary/10 border border-white/10 hover:border-primary/30 flex items-center justify-center cursor-pointer transition-all shrink-0" title="Lampirkan gambar, PDF, atau Word">
-        <span class="material-symbols-outlined text-sm text-white/50">attach_file</span>
+    <div class="pp-chat-foot p-4 flex gap-2 items-center rounded-b-[2rem]">
+      <label for="ai-file-input" id="ai-attach-label" class="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer transition-all shrink-0" style="background: var(--surface); border: 1px solid var(--border);" title="Lampirkan gambar, PDF, atau Word">
+        <span class="material-symbols-outlined text-sm t-muted">attach_file</span>
       </label>
       <input type="file" id="ai-file-input" class="hidden" accept="image/*,.pdf,.doc,.docx">
 
-      <input type="text" id="ai-chat-input" class="flex-1 bg-black/40 border border-white/10 rounded-full px-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary/50 placeholder-white/30 transition-colors" placeholder="Ketik atau lampirkan file..." autocomplete="off">
-      <button id="ai-send-btn" class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center hover:scale-105 transition-transform shrink-0 shadow-lg shadow-primary/20">
+      <input type="text" id="ai-chat-input" class="pp-chat-input" placeholder="Ketik atau lampirkan file..." autocomplete="off">
+      <button id="ai-send-btn" class="w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 transition-transform shrink-0" style="background: var(--accent); color: var(--accent-on);">
         <span class="material-symbols-outlined text-base">send</span>
       </button>
     </div>
 
     <!-- Info file support -->
-    <p class="text-center text-[10px] text-white/20 pb-3">Mendukung: Gambar 🖼️ • PDF 📄 • Word 📝</p>
+    <p class="text-center text-[10px] t-faint pb-3">Mendukung: Gambar 🖼️ • PDF 📄 • Word 📝</p>
   </div>
 
   <!-- FAB Button -->
-  <button id="ai-fab" class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-lg shadow-primary/30 hover:scale-110 transition-transform ml-auto relative">
+  <button id="ai-fab" class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition-transform ml-auto relative" style="background: var(--accent); color: var(--accent-on); box-shadow: var(--glow), var(--shadow-lift);">
     <span class="material-symbols-outlined text-2xl">forum</span>
-    <span class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-surface animate-pulse"></span>
+    <span class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full animate-pulse" style="border:2px solid var(--bg);"></span>
   </button>
 </div>
 
@@ -1050,37 +924,25 @@ import Analytics from '@vercel/analytics/astro'
   const AI_API_KEY = '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';
   const AI_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
-  // === 16 LAPIS FALLBACK - Berdasarkan ranking OpenRouter Juli 2026 ===
-  // Vision-capable models diletakkan di atas agar bisa handle upload gambar
   const AI_MODELS = [
-    // ===== TIER 1: Vision/Multimodal (Prioritas utama, bisa baca gambar) =====
-    'google/gemma-4-26b-a4b-it:free',              // ✅ L1  - Google Gemma4 26B MoE (Vision+Video) 262K ctx
-    'google/gemma-4-31b-it:free',                  // ✅ L2  - Google Gemma4 31B (Vision) 262K ctx
-    'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free', // ✅ L3  - NVIDIA Omni (Text+Image+Video+Audio!) 256K ctx
-    'nvidia/nemotron-nano-12b-v2-vl:free',         // ✅ L4  - NVIDIA Nemotron VL (Vision) 128K ctx
-
-    // ===== TIER 2: Top Usage (9T+ token pakai, paling populer & stabil) =====
-    'tencent/hy3:free',                            // ✅ L5  - Tencent HY3 295B MoE (#1 ranking!) 256K ctx
-    'nvidia/nemotron-3-ultra-550b-a55b:free',      // ✅ L6  - NVIDIA Ultra 550B MoE, 1M ctx!
-    'poolside/laguna-m.1:free',                    // ✅ L7  - Poolside Laguna M.1 (562B tokens used)
-    'nvidia/nemotron-3-super-120b-a12b:free',      // ✅ L8  - NVIDIA Super 120B, 1M ctx
-    'poolside/laguna-xs-2.1:free',                 // ✅ L9  - Poolside Laguna XS 2.1
-
-    // ===== TIER 3: Reliable Workhorses (Tested & Confirmed Works) =====
-    'nvidia/nemotron-3-nano-30b-a3b:free',         // ✅ L10 - NVIDIA Nano 30B (confirmed OK)
-    'openai/gpt-oss-20b:free',                     // ✅ L11 - OpenAI OSS 20B (confirmed OK)
-    'nvidia/nemotron-nano-9b-v2:free',             // ✅ L12 - NVIDIA Nano 9B V2
-
-    // ===== TIER 4: Heavy Backup (Model besar, kadang antri tapi powerful) =====
-    'meta-llama/llama-3.3-70b-instruct:free',      // 🔄 L13 - Meta LLaMA 3.3 70B
-    'qwen/qwen3-next-80b-a3b-instruct:free',       // 🔄 L14 - Qwen3 80B
-    'nousresearch/hermes-3-llama-3.1-405b:free',   // 🔄 L15 - Hermes 3 LLaMA 405B
-
-    // ===== TIER 5: Last Resort (Auto-router OpenRouter milihkan sendiri) =====
-    'openrouter/free',                             // 🆘 L16 - OpenRouter auto-select (safety net!)
+    'google/gemma-4-26b-a4b-it:free',
+    'google/gemma-4-31b-it:free',
+    'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+    'nvidia/nemotron-nano-12b-v2-vl:free',
+    'tencent/hy3:free',
+    'nvidia/nemotron-3-ultra-550b-a55b:free',
+    'poolside/laguna-m.1:free',
+    'nvidia/nemotron-3-super-120b-a12b:free',
+    'poolside/laguna-xs-2.1:free',
+    'nvidia/nemotron-3-nano-30b-a3b:free',
+    'openai/gpt-oss-20b:free',
+    'nvidia/nemotron-nano-9b-v2:free',
+    'meta-llama/llama-3.3-70b-instruct:free',
+    'qwen/qwen3-next-80b-a3b-instruct:free',
+    'nousresearch/hermes-3-llama-3.1-405b:free',
+    'openrouter/free',
   ];
 
-  // === DOM Elements ===
   const aiFab        = document.getElementById('ai-fab');
   const aiChatBox    = document.getElementById('ai-chat-box');
   const aiCloseBtn   = document.getElementById('ai-close-btn');
@@ -1092,14 +954,12 @@ import Analytics from '@vercel/analytics/astro'
   const aiFileName   = document.getElementById('ai-file-name');
   const aiFileRemove = document.getElementById('ai-file-remove');
 
-  // State file yang terpilih
   let selectedFile = null;
-  let selectedFileType = null; // 'image' | 'pdf' | 'word'
+  let selectedFileType = null;
   let selectedFileBase64 = null;
   let selectedFileText = null;
 
-  // === SYSTEM PROMPT (Friendly, Humble, Humoris) ===
-    const AI_HISTORY = [
+  const AI_HISTORY = [
     {
       role: 'system',
       content: `Kamu adalah **Gana AI**, asisten virtual ahli yang tinggal di dalam Portal Perencana Keahlian GanaSatya Dhiracana DCXXV — portal resmi yang dibangun khusus untuk 500+ Perencana Keahlian di seluruh Kejaksaan RI.
@@ -1177,7 +1037,6 @@ Kalau bestie kamu ngirim gambar/dokumen, langsung aja bantuin review dan kasih m
     }
   ];
 
-  // === Buka & Tutup Chat ===
   aiFab.addEventListener('click', () => {
     aiChatBox.classList.remove('hidden');
     setTimeout(() => {
@@ -1198,13 +1057,14 @@ Kalau bestie kamu ngirim gambar/dokumen, langsung aja bantuin review dan kasih m
     }, 300);
   });
 
-  // === Tambah Balon Chat ===
   function aiAddMessage(html, isUser = false, isFile = false) {
     const div = document.createElement('div');
     if (isUser) {
-      div.className = 'self-end max-w-[85%] p-3.5 rounded-2xl rounded-tr-sm bg-primary text-on-primary font-semibold text-sm shadow-lg shadow-primary/20 break-words';
+      div.className = 'self-end max-w-[85%] p-3.5 rounded-2xl rounded-tr-sm font-semibold text-sm break-words';
+      div.style.background = 'var(--accent)';
+      div.style.color = 'var(--accent-on)';
     } else {
-      div.className = 'self-start max-w-[85%] p-3.5 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 text-sm text-white/90 leading-relaxed break-words';
+      div.className = 'pp-bubble-bot break-words';
     }
     div.innerHTML = html;
     aiChatBody.appendChild(div);
@@ -1216,11 +1076,11 @@ Kalau bestie kamu ngirim gambar/dokumen, langsung aja bantuin review dan kasih m
     if (document.getElementById('ai-typing-indicator')) return;
     const div = document.createElement('div');
     div.id = 'ai-typing-indicator';
-    div.className = 'self-start p-3.5 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 flex gap-1.5 items-center';
+    div.className = 'pp-bubble-bot flex gap-1.5 items-center';
     div.innerHTML = `
-      <div class="w-1.5 h-1.5 bg-primary/70 rounded-full animate-bounce" style="animation-delay:0ms"></div>
-      <div class="w-1.5 h-1.5 bg-primary/70 rounded-full animate-bounce" style="animation-delay:150ms"></div>
-      <div class="w-1.5 h-1.5 bg-primary/70 rounded-full animate-bounce" style="animation-delay:300ms"></div>
+      <div class="w-1.5 h-1.5 rounded-full animate-bounce" style="background: var(--accent); animation-delay:0ms"></div>
+      <div class="w-1.5 h-1.5 rounded-full animate-bounce" style="background: var(--accent); animation-delay:150ms"></div>
+      <div class="w-1.5 h-1.5 rounded-full animate-bounce" style="background: var(--accent); animation-delay:300ms"></div>
     `;
     aiChatBody.appendChild(div);
     aiChatBody.scrollTop = aiChatBody.scrollHeight;
@@ -1231,7 +1091,6 @@ Kalau bestie kamu ngirim gambar/dokumen, langsung aja bantuin review dan kasih m
     if (t) t.remove();
   }
 
-  // === File Upload Handler ===
   aiFileInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -1247,7 +1106,6 @@ Kalau bestie kamu ngirim gambar/dokumen, langsung aja bantuin review dan kasih m
 
     if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
       selectedFileType = 'image';
-      // Konversi ke base64
       selectedFileBase64 = await fileToBase64(file);
     } else if (ext === 'pdf') {
       selectedFileType = 'pdf';
@@ -1317,7 +1175,6 @@ Kalau bestie kamu ngirim gambar/dokumen, langsung aja bantuin review dan kasih m
     }
   }
 
-  // === Auto-Fallback API Call (9 Lapis) ===
   async function aiCallWithFallback(messages, modelIndex = 0) {
     if (modelIndex >= AI_MODELS.length) {
       throw new Error('Waduh, semua AI lagi istirahat serentak nih 😅 Coba lagi dalam beberapa detik ya teman perencana!');
@@ -1359,12 +1216,10 @@ Kalau bestie kamu ngirim gambar/dokumen, langsung aja bantuin review dan kasih m
     }
   }
 
-  // === Kirim Pesan ===
   async function aiSendMessage() {
     const text = aiChatInput.value.trim();
     if (!text && !selectedFile) return;
 
-    // Tampilkan pesan user
     let displayHtml = '';
     if (selectedFileType === 'image' && selectedFileBase64) {
       displayHtml = `<img src="${selectedFileBase64}" class="rounded-xl mb-2 max-w-full" style="max-height:120px;object-fit:cover;">`;
@@ -1373,29 +1228,25 @@ Kalau bestie kamu ngirim gambar/dokumen, langsung aja bantuin review dan kasih m
       displayHtml = `<span class="block text-xs opacity-70 mb-1">${icon} ${selectedFile.name}</span>`;
     }
     if (text) displayHtml += text.replace(/\n/g, '<br>');
+
     aiAddMessage(displayHtml, true);
 
-    // Siapkan isi pesan untuk API
     let userMessageContent;
 
     if (selectedFileType === 'image' && selectedFileBase64) {
-      // Kirim sebagai vision (gambar + teks)
       userMessageContent = [
         { type: 'image_url', image_url: { url: selectedFileBase64 } },
         { type: 'text', text: text || 'Tolong analisis gambar ini ya!' }
       ];
     } else if (selectedFileText) {
-      // Kirim teks hasil ekstraksi + pertanyaan user
       const fileInfo = `[File: ${selectedFile.name}]\n\nIsi dokumen:\n---\n${selectedFileText.substring(0, 6000)}\n---\n\n`;
       userMessageContent = fileInfo + (text || 'Tolong ringkas dan jelaskan isi dokumen ini ya!');
     } else {
       userMessageContent = text;
     }
 
-    // Tambah ke history
     AI_HISTORY.push({ role: 'user', content: userMessageContent });
 
-    // Reset input
     aiChatInput.value = '';
     resetFile();
     aiFileInput.value = '';
@@ -1426,4 +1277,3 @@ Kalau bestie kamu ngirim gambar/dokumen, langsung aja bantuin review dan kasih m
 <!-- === AKHIR GANA AI V3 === -->
 </body>
 </html>
-
