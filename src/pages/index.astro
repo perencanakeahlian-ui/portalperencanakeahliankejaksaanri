@@ -1,4 +1,5 @@
 ---
+export const prerender = true;
 import Analytics from '@vercel/analytics/astro'
 ---
 <!DOCTYPE html>
@@ -921,27 +922,9 @@ import Analytics from '@vercel/analytics/astro'
 <script is:inline>
 (function() {
   // === GANA AI - Config ===
-  const AI_API_KEY = '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';
-  const AI_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-
-  const AI_MODELS = [
-    'google/gemma-4-26b-a4b-it:free',
-    'google/gemma-4-31b-it:free',
-    'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
-    'nvidia/nemotron-nano-12b-v2-vl:free',
-    'tencent/hy3:free',
-    'nvidia/nemotron-3-ultra-550b-a55b:free',
-    'poolside/laguna-m.1:free',
-    'nvidia/nemotron-3-super-120b-a12b:free',
-    'poolside/laguna-xs-2.1:free',
-    'nvidia/nemotron-3-nano-30b-a3b:free',
-    'openai/gpt-oss-20b:free',
-    'nvidia/nemotron-nano-9b-v2:free',
-    'meta-llama/llama-3.3-70b-instruct:free',
-    'qwen/qwen3-next-80b-a3b-instruct:free',
-    'nousresearch/hermes-3-llama-3.1-405b:free',
-    'openrouter/free',
-  ];
+  // API key TIDAK ada di sini. Chat memanggil endpoint server /api/chat,
+  // dan key disimpan aman sebagai Environment Variable di server (Vercel).
+  const AI_PROXY_URL = '/api/chat';
 
   const aiFab        = document.getElementById('ai-fab');
   const aiChatBox    = document.getElementById('ai-chat-box');
@@ -1175,45 +1158,27 @@ Kalau bestie kamu ngirim gambar/dokumen, langsung aja bantuin review dan kasih m
     }
   }
 
-  async function aiCallWithFallback(messages, modelIndex = 0) {
-    if (modelIndex >= AI_MODELS.length) {
-      throw new Error('Waduh, semua AI lagi istirahat serentak nih 😅 Coba lagi dalam beberapa detik ya teman perencana!');
-    }
+  async function aiCallWithFallback(messages) {
+    // Panggil proxy server kita; server yang pegang API key + fallback antar-model.
+    const res = await fetch(AI_PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages })
+    });
 
-    const model = AI_MODELS[modelIndex];
-
+    let data;
     try {
-      const res = await fetch(AI_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + AI_API_KEY,
-          'HTTP-Referer': window.location.origin,
-          'X-Title': 'Gana AI - Portal Perencana'
-        },
-        body: JSON.stringify({ model, messages })
-      });
-
-      const data = await res.json();
-
-      if (data.error) {
-        const shouldFallback = res.status === 429 || res.status === 503 ||
-          res.status === 404 || res.status === 502 ||
-          (data.error.message && (
-            data.error.message.includes('No endpoints') ||
-            data.error.message.includes('unavailable') ||
-            data.error.message.includes('overloaded') ||
-            data.error.message.includes('not available')
-          ));
-        if (shouldFallback) return aiCallWithFallback(messages, modelIndex + 1);
-        throw new Error(data.error.message);
-      }
-
-      return data;
-    } catch (err) {
-      if (!err.message.includes('Waduh')) return aiCallWithFallback(messages, modelIndex + 1);
-      throw err;
+      data = await res.json();
+    } catch {
+      throw new Error('Waduh, server lagi sibuk nih 😅 Coba lagi sebentar ya teman perencana!');
     }
+
+    if (!res.ok || (data && data.error)) {
+      const msg = (data && data.error && data.error.message) || 'Koneksi ke server terputus.';
+      throw new Error(msg);
+    }
+
+    return data;
   }
 
   async function aiSendMessage() {
