@@ -268,10 +268,20 @@ import Analytics from '@vercel/analytics/astro'
         .typing-cursor::after { content:'|'; animation:blink 1s infinite; margin-left:4px; color:var(--accent); }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
-        /* Kalender */
+        /* Kalender — tinggi cukup untuk sebulan penuh (6 baris minggu),
+           dan bisa di-scroll kalau konten masih lebih panjang. */
         .calendar-frame-container {
-            position:relative; width:100%; height:500px; background:var(--surface-2);
-            border-radius:var(--radius-lg); overflow:hidden;
+            position:relative; width:100%; height:760px; background:var(--surface-2);
+            border-radius:var(--radius-lg); overflow:auto; -webkit-overflow-scrolling:touch;
+        }
+        .calendar-frame-container iframe { display:block; width:100%; height:100%; border:0; }
+        /* Tablet */
+        @media (max-width: 1024px) {
+            .calendar-frame-container { height:680px; }
+        }
+        /* Mobile: tampilan agenda/list lebih panjang + bisa di-scroll penuh */
+        @media (max-width: 640px) {
+            .calendar-frame-container { height:70vh; min-height:520px; max-height:760px; }
         }
 
         /* ===== FAQ (markup dirender JS — nama class WAJIB dipertahankan) ===== */
